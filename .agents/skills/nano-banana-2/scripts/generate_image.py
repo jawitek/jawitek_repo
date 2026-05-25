@@ -111,11 +111,6 @@ def generate(
         contents=contents,
         config=types.GenerateContentConfig(
             response_modalities=["IMAGE", "TEXT"],
-            image_generation_config=types.ImageGenerationConfig(
-                number_of_images=1,
-                output_mime_type="image/png",
-                output_compression_quality=95,
-            ),
         ),
     )
 
