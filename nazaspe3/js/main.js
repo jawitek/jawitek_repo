@@ -1,62 +1,16 @@
 /* Na Zaspę 3 — interactions
+   Replaces the design prototype's React runtime with plain DOM code. The room
+   rows live in the HTML, so the full list still renders without JavaScript;
+   this file only filters, sorts and links them to the contact form.
    ------------------------------------------------------------------------- */
 (function () {
   "use strict";
 
-  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var LEASING_EMAIL = "office@kapholding.pl";
 
-  /* ---------------------------------------------------------------- i18n */
-  var PL = { text: {}, ph: {} };
-
-  function snapshotPolish() {
-    document.querySelectorAll("[data-i18n]").forEach(function (el) {
-      PL.text[el.dataset.i18n] = el.textContent;
-    });
-    document.querySelectorAll("[data-i18n-ph]").forEach(function (el) {
-      PL.ph[el.dataset.i18nPh] = el.getAttribute("placeholder") || "";
-    });
-  }
-
-  function setLang(lang) {
-    var en = window.I18N_EN || {};
-    document.querySelectorAll("[data-i18n]").forEach(function (el) {
-      var k = el.dataset.i18n;
-      var v = lang === "en" ? en[k] : PL.text[k];
-      if (typeof v === "string") el.textContent = v;
-    });
-    document.querySelectorAll("[data-i18n-ph]").forEach(function (el) {
-      var k = el.dataset.i18nPh;
-      var v = lang === "en" ? en[k] : PL.ph[k];
-      if (typeof v === "string") el.setAttribute("placeholder", v);
-    });
-
-    document.documentElement.lang = lang;
-    document.querySelectorAll(".lang button").forEach(function (b) {
-      b.classList.toggle("is-on", b.dataset.lang === lang);
-      b.setAttribute("aria-pressed", b.dataset.lang === lang ? "true" : "false");
-    });
-    try { localStorage.setItem("nz3-lang", lang); } catch (e) {}
-  }
-
-  snapshotPolish();
-  document.querySelectorAll(".lang button").forEach(function (b) {
-    b.addEventListener("click", function () { setLang(b.dataset.lang); });
-  });
-  // Polish is the default; English only when the visitor has chosen it before.
-  var saved = null;
-  try { saved = localStorage.getItem("nz3-lang"); } catch (e) {}
-  if (saved === "en") setLang("en");
-
-  /* -------------------------------------------------------------- header */
-  var head = document.getElementById("head");
+  /* ------------------------------------------------------------ menu */
   var burger = document.getElementById("burger");
   var nav = document.getElementById("nav");
-
-  function onScroll() {
-    head.classList.toggle("is-stuck", window.scrollY > 40);
-  }
-  onScroll();
-  window.addEventListener("scroll", onScroll, { passive: true });
 
   burger.addEventListener("click", function () {
     var open = nav.classList.toggle("is-open");
@@ -69,113 +23,104 @@
     }
   });
 
-  /* ------------------------------------------------------ active section */
-  var links = Array.prototype.slice.call(nav.querySelectorAll("a"));
-  var targets = links
-    .map(function (a) { return document.querySelector(a.getAttribute("href")); })
-    .filter(Boolean);
+  /* ------------------------------------------------------ room table */
+  var tbody = document.getElementById("tbody");
+  var rows = Array.prototype.slice.call(tbody.querySelectorAll(".row"));
+  var chips = Array.prototype.slice.call(document.querySelectorAll("#chips .chip"));
+  var countEl = document.getElementById("count");
+  var sortBtn = document.getElementById("sort");
+  var selection = document.getElementById("selection");
+  var selectionLabel = document.getElementById("selection-label");
+  var roomField = document.getElementById("f-room");
 
-  if ("IntersectionObserver" in window && targets.length) {
-    var spy = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (!en.isIntersecting) return;
-        links.forEach(function (a) {
-          a.classList.toggle("is-active", a.getAttribute("href") === "#" + en.target.id);
-        });
-      });
-    }, { rootMargin: "-45% 0px -50% 0px" });
-    targets.forEach(function (t) { spy.observe(t); });
+  var floor = -1;      // -1 = all
+  var sortByArea = false;
+  var order = rows.slice();   // the original, floor-ordered sequence
+
+  function plural(n) {
+    if (n === 1) return " pokój";
+    if (n < 5) return " pokoje";
+    return " pokoi";
   }
 
-  /* --------------------------------------------------------- hero lights */
-  var lights = document.getElementById("lights");
-  if (lights) {
-    // Grid matches the #win pattern: 60 × 52 px cells over the office volume.
-    var cells = [];
-    for (var x = 370; x < 1080; x += 60) {
-      for (var y = 264; y < 576; y += 52) cells.push([x, y]);
-    }
-    for (var i = 0; i < 26; i++) {
-      var c = cells[(i * 37 + 11) % cells.length];
-      var r = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-      r.setAttribute("x", c[0] + 8);
-      r.setAttribute("y", c[1] + 10);
-      r.setAttribute("width", 44);
-      r.setAttribute("height", 32);
-      r.setAttribute("class", "on");
-      r.style.animationDelay = ((i * 0.83) % 7).toFixed(2) + "s";
-      lights.appendChild(r);
-    }
+  function render() {
+    var shown = 0;
+    var list = sortByArea
+      ? order.slice().sort(function (a, b) { return b.dataset.m2 - a.dataset.m2; })
+      : order;
+
+    list.forEach(function (r) {
+      tbody.appendChild(r);                       // re-appending applies the order
+      var on = floor === -1 || +r.dataset.floor === floor;
+      r.hidden = !on;
+      if (on) shown++;
+    });
+
+    countEl.textContent = shown + plural(shown);
+    sortBtn.textContent = sortByArea ? "Sortuj: metraż ↓" : "Sortuj: kondygnacja";
   }
 
-  /* -------------------------------------------------------- floor picker */
-  var rows = Array.prototype.slice.call(document.querySelectorAll(".fl-row"));
-  var bands = Array.prototype.slice.call(document.querySelectorAll("#secFloors .fl"));
-
-  // Mark the let floor on the section drawing.
-  bands.forEach(function (b) {
-    var row = rows.filter(function (r) { return r.dataset.floor === b.dataset.floor; })[0];
-    if (row && row.classList.contains("is-taken")) b.classList.add("is-let");
+  chips.forEach(function (c) {
+    c.addEventListener("click", function () {
+      floor = +c.dataset.floor;
+      chips.forEach(function (o) { o.classList.toggle("is-on", o === c); });
+      render();
+    });
   });
 
-  function select(floor) {
-    rows.forEach(function (r) {
-      var on = r.dataset.floor === floor;
-      r.classList.toggle("is-open", on);
-      r.classList.toggle("is-on", on);
-      r.setAttribute("aria-expanded", on ? "true" : "false");
-    });
-    bands.forEach(function (b) {
-      b.classList.toggle("is-on", b.dataset.floor === floor);
-    });
+  sortBtn.addEventListener("click", function () {
+    sortByArea = !sortByArea;
+    render();
+  });
+
+  function select(row) {
+    rows.forEach(function (r) { r.classList.toggle("is-on", r === row); });
+
+    var id = row.dataset.id;
+    var area = row.querySelector(".rarea").textContent.trim();
+    var fl = row.querySelector(".rfloor").textContent.trim();
+    var label = id + " · " + area + " · " + fl;
+
+    selectionLabel.textContent = "Wybrano: " + label;
+    selection.hidden = false;
+    if (roomField) roomField.value = label;
   }
 
   rows.forEach(function (r) {
-    r.addEventListener("click", function () { select(r.dataset.floor); });
+    r.addEventListener("click", function () { select(r); });
     r.addEventListener("keydown", function (e) {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        select(r.dataset.floor);
-      }
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(r); }
     });
   });
 
-  bands.forEach(function (b) {
-    b.style.cursor = "pointer";
-    b.addEventListener("click", function () {
-      select(b.dataset.floor);
-      var row = rows.filter(function (r) { return r.dataset.floor === b.dataset.floor; })[0];
-      if (row && window.innerWidth < 900) {
-        row.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "center" });
-      }
-    });
-  });
+  render();
 
-  select("4");
-
-  /* -------------------------------------------------------------- reveal */
-  if ("IntersectionObserver" in window) {
-    var revealables = document.querySelectorAll(
-      ".sec-head, .two > *, .fact, .floors > *, .am, .map-fig, .dist, .draw, .contact > *"
-    );
-    revealables.forEach(function (el, i) {
-      el.classList.add("rv");
-      el.style.transitionDelay = (Math.min(i % 6, 5) * 55) + "ms";
-    });
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (en) {
-        if (en.isIntersecting) {
-          en.target.classList.add("in");
-          io.unobserve(en.target);
-        }
+  /* ------------------------------------------------------------- faq */
+  Array.prototype.forEach.call(document.querySelectorAll(".faq-item"), function (item) {
+    var btn = item.querySelector("button");
+    var sign = item.querySelector("i");
+    btn.addEventListener("click", function () {
+      var open = !item.classList.contains("is-open");
+      // one open at a time, matching the prototype
+      Array.prototype.forEach.call(document.querySelectorAll(".faq-item"), function (o) {
+        o.classList.remove("is-open");
+        o.querySelector("i").textContent = "+";
+        o.querySelector("button").setAttribute("aria-expanded", "false");
       });
-    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.05 });
-    revealables.forEach(function (el) { io.observe(el); });
-  }
+      if (open) {
+        item.classList.add("is-open");
+        sign.textContent = "–";
+        btn.setAttribute("aria-expanded", "true");
+      }
+    });
+  });
 
-  /* ---------------------------------------------------------------- form */
+  /* ------------------------------------------------------------ form */
   var form = document.getElementById("form");
-  var ferr = document.getElementById("ferr");
+  var card = form.closest(".form-card");
+  var sent = document.getElementById("form-sent");
+  var back = document.getElementById("form-back");
+  var err = document.getElementById("f-err");
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
@@ -184,43 +129,35 @@
     var email = f.email.value.trim();
 
     if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
-      ferr.hidden = false;
+      err.hidden = false;
       (name ? f.email : f.name).focus();
       return;
     }
-    ferr.hidden = true;
-
-    var en = document.documentElement.lang === "en";
-    var subject = en
-      ? "Leasing enquiry — Na Zaspę 3"
-      : "Zapytanie o najem — Na Zaspę 3";
+    err.hidden = true;
 
     var body = [
-      (en ? "Name: " : "Imię i nazwisko: ") + name,
-      (en ? "Company: " : "Firma: ") + (f.company.value.trim() || "—"),
-      (en ? "E-mail: " : "E-mail: ") + email,
-      (en ? "Area: " : "Powierzchnia: ") + (f.area.value.trim() || "—") + " m²",
-      (en ? "Timing: " : "Termin: ") + f.when.value,
+      "Imię i nazwisko: " + name,
+      "Firma: " + (f.company.value.trim() || "—"),
+      "E-mail: " + email,
+      "Telefon: " + (f.phone.value.trim() || "—"),
+      "Interesujący pokój: " + (f.room.value.trim() || "—"),
       "",
-      (en ? "Message:" : "Wiadomość:"),
+      "Wiadomość:",
       f.message.value.trim() || "—"
     ].join("\n");
 
     window.location.href =
-      "mailto:najem@nazaspe3.pl?subject=" + encodeURIComponent(subject) +
+      "mailto:" + LEASING_EMAIL +
+      "?subject=" + encodeURIComponent("Zapytanie o najem — Na Zaspę 3") +
       "&body=" + encodeURIComponent(body);
 
-    form.classList.add("is-sent");
-    var btn = form.querySelector("button[type=submit]");
-    var original = btn.textContent;
-    btn.textContent = en ? "Opening your mail app…" : "Otwieram program pocztowy…";
-    setTimeout(function () {
-      btn.textContent = original;
-      form.classList.remove("is-sent");
-    }, 4000);
+    card.setAttribute("data-sent", "");
+    sent.hidden = false;
   });
 
-  /* ---------------------------------------------------- year in the foot */
-  var y = document.getElementById("year");
-  if (y) y.textContent = new Date().getFullYear();
+  back.addEventListener("click", function () {
+    card.removeAttribute("data-sent");
+    sent.hidden = true;
+    form.elements.name.focus();
+  });
 })();
