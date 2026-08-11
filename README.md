@@ -1,24 +1,40 @@
 # Kanno Noodle — website
 
-The production website lives at the repository root and is built from the
-"Direction A · Editorial / Wabi" design in `project/` (see the handoff notes
-below).
+Live at https://jawitek.github.io/jawitek_repo/
 
-- `index.html` — single-page site: cinematic intro, hero, marquee, about,
-  quality/process, portfolio, contact, footer
-- `css/style.css` — full stylesheet (Direction A design + responsive/mobile
-  layer the prototype didn't have)
-- `js/i18n.js` — EN / PL / JP copy
-- `js/main.js` — intro sequence, language switching, scroll reveals, hero
-  parallax, mobile menu
-- `assets/` — Kanno logo (SVG with restored brand colors, white-wordmark
-  variant for dark backgrounds, favicon)
+The production website lives at the repository root, built from the design
+bundle the client exported from Claude Design (`Kanno Noodle Website.html`).
+It is a B2B site for the noodle production business: Japanese recipes,
+production in central Poland.
 
-No build step — serve the root with any static host (`python3 -m http.server`
-locally, or GitHub Pages / Netlify / any web server in production). Food
-photography currently hotlinks the Unsplash shots approved during the design
-phase; swap the URLs in `index.html` and `js/main.js` (`STEP_PHOTOS`) when
-real photography is ready.
+- `index.html` — single page: hero, stats, about, noodle portfolio,
+  production/packing, quality & site, contact form, footer
+- `css/style.css` — full stylesheet, including the responsive layer the
+  desktop-only prototype did not have
+- `js/main.js` — scroll reveals, egg-variant filter, contact form, mobile menu
+- `assets/` — logo (dark and white wordmark variants), hero and section
+  photography, six product shots, packaging and map images, favicon
+
+All photography ships with the repo — nothing is hotlinked, so the site
+renders identically offline and on any host.
+
+No build step. Serve the repository root with any static host: GitHub Pages
+(currently in use), Netlify, or `python3 -m http.server` locally.
+
+### Known gaps
+
+- **Languages.** The header shows EN / PL / JA exactly as designed, but only
+  English copy exists — the PL and JA chips are inert until translations are
+  supplied.
+- **Contact form.** There is no backend. Submitting composes a pre-filled
+  message to hello@kanno.pl in the visitor's mail client. Wiring it to a form
+  service (Formspree, Netlify Forms) or an endpoint would make it a true form.
+- **Product photo mapping.** The bundle shipped six unnamed product images;
+  they were matched to the five noodle styles by appearance. Worth a check
+  against the real product line, and easy to swap in `index.html`.
+
+The older "Direction A · Editorial / Wabi" concept and the Instagram post
+grid remain in `project/` and `kanno-instagram.html` for reference.
 
 ---
 
