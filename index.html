@@ -2,186 +2,382 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Kanno Noodle — The art of Asian noodles</title>
+  <title>Kanno Noodle — The art of Japanese noodles, made in Europe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Kanno Noodle is a joint venture between the Kanno family — producing Japanese noodles in Tokyo since 1949 — and a Polish family business. Authentic ramen, udon and soba for European kitchens. IFS Food certified.">
-  <meta property="og:title" content="Kanno Noodle — The art of Asian noodles">
-  <meta property="og:description" content="Authentic Japanese ramen, udon and soba, produced in Poland. A joint venture with the Kanno family of Tokyo, making noodles since 1949.">
+  <meta name="description" content="Japanese ramen noodles produced in central Poland by the Kanno family joint venture. Five styles, with or without egg, IFS Food certified, frozen with 12 months shelf life.">
+  <meta property="og:title" content="Kanno Noodle — The art of Japanese noodles, made in Europe">
+  <meta property="og:description" content="Seventy years of Kanno family craft, Japanese recipes and know-how, produced in central Poland for ramen kitchens and retail across Europe.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="assets/kanno-logo.png">
+  <meta property="og:image" content="assets/hero.jpg">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="intro-pending">
+<body>
 
-  <!-- ===== Cinematic intro ===== -->
-  <div class="intro" id="intro" aria-hidden="true">
-    <div class="cine">
-      <div class="shot s1"><img src="https://images.unsplash.com/photo-1557872943-16a5ac26437e?w=1200&q=80&auto=format&fit=crop" alt=""></div>
-      <div class="shot s2"><img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=900&q=80&auto=format&fit=crop" alt=""></div>
-      <div class="vignette"></div>
+<!-- ===== Header ===== -->
+<header class="site-header">
+  <div class="header-inner">
+    <a href="#top" class="brand"><img src="assets/logo.svg" alt="Kanno Noodle"></a>
+
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="#about">About</a>
+      <a href="#products">Noodles</a>
+      <a href="#production">Production</a>
+      <a href="#quality">Quality</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <div class="lang" aria-label="Language">
+      <span class="on">EN</span>
+      <span>PL</span>
+      <span>JA</span>
     </div>
-    <div class="grain"></div>
-    <div class="bar top"></div>
-    <div class="bar bot"></div>
-    <div class="caption">
-      <div class="cap-line l1"><span class="inner">Tokyo · 1949 — Warsaw · today</span></div>
-      <div class="cap-line l2">
-        <span class="word w1"><span class="inner">The art</span></span>
-        <span class="word w2"><span class="inner">of Asian</span></span>
-        <span class="word w3"><span class="inner">noodles.</span></span>
-      </div>
-      <div class="cap-line l3"><span class="inner">A film by Kanno Noodle — Sc. 01</span></div>
-    </div>
-    <div class="logo-flash"><img src="assets/kanno-logo-white.svg" alt=""></div>
-    <div class="tick"><span class="dot"></span><span>REC · 24fps · KANNO/01</span></div>
-    <div class="stamp">麺 · ART OF NOODLES</div>
-    <button class="skip" id="intro-skip" type="button">Skip →</button>
+
+    <a href="#contact" class="btn btn-red header-cta">Request a quote</a>
+
+    <button class="burger" id="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav">
+      <span></span><span></span><span></span>
+    </button>
   </div>
+</header>
 
-  <!-- ===== Navigation ===== -->
-  <header class="nav">
-    <div class="nav-inner">
-      <a href="#top" class="logo"><img src="assets/kanno-logo.svg" alt="Kanno Noodle"></a>
-      <nav class="nav-links sans" id="nav-links" aria-label="Main">
-        <a href="#about" data-i18n="nav.0">About</a>
-        <a href="#portfolio" data-i18n="nav.1">Portfolio</a>
-        <a href="#quality" data-i18n="nav.2">Quality</a>
-        <a href="#quality" data-i18n="nav.3">Production</a>
-        <a href="#contact" data-i18n="nav.4">Contact</a>
-      </nav>
-      <div class="nav-right">
-        <div class="lang" role="group" aria-label="Language">
-          <button type="button" data-lang="EN" class="on">EN</button>
-          <button type="button" data-lang="PL">PL</button>
-          <button type="button" data-lang="JP">JP</button>
-        </div>
-        <button class="burger" id="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav-links">
-          <span></span><span></span>
-        </button>
+<main>
+
+  <!-- ===== Hero ===== -->
+  <section id="top" class="hero">
+    <img class="hero-bg" src="assets/hero.jpg" alt="">
+    <div class="hero-shade"></div>
+    <div class="hero-inner">
+      <div class="eyebrow eyebrow-orange" data-reveal>
+        <span class="rule"></span>Tokyo 1949 · Made in Poland
+      </div>
+      <h1 data-reveal>The art of Japanese noodles, made in&nbsp;Europe</h1>
+      <p class="hero-lead" data-reveal>Seventy years of Kanno family craft, Japanese recipes and know-how, produced in central Poland at the heart of Europe's logistics network — supplying ramen kitchens and retail with frozen noodles of consistent, chef-grade texture.</p>
+      <div class="hero-actions" data-reveal>
+        <a href="#contact" class="btn btn-red btn-lg">Talk to our sales team</a>
+        <a href="#products" class="btn btn-outline btn-lg">See the noodle range</a>
       </div>
     </div>
-  </header>
+  </section>
 
-  <main id="top">
+  <!-- ===== Stats ===== -->
+  <section class="stats">
+    <div class="stats-inner">
+      <div class="stat">
+        <div class="stat-value">1949</div>
+        <div class="stat-label">Kanno family since</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">500+ t</div>
+        <div class="stat-label">Annual capacity</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">3.5 M</div>
+        <div class="stat-label">Portions per year</div>
+      </div>
+      <div class="stat stat-cert">
+        <img src="assets/ifs-food.png" alt="IFS Food certified">
+        <div class="stat-label">Certified<br>food safety</div>
+      </div>
+    </div>
+  </section>
 
-    <!-- ===== Hero ===== -->
-    <section class="hero">
-      <div class="hero-grid">
-        <div>
-          <div class="hero-eyebrow mono">
-            <span class="line"></span><span data-i18n="heroEyebrow">Tokyo · 1949 — Warsaw · today</span>
+  <!-- ===== About ===== -->
+  <section id="about" class="about section-pad">
+    <div class="about-grid">
+      <div data-reveal>
+        <div class="eyebrow eyebrow-red">About us</div>
+        <h2>A Tokyo legacy with a Polish address</h2>
+        <p class="body-text">For over 70 years the Kanno family has perfected noodle-making in the heart of Tokyo. Since 1949 their precision has supplied thousands of restaurants across Japan, Asia, North America and Australia — grounded in craftsmanship and a clear mission: safe, high-quality products that carry noodle culture forward.</p>
+        <p class="body-text">The joint venture between Mr. Yoshio Kanno and a Polish family business opened a new chapter. An independent production site was established in Poland, built on Kanno's recipes, standards and the support of their food technologists — the authenticity of Japanese noodles, built on tradition and mutual trust.</p>
+        <div class="about-flags">
+          <img src="assets/japan-poland.png" alt="Japan and Poland">
+          <div>Japanese recipes and technology. European production, service and supply.</div>
+        </div>
+      </div>
+      <div class="about-media" data-reveal>
+        <img class="about-hero-img" src="assets/noodles-board.jpg" alt="Fresh noodles on a wooden board" loading="lazy">
+        <div class="about-media-pair">
+          <img src="assets/wheat-flour.jpg" alt="Selected wheat flour" loading="lazy">
+          <img src="assets/ramen-shop-night.png" alt="Ramen shop at night" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Products ===== -->
+  <section id="products" class="products">
+    <div class="products-inner">
+      <div class="products-head">
+        <div data-reveal>
+          <div class="eyebrow eyebrow-red">Noodle portfolio</div>
+          <h2>Five styles, with or without egg</h2>
+          <p class="body-text">Every style follows a traditional Japanese recipe and the same production standard. Formats, portion weights and packaging are adapted to each partner.</p>
+        </div>
+        <div class="filters" id="filters" role="group" aria-label="Egg variant" data-reveal>
+          <button type="button" class="chip on" data-filter="all">Both variants</button>
+          <button type="button" class="chip" data-filter="egg">With egg</button>
+          <button type="button" class="chip" data-filter="noegg">Without egg</button>
+        </div>
+      </div>
+
+      <div class="product-grid">
+
+        <article class="card" data-reveal>
+          <div class="card-media">
+            <img src="assets/prod-sapporo.png" alt="Sapporo style noodles" loading="lazy">
+            <span class="badge">With or without egg</span>
           </div>
-          <h1>
-            <span class="line-anim" data-i18n="heroTitle.0">The art of</span><br>
-            <span class="line-anim it" data-i18n="heroTitle.1">Asian</span><br>
-            <span class="line-anim" data-i18n="heroTitle.2">noodles.</span>
-          </h1>
+          <div class="card-body">
+            <div class="card-title">
+              <h3>Sapporo style</h3>
+              <div class="card-jp">札幌</div>
+            </div>
+            <p class="card-blurb">Springy medium-thick curls that hold body in rich miso and shoyu broths.</p>
+            <dl class="spec">
+              <div><dt>Portion</dt><dd>130 g</dd></div>
+              <div><dt>Allergens</dt><dd class="allergens">Gluten (egg optional)</dd></div>
+              <div><dt>Shelf life</dt><dd>12 months at −18 °C</dd></div>
+            </dl>
+          </div>
+        </article>
+
+        <article class="card" data-reveal>
+          <div class="card-media">
+            <img src="assets/prod-temomi.png" alt="Temomi style noodles" loading="lazy">
+            <span class="badge">With or without egg</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">
+              <h3>Temomi style</h3>
+              <div class="card-jp">手揉み</div>
+            </div>
+            <p class="card-blurb">Hand-crimped irregular strands with a chewy bite that grips thicker broths.</p>
+            <dl class="spec">
+              <div><dt>Portion</dt><dd>155 g</dd></div>
+              <div><dt>Allergens</dt><dd class="allergens">Gluten (egg optional)</dd></div>
+              <div><dt>Shelf life</dt><dd>12 months at −18 °C</dd></div>
+            </dl>
+          </div>
+        </article>
+
+        <article class="card" data-reveal>
+          <div class="card-media">
+            <img src="assets/prod-tokyo-straight.png" alt="Tokyo straight noodles" loading="lazy">
+            <span class="badge">With or without egg</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">
+              <h3>Tokyo straight</h3>
+              <div class="card-jp">東京 ストレート</div>
+            </div>
+            <p class="card-blurb">Clean straight strands, the classic pairing for clear shoyu and shio ramen.</p>
+            <dl class="spec">
+              <div><dt>Portion</dt><dd>140 g</dd></div>
+              <div><dt>Allergens</dt><dd class="allergens">Gluten (egg optional)</dd></div>
+              <div><dt>Shelf life</dt><dd>12 months at −18 °C</dd></div>
+            </dl>
+          </div>
+        </article>
+
+        <article class="card" data-reveal>
+          <div class="card-media">
+            <img src="assets/prod-tokyo-wavy.png" alt="Tokyo wavy noodles" loading="lazy">
+            <span class="badge">With or without egg</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">
+              <h3>Tokyo wavy</h3>
+              <div class="card-jp">東京 ちぢれ</div>
+            </div>
+            <p class="card-blurb">Wavy cut that carries broth along the strand from first bite to last.</p>
+            <dl class="spec">
+              <div><dt>Portion</dt><dd>140 g</dd></div>
+              <div><dt>Allergens</dt><dd class="allergens">Gluten (egg optional)</dd></div>
+              <div><dt>Shelf life</dt><dd>12 months at −18 °C</dd></div>
+            </dl>
+          </div>
+        </article>
+
+        <article class="card" data-reveal>
+          <div class="card-media">
+            <img src="assets/prod-tonkotsu.png" alt="Tonkotsu style noodles" loading="lazy">
+            <span class="badge">With or without egg</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">
+              <h3>Tonkotsu style</h3>
+              <div class="card-jp">豚骨</div>
+            </div>
+            <p class="card-blurb">Thin, firm and low-hydration — built for short cooking in pork-bone broth.</p>
+            <dl class="spec">
+              <div><dt>Portion</dt><dd>130 g</dd></div>
+              <div><dt>Allergens</dt><dd class="allergens">Gluten (egg optional)</dd></div>
+              <div><dt>Shelf life</dt><dd>12 months at −18 °C</dd></div>
+            </dl>
+          </div>
+        </article>
+
+        <article class="card card-custom" data-reveal>
+          <div class="card-media">
+            <img src="assets/prod-custom.png" alt="Custom recipe noodles" loading="lazy">
+            <span class="badge badge-dark">Made to brief</span>
+          </div>
+          <div class="card-body">
+            <div class="card-title">
+              <h3>Custom recipe</h3>
+              <div class="card-jp">オーダーメイド</div>
+            </div>
+            <p class="card-blurb">Developed with your kitchen or category team: hydration, cut, colour and format.</p>
+            <dl class="spec">
+              <div><dt>Portion</dt><dd>130–155 g</dd></div>
+              <div><dt>Allergens</dt><dd>On specification</dd></div>
+              <div><dt>Shelf life</dt><dd>12 months at −18 °C</dd></div>
+            </dl>
+          </div>
+        </article>
+
+      </div>
+
+      <div class="products-note" data-reveal>
+        <span>Portion weights available in 130 g, 140 g and 155 g. Alternative recipes are developed with partners on request.</span>
+        <a href="#contact">Ask about a custom recipe →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Production ===== -->
+  <section id="production" class="production">
+    <div class="production-inner">
+      <div class="production-head">
+        <div data-reveal>
+          <div class="eyebrow eyebrow-orange">Our production</div>
+          <h2>Consistency, batch after batch</h2>
         </div>
-        <div class="hero-meta">
-          <p data-i18n="heroSub">Kanno Noodle is a joint venture between the Kanno family — producing Japanese noodles in Tokyo since 1949 — and a Polish family business. We bring authentic ramen, udon and soba to European kitchens.</p>
-          <div class="ctas">
-            <a class="btn" href="#contact"><span data-i18n="heroCta">Request a sample</span> →</a>
-            <a class="btn ghost" href="#about" data-i18n="heroCta2">About the company</a>
+        <p class="production-lead" data-reveal>Every batch is produced under controlled conditions and overseen by experienced food technologists, with defined standards for texture, weight and hydration. Selected ingredients and proven Japanese recipes keep each delivery identical to the last.</p>
+      </div>
+
+      <div class="packing">
+        <div class="packing-item" data-reveal>
+          <h3>Servings packing</h3>
+          <p>Standard film bag holds 5 portions — the best balance of production efficiency, freezing performance and handling. Configurations from 3 to 7 portions are available.</p>
+        </div>
+        <div class="packing-item" data-reveal>
+          <h3>Carton</h3>
+          <p>10 film packs per carton, 600 × 400 × 80 mm, labelled with full product information and ventilated to support efficient freezing.</p>
+        </div>
+        <div class="packing-item" data-reveal>
+          <h3>Pallet</h3>
+          <p>Up to 80 cartons, 4 per layer over 20 layers, wrapped and labelled for secure, traceable transport.</p>
+        </div>
+      </div>
+
+      <div class="packing-media">
+        <img class="contain" src="assets/pack-film.png" alt="Film pack of five portions" loading="lazy" data-reveal>
+        <img src="assets/pack-carton.png" alt="Carton with labelled packs" loading="lazy" data-reveal>
+        <img class="contain" src="assets/pack-pallet.png" alt="Wrapped pallet" loading="lazy" data-reveal>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== Quality ===== -->
+  <section id="quality" class="quality section-pad">
+    <div class="quality-grid">
+      <div data-reveal>
+        <div class="eyebrow eyebrow-red">Quality &amp; site</div>
+        <h2>Clean production in the centre of Europe</h2>
+        <p class="body-text">Our noodles are made in a modern facility with clearly defined clean zones and strict process control, backed by IFS certification. Every product is stored in optimised conditions that preserve freshness, texture and full flavour.</p>
+        <p class="body-text">The site sits in central Poland, close to major transport routes — fast, cost-effective distribution to domestic and international markets from one of Europe's strategic logistics hubs.</p>
+        <div class="quality-stats">
+          <div class="qs qs-red">
+            <div class="qs-value">IFS Food</div>
+            <div class="qs-label">Certified standard</div>
+          </div>
+          <div class="qs qs-orange">
+            <div class="qs-value">Clean zones</div>
+            <div class="qs-label">Strict process control</div>
+          </div>
+          <div class="qs qs-ink">
+            <div class="qs-value">−18 °C</div>
+            <div class="qs-label">Cold chain, 12 months</div>
           </div>
         </div>
       </div>
-      <div class="hero-figure" id="hero-figure">
-        <div class="reveal" data-delay="100"><div class="photo tall"><img src="https://images.unsplash.com/photo-1623341214825-9f4f963727da?w=900&q=80&auto=format&fit=crop" alt="Ramen close-up" loading="eager"><span class="cap">Ramen · close-up</span></div></div>
-        <div class="reveal" data-delay="200"><div class="photo hero-img"><img src="https://images.unsplash.com/photo-1557872943-16a5ac26437e?w=1200&q=80&auto=format&fit=crop" alt="Noodle bowl" loading="eager"><span class="cap">Hero · bowl</span></div></div>
-        <div class="reveal" data-delay="300"><div class="photo tall"><img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=900&q=80&auto=format&fit=crop" alt="Production hands" loading="lazy"><span class="cap">Production · hands</span></div></div>
-      </div>
-    </section>
-
-    <!-- ===== Marquee ===== -->
-    <div class="marquee" aria-hidden="true">
-      <div class="marquee-track" id="marquee-track"></div>
-    </div>
-
-    <!-- ===== About / Story ===== -->
-    <section class="story" id="about">
-      <div class="section-head reveal">
-        <div class="lbl">— <span data-i18n="sectionStory">About us</span></div>
-        <h2 data-i18n="storyTitle">Three generations of noodle-making, brought to Europe.</h2>
-      </div>
-      <div class="story-grid">
-        <div class="reveal"><div class="photo tall"><img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=900&q=80&auto=format&fit=crop" alt="Workshop" loading="lazy"><span class="cap">Workshop</span></div></div>
-        <div class="reveal" data-delay="120">
-          <p class="body" data-i18n="storyBody1">Kanno Noodle was founded as a joint venture between Mr. Yoshio Kanno, head of a Tokyo family business producing Japanese noodles since 1949, and a Polish family enterprise. The mission is simple: bring genuine Japanese noodle craft to the European market.</p>
-          <p class="body" data-i18n="storyBody2">Our recipes, technique and quality discipline come directly from Tokyo. Our production, logistics and people are based in Poland — close to our customers, on EU soil, ready to ship across the continent.</p>
-        </div>
-        <div class="reveal story-meta" data-delay="240" id="story-meta"></div>
-      </div>
-    </section>
-
-    <!-- ===== Quality / Process ===== -->
-    <section class="process" id="quality">
-      <div class="section-head reveal">
-        <div class="lbl">— <span data-i18n="sectionProcess">Quality</span></div>
-        <h2 data-i18n="processTitle">Authentic recipes, modern discipline.</h2>
-      </div>
-      <div class="process-sub reveal">
-        <p data-i18n="processSub">Every batch is produced under the supervision of qualified food technologists, to standards certified to IFS. The recipe is Japanese; the consistency, traceability and food-safety regime is European.</p>
-      </div>
-      <div class="grid" id="process-grid"></div>
-    </section>
-
-    <!-- ===== Portfolio ===== -->
-    <section class="biz" id="portfolio">
-      <div class="section-head reveal">
-        <div class="lbl">— <span data-i18n="sectionBiz">Portfolio</span></div>
-        <h2 data-i18n="bizTitle">Ramen, udon, soba — and what your kitchen needs next.</h2>
-      </div>
-      <div class="biz-grid">
-        <div class="reveal">
-          <p class="biz-sub" data-i18n="bizSub">Our portfolio covers the core Japanese noodle range, with the flexibility to develop bespoke products for restaurants, distributors and food-service partners across Europe.</p>
-          <div class="photo wide biz-photo"><img src="https://images.unsplash.com/photo-1614563637806-1d0e645e0940?w=1400&q=80&auto=format&fit=crop" alt="Noodle range" loading="lazy"><span class="cap">Portfolio · range</span></div>
-        </div>
-        <div class="reveal biz-points" data-delay="150" id="biz-points"></div>
-      </div>
-    </section>
-
-    <!-- ===== Contact ===== -->
-    <section class="contact" id="contact">
-      <div class="row">
-        <h2 id="contact-title"><span>Talk to </span><span class="it">us.</span></h2>
-        <div class="right">
-          <p data-i18n="contactSub">Distributors, restaurants, food-service operators — we answer every inquiry. Tell us what you need and where you cook.</p>
-          <a class="btn" href="mailto:office@kanno.pl"><span data-i18n="contactCta">Send an inquiry</span> →</a>
-          <div class="mono contact-mail">office@kanno.pl</div>
+      <div class="quality-media" data-reveal>
+        <img class="quality-photo" src="assets/kanno-noodles.png" alt="Kanno noodles" loading="lazy">
+        <div class="map-card">
+          <img src="assets/map-europe.png" alt="Central Poland on the map of Europe" loading="lazy">
+          <div>
+            <div class="map-title">Central Poland</div>
+            <div class="map-text">Two days by road to most of the EU, with direct access to Poland's motorway network.</div>
+          </div>
         </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
 
-  <!-- ===== Footer ===== -->
-  <footer class="foot">
-    <div>
-      <img class="foot-logo" src="assets/kanno-logo-white.svg" alt="Kanno Noodle">
-      <p class="foot-tag" data-i18n="footTag">Kanno Noodle is a joint venture between the Kanno family — producing Japanese noodles in Tokyo since 1949 — and a Polish family business.</p>
-      <div class="copy">© Kanno Noodle Sp. z o.o. 2026</div>
-    </div>
-    <div>
-      <h5 data-i18n="footAddress">Address</h5>
-      <p>Kanno Noodle Sp. z o.o.<br>al. Niepodległości 112<br><span data-i18n="addrCity">02-577 Warszawa, Poland</span></p>
-      <p class="foot-dim" data-i18n="production">Production · central Poland</p>
-    </div>
-    <div>
-      <h5 data-i18n="footContact">Contact</h5>
-      <p><a href="mailto:office@kanno.pl">office@kanno.pl</a></p>
-      <p class="foot-gap"><a href="https://www.kanno.pl" target="_blank" rel="noopener">www.kanno.pl</a></p>
-    </div>
-    <div>
-      <h5 data-i18n="footQuality">Quality</h5>
-      <p>IFS Food certified</p>
-      <p class="foot-dim foot-gap" data-i18n="footTrace">Full traceability</p>
-    </div>
-  </footer>
+  <!-- ===== Contact ===== -->
+  <section id="contact" class="contact">
+    <div class="contact-inner">
+      <div class="contact-info" data-reveal>
+        <div class="eyebrow eyebrow-orange">Contact us</div>
+        <h2>Let's talk volumes, formats and timing</h2>
+        <p class="contact-lead">Tell us what you serve or sell and we will come back with a specification, portion format and lead time.</p>
+        <div class="contact-details">
+          <a class="contact-mail" href="mailto:hello@kanno.pl">hello@kanno.pl</a>
+          <div class="contact-addr">Kanno Noodle Sp. z o.o.<br>al. Niepodległości 112<br>02-577 Warsaw, Poland</div>
+        </div>
+        <img class="contact-logo" src="assets/logo-white.svg" alt="Kanno Noodle">
+      </div>
 
-  <script src="js/i18n.js"></script>
-  <script src="js/main.js"></script>
+      <form class="contact-form" id="contact-form" data-reveal novalidate>
+        <div class="field-row">
+          <label>First name*
+            <input name="firstName" required placeholder="Aiko">
+          </label>
+          <label>Last name
+            <input name="lastName" placeholder="Kowalska">
+          </label>
+        </div>
+        <label>Company e-mail*
+          <input name="email" type="email" required placeholder="you@company.com">
+        </label>
+        <label>I am contacting as
+          <select name="role">
+            <option>Restaurant or chain</option>
+            <option>Retail / grocery</option>
+            <option>Distributor or importer</option>
+            <option>Private label</option>
+            <option>Other</option>
+          </select>
+        </label>
+        <label>Your message
+          <textarea name="message" rows="4" placeholder="Styles, portion weight, monthly volume, delivery market"></textarea>
+        </label>
+        <button type="submit" class="btn btn-red btn-submit" id="submit-btn">Send inquiry</button>
+        <p class="form-note" id="form-note" role="status" hidden></p>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<!-- ===== Footer ===== -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© 2026 Kanno Noodle Sp. z o.o.</span>
+    <span class="footer-tag">The art of Asian noodles</span>
+    <div class="footer-links">
+      <a href="https://www.instagram.com/kannoseimenjo/" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://twitter.com/kannoseimenjo" target="_blank" rel="noopener">X / Twitter</a>
+      <a href="#top">Back to top</a>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
 </body>
 </html>
