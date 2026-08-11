@@ -1,3 +1,27 @@
+# Kanno Noodle — website
+
+The production website lives at the repository root and is built from the
+"Direction A · Editorial / Wabi" design in `project/` (see the handoff notes
+below).
+
+- `index.html` — single-page site: cinematic intro, hero, marquee, about,
+  quality/process, portfolio, contact, footer
+- `css/style.css` — full stylesheet (Direction A design + responsive/mobile
+  layer the prototype didn't have)
+- `js/i18n.js` — EN / PL / JP copy
+- `js/main.js` — intro sequence, language switching, scroll reveals, hero
+  parallax, mobile menu
+- `assets/` — Kanno logo (SVG with restored brand colors, white-wordmark
+  variant for dark backgrounds, favicon)
+
+No build step — serve the root with any static host (`python3 -m http.server`
+locally, or GitHub Pages / Netlify / any web server in production). Food
+photography currently hotlinks the Unsplash shots approved during the design
+phase; swap the URLs in `index.html` and `js/main.js` (`STEP_PHOTOS`) when
+real photography is ready.
+
+---
+
 # CODING AGENTS: READ THIS FIRST
 
 This is a **handoff bundle** from Claude Design (claude.ai/design).
