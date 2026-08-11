@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Kanno Noodle — The art of Asian noodles</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Kanno Noodle is a joint venture between the Kanno family — producing Japanese noodles in Tokyo since 1949 — and a Polish family business. Authentic ramen, udon and soba for European kitchens. IFS Food certified.">
+  <meta property="og:title" content="Kanno Noodle — The art of Asian noodles">
+  <meta property="og:description" content="Authentic Japanese ramen, udon and soba, produced in Poland. A joint venture with the Kanno family of Tokyo, making noodles since 1949.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="assets/kanno-logo.png">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="intro-pending">
+
+  <!-- ===== Cinematic intro ===== -->
+  <div class="intro" id="intro" aria-hidden="true">
+    <div class="cine">
+      <div class="shot s1"><img src="https://images.unsplash.com/photo-1557872943-16a5ac26437e?w=1200&q=80&auto=format&fit=crop" alt=""></div>
+      <div class="shot s2"><img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=900&q=80&auto=format&fit=crop" alt=""></div>
+      <div class="vignette"></div>
+    </div>
+    <div class="grain"></div>
+    <div class="bar top"></div>
+    <div class="bar bot"></div>
+    <div class="caption">
+      <div class="cap-line l1"><span class="inner">Tokyo · 1949 — Warsaw · today</span></div>
+      <div class="cap-line l2">
+        <span class="word w1"><span class="inner">The art</span></span>
+        <span class="word w2"><span class="inner">of Asian</span></span>
+        <span class="word w3"><span class="inner">noodles.</span></span>
+      </div>
+      <div class="cap-line l3"><span class="inner">A film by Kanno Noodle — Sc. 01</span></div>
+    </div>
+    <div class="logo-flash"><img src="assets/kanno-logo-white.svg" alt=""></div>
+    <div class="tick"><span class="dot"></span><span>REC · 24fps · KANNO/01</span></div>
+    <div class="stamp">麺 · ART OF NOODLES</div>
+    <button class="skip" id="intro-skip" type="button">Skip →</button>
+  </div>
+
+  <!-- ===== Navigation ===== -->
+  <header class="nav">
+    <div class="nav-inner">
+      <a href="#top" class="logo"><img src="assets/kanno-logo.svg" alt="Kanno Noodle"></a>
+      <nav class="nav-links sans" id="nav-links" aria-label="Main">
+        <a href="#about" data-i18n="nav.0">About</a>
+        <a href="#portfolio" data-i18n="nav.1">Portfolio</a>
+        <a href="#quality" data-i18n="nav.2">Quality</a>
+        <a href="#quality" data-i18n="nav.3">Production</a>
+        <a href="#contact" data-i18n="nav.4">Contact</a>
+      </nav>
+      <div class="nav-right">
+        <div class="lang" role="group" aria-label="Language">
+          <button type="button" data-lang="EN" class="on">EN</button>
+          <button type="button" data-lang="PL">PL</button>
+          <button type="button" data-lang="JP">JP</button>
+        </div>
+        <button class="burger" id="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav-links">
+          <span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ===== Hero ===== -->
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="hero-eyebrow mono">
+            <span class="line"></span><span data-i18n="heroEyebrow">Tokyo · 1949 — Warsaw · today</span>
+          </div>
+          <h1>
+            <span class="line-anim" data-i18n="heroTitle.0">The art of</span><br>
+            <span class="line-anim it" data-i18n="heroTitle.1">Asian</span><br>
+            <span class="line-anim" data-i18n="heroTitle.2">noodles.</span>
+          </h1>
+        </div>
+        <div class="hero-meta">
+          <p data-i18n="heroSub">Kanno Noodle is a joint venture between the Kanno family — producing Japanese noodles in Tokyo since 1949 — and a Polish family business. We bring authentic ramen, udon and soba to European kitchens.</p>
+          <div class="ctas">
+            <a class="btn" href="#contact"><span data-i18n="heroCta">Request a sample</span> →</a>
+            <a class="btn ghost" href="#about" data-i18n="heroCta2">About the company</a>
+          </div>
+        </div>
+      </div>
+      <div class="hero-figure" id="hero-figure">
+        <div class="reveal" data-delay="100"><div class="photo tall"><img src="https://images.unsplash.com/photo-1623341214825-9f4f963727da?w=900&q=80&auto=format&fit=crop" alt="Ramen close-up" loading="eager"><span class="cap">Ramen · close-up</span></div></div>
+        <div class="reveal" data-delay="200"><div class="photo hero-img"><img src="https://images.unsplash.com/photo-1557872943-16a5ac26437e?w=1200&q=80&auto=format&fit=crop" alt="Noodle bowl" loading="eager"><span class="cap">Hero · bowl</span></div></div>
+        <div class="reveal" data-delay="300"><div class="photo tall"><img src="https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=900&q=80&auto=format&fit=crop" alt="Production hands" loading="lazy"><span class="cap">Production · hands</span></div></div>
+      </div>
+    </section>
+
+    <!-- ===== Marquee ===== -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee-track" id="marquee-track"></div>
+    </div>
+
+    <!-- ===== About / Story ===== -->
+    <section class="story" id="about">
+      <div class="section-head reveal">
+        <div class="lbl">— <span data-i18n="sectionStory">About us</span></div>
+        <h2 data-i18n="storyTitle">Three generations of noodle-making, brought to Europe.</h2>
+      </div>
+      <div class="story-grid">
+        <div class="reveal"><div class="photo tall"><img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=900&q=80&auto=format&fit=crop" alt="Workshop" loading="lazy"><span class="cap">Workshop</span></div></div>
+        <div class="reveal" data-delay="120">
+          <p class="body" data-i18n="storyBody1">Kanno Noodle was founded as a joint venture between Mr. Yoshio Kanno, head of a Tokyo family business producing Japanese noodles since 1949, and a Polish family enterprise. The mission is simple: bring genuine Japanese noodle craft to the European market.</p>
+          <p class="body" data-i18n="storyBody2">Our recipes, technique and quality discipline come directly from Tokyo. Our production, logistics and people are based in Poland — close to our customers, on EU soil, ready to ship across the continent.</p>
+        </div>
+        <div class="reveal story-meta" data-delay="240" id="story-meta"></div>
+      </div>
+    </section>
+
+    <!-- ===== Quality / Process ===== -->
+    <section class="process" id="quality">
+      <div class="section-head reveal">
+        <div class="lbl">— <span data-i18n="sectionProcess">Quality</span></div>
+        <h2 data-i18n="processTitle">Authentic recipes, modern discipline.</h2>
+      </div>
+      <div class="process-sub reveal">
+        <p data-i18n="processSub">Every batch is produced under the supervision of qualified food technologists, to standards certified to IFS. The recipe is Japanese; the consistency, traceability and food-safety regime is European.</p>
+      </div>
+      <div class="grid" id="process-grid"></div>
+    </section>
+
+    <!-- ===== Portfolio ===== -->
+    <section class="biz" id="portfolio">
+      <div class="section-head reveal">
+        <div class="lbl">— <span data-i18n="sectionBiz">Portfolio</span></div>
+        <h2 data-i18n="bizTitle">Ramen, udon, soba — and what your kitchen needs next.</h2>
+      </div>
+      <div class="biz-grid">
+        <div class="reveal">
+          <p class="biz-sub" data-i18n="bizSub">Our portfolio covers the core Japanese noodle range, with the flexibility to develop bespoke products for restaurants, distributors and food-service partners across Europe.</p>
+          <div class="photo wide biz-photo"><img src="https://images.unsplash.com/photo-1614563637806-1d0e645e0940?w=1400&q=80&auto=format&fit=crop" alt="Noodle range" loading="lazy"><span class="cap">Portfolio · range</span></div>
+        </div>
+        <div class="reveal biz-points" data-delay="150" id="biz-points"></div>
+      </div>
+    </section>
+
+    <!-- ===== Contact ===== -->
+    <section class="contact" id="contact">
+      <div class="row">
+        <h2 id="contact-title"><span>Talk to </span><span class="it">us.</span></h2>
+        <div class="right">
+          <p data-i18n="contactSub">Distributors, restaurants, food-service operators — we answer every inquiry. Tell us what you need and where you cook.</p>
+          <a class="btn" href="mailto:office@kanno.pl"><span data-i18n="contactCta">Send an inquiry</span> →</a>
+          <div class="mono contact-mail">office@kanno.pl</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer ===== -->
+  <footer class="foot">
+    <div>
+      <img class="foot-logo" src="assets/kanno-logo-white.svg" alt="Kanno Noodle">
+      <p class="foot-tag" data-i18n="footTag">Kanno Noodle is a joint venture between the Kanno family — producing Japanese noodles in Tokyo since 1949 — and a Polish family business.</p>
+      <div class="copy">© Kanno Noodle Sp. z o.o. 2026</div>
+    </div>
+    <div>
+      <h5 data-i18n="footAddress">Address</h5>
+      <p>Kanno Noodle Sp. z o.o.<br>al. Niepodległości 112<br><span data-i18n="addrCity">02-577 Warszawa, Poland</span></p>
+      <p class="foot-dim" data-i18n="production">Production · central Poland</p>
+    </div>
+    <div>
+      <h5 data-i18n="footContact">Contact</h5>
+      <p><a href="mailto:office@kanno.pl">office@kanno.pl</a></p>
+      <p class="foot-gap"><a href="https://www.kanno.pl" target="_blank" rel="noopener">www.kanno.pl</a></p>
+    </div>
+    <div>
+      <h5 data-i18n="footQuality">Quality</h5>
+      <p>IFS Food certified</p>
+      <p class="foot-dim foot-gap" data-i18n="footTrace">Full traceability</p>
+    </div>
+  </footer>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
