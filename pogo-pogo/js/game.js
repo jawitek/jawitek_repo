@@ -93,7 +93,13 @@
 
   /* Rekin patroluje sinusoidą zamiast przecinać ekran po prostej — gracz musi
      przewidzieć tor płetwy, a nie tylko zauważyć przeszkodę.            */
-  var SHARK_FREQ = 0.03;              // ile sinusa na piksel drogi
+  /* Częstotliwość liczona na sztukę, tak żeby PRĘDKOŚĆ BOCZNA nie przekraczała
+     SHARK_VLAT. Stała częstotliwość dawała v = amp · FREQ · przewijanie, więc
+     przy 600 px/s i amplitudzie 50 rekin śmigał 900 px/s — 3,6× szybciej niż
+     gracz. Długość fali trzymana w rozsądnych granicach, żeby tor pozostał
+     czytelny na jednym ekranie.                                          */
+  var SHARK_VLAT = 140;               // px/s, maks. prędkość boczna
+  var SHARK_WAVE = [520, 1200];       // dopuszczalna długość fali w px
   var SHARK_AMP  = [30, 50];          // wychylenie w bok
   var SHARK_TILT = 6 * Math.PI / 180; // kąt natarcia płetwy
 
@@ -105,7 +111,7 @@
   /* Wersja zasobów. Przeglądarki trzymały stary game.js i stare sprite'y po
      wdrożeniu — gracz widział poprzednią wersję gry mimo udanej publikacji.
      PODBIJ TĘ LICZBĘ (i te w index.html) przy każdym wdrożeniu.          */
-  var VER = "9";
+  var VER = "10";
 
   /* ------------------------------------------------------------ narzędzia */
 
@@ -730,7 +736,6 @@
     var k = e.key.toLowerCase();
     if (k === "arrowleft"  || k === "a") { input.left  = true; e.preventDefault(); }
     if (k === "arrowright" || k === "d") { input.right = true; e.preventDefault(); }
-    if (k === "q") { useSlowmo(); e.preventDefault(); }
     if (k === " " || k === "enter") { tap(); e.preventDefault(); }
   });
   window.addEventListener("keyup", function (e) {
@@ -784,22 +789,14 @@
     });
   });
 
+  /* Sloty pokazują wyłącznie to, co gracz FAKTYCZNIE ma. Puste są ukryte —
+     stale widoczna, wygaszona ikona zegara sugerowała przedmiot w zapasie,
+     którego nie było.                                                    */
   function refreshSlots() {
-    el.slotS.classList.toggle("is-full", game.slots.slowmo || game.slowT > 0);
+    el.slotS.classList.toggle("is-full", game.slowT > 0);
     el.slotS.classList.toggle("is-live", game.slowT > 0);
     el.slotH.classList.toggle("is-full", game.slots.heart);
   }
-
-  function useSlowmo() {
-    if (game.mode !== PLAY || !game.slots.slowmo || game.slowT > 0) return;
-    game.slots.slowmo = false;
-    game.slowT = SLOW_TIME;
-    refreshSlots();
-    pop(W / 2, H * 0.36, "SLOW-MO!", 1.25);
-  }
-
-  el.slotS.addEventListener("click", function (e) { e.stopPropagation(); useSlowmo(); });
-  el.slotH.addEventListener("click", function (e) { e.stopPropagation(); });
 
   /* --------------------------------------------------------------- świat */
 
@@ -820,7 +817,8 @@
     items: [],
     wake: [],
     pops: [],
-    slots: { slowmo: false, heart: false },
+    slots: { heart: false },
+    spawned: 0,
     slowT: 0,
     hasBird: true,
     flyaway: null,
@@ -844,11 +842,11 @@
     game.bird.a = 0; game.bird.w = 0; game.bird.over = 0; game.bird.panic = 0;
     game.obstacles.length = 0;
     game.spray.length = 0;
-    game.spawn = 1.1;
+    game.spawn = 1.1 * SPEED_MIN;
+    game.spawned = 0;
     game.items.length = 0;
     game.wake.length = 0;
     game.pops.length = 0;
-    game.slots.slowmo = false;
     game.slots.heart = false;
     game.slowT = 0;
     game.hasBird = true;
@@ -989,6 +987,7 @@
   /* gapTime — ile czasu minęło od poprzedniej fali. Z tego wynika, jak daleko
      skuter zdążył się przemieścić, a więc jak daleko wolno odsunąć korytarz. */
   function spawnWave(gapTime) {
+    game.spawned++;                 // licznik fal — do pomiarów gęstości
     var L = level();
     var d = clamp(L / 6, 0, 1);
 
@@ -998,11 +997,14 @@
       var sr = 0.35 * Math.min(SKI_VX_MAX * gapTime,
                                0.5 * SKI_ACCEL * gapTime * gapTime);
       var base = clamp(game.safeX + rand(-sr, sr), LANE_LO, LANE_HI);
+      var amp = rand(SHARK_AMP[0], SHARK_AMP[1]);
+      var wave = clamp(6.2832 * amp * game.speed / SHARK_VLAT,
+                       SHARK_WAVE[0], SHARK_WAVE[1]);
       game.obstacles.push({
         type: "shark",
         baseX: base, x: base, y: -60, vx: 0,
         phase: rand(0, 6.2832),
-        amp: rand(SHARK_AMP[0], SHARK_AMP[1]),
+        amp: amp, freq: 6.2832 / wave,
         r: HIT_SHARK
       });
       return;
@@ -1012,7 +1014,7 @@
        przedmiot nie pojawia się, dopóki gracz go trzyma albo jest aktywny —
        więc na rzece nigdy nie leżą dwa zegary naraz.                    */
     var want = [];
-    if (!game.slots.slowmo && game.slowT <= 0) want.push("item_slowmo");
+    if (game.slowT <= 0) want.push("item_slowmo");
     if (!game.slots.heart) want.push("item_heart");
     if (want.length && Math.random() < 0.13) {
       var ir = 0.35 * Math.min(SKI_VX_MAX * gapTime,
@@ -1122,7 +1124,8 @@
       }
     }
 
-    var target = Math.min(SPEED_CAP, SPEED_MIN + SPEED_STEP * level()) * (1 + JUMP_BOOST * h);
+    var levelSpeed = Math.min(SPEED_CAP, SPEED_MIN + SPEED_STEP * level());
+    var target = levelSpeed * (1 + JUMP_BOOST * h);
     if (game.slowT > 0) target *= SLOW_FACTOR;
 
     if (game.slowT > 0) game.speed += (target - game.speed) * Math.min(1, 9 * dt);
@@ -1219,11 +1222,15 @@
     }
 
     /* trasa */
-    game.spawn -= dt;
+    /* Odstęp między falami jest DYSTANSEM, nie czasem. Liczony czasem
+       oznaczał, że w spowolnieniu świat sunie na 30% prędkości, a fale wciąż
+       sypią się co tyle samo sekund — czyli trzy razy gęściej w przestrzeni.
+       Zegar zamiast ulgi dawał ścianę przeszkód.                         */
+    game.spawn -= game.speed * dt;
     if (game.spawn <= 0) {
       spawnWave(game.gapTime);
       game.gapTime = spawnDelay();
-      game.spawn = game.gapTime;
+      game.spawn = game.gapTime * levelSpeed;
     }
     moveObstacles(dt);
 
@@ -1274,8 +1281,8 @@
       if (idx * idx + idy * idy < (ITEM_R + HIT_W) * (ITEM_R + HIT_W)) {
         game.items.splice(k2, 1);
         if (it.kind === "item_slowmo") {
-          game.slots.slowmo = true;
-          pop(ski.x, SKI_Y - 96, "SLOW-MO GOTOWE", 0.9);
+          game.slowT = SLOW_TIME;          // odpala się samo po najechaniu
+          pop(ski.x, SKI_Y - 96, "SLOW-MO!", 1.15);
         } else if (!game.hasBird) {
           game.hasBird = true;                 // serce odradza flaminga
           game.bird.a = 0; game.bird.w = 0; game.bird.panic = 0;
@@ -1325,7 +1332,7 @@
         /* Patrol sinusoidalny wokół toru, po którym rekin wszedł. Faza
            liczona z przebytej drogi, nie z czasu — dzięki temu spowolnienie
            i skok nie zmieniają kształtu toru, tylko tempo jego pokonywania. */
-        var ph = o.y * SHARK_FREQ + o.phase;
+        var ph = o.y * o.freq + o.phase;
         o.x = clamp(o.baseX + Math.sin(ph) * o.amp, 12, W - 12);
         o.lean = Math.cos(ph);          // >0 płynie w prawo, <0 w lewo
       } else {
@@ -1920,7 +1927,7 @@
         mode: game.mode, dist: Math.floor(game.dist),
         hasBird: game.hasBird, slowT: game.slowT, jumpT: game.jumpT,
         speed: Math.round(game.speed),
-        slowmo: game.slots.slowmo, heart: game.slots.heart
+        heart: game.slots.heart, obs: game.obstacles.length, spawned: game.spawned
       };
     };
   }
