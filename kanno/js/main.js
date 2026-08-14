@@ -2,6 +2,120 @@
 (function () {
   'use strict';
 
+  var I18N = window.KANNO_I18N || {};
+  var LANGS = ['EN', 'PL', 'JA'];
+  var DEFAULT_LANG = 'EN';
+  var lang = DEFAULT_LANG;
+
+  function dict() { return I18N[lang] || I18N[DEFAULT_LANG] || {}; }
+
+  function resolve(path) {
+    return path.split('.').reduce(function (o, k) {
+      return (o == null) ? undefined : o[k];
+    }, dict());
+  }
+
+  /* ---------- Language ---------- */
+
+  function applyLang(next) {
+    if (LANGS.indexOf(next) === -1 || !I18N[next]) next = DEFAULT_LANG;
+    lang = next;
+    var t = dict();
+
+    document.querySelectorAll('[data-i18n]').forEach(function (el) {
+      var v = resolve(el.getAttribute('data-i18n'));
+      if (typeof v === 'string') el.textContent = v;
+    });
+
+    // Values that legitimately carry markup (line breaks in addresses etc.).
+    document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
+      var v = resolve(el.getAttribute('data-i18n-html'));
+      if (typeof v === 'string') el.innerHTML = v;
+    });
+
+    document.querySelectorAll('[data-i18n-alt]').forEach(function (el) {
+      var v = resolve(el.getAttribute('data-i18n-alt'));
+      if (typeof v === 'string') el.setAttribute('alt', v);
+    });
+
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(function (el) {
+      var v = resolve(el.getAttribute('data-i18n-placeholder'));
+      if (typeof v === 'string') el.setAttribute('placeholder', v);
+    });
+
+    document.querySelectorAll('[data-i18n-content]').forEach(function (el) {
+      var v = resolve(el.getAttribute('data-i18n-content'));
+      if (typeof v === 'string') el.setAttribute('content', v);
+    });
+
+    if (t.meta && t.meta.title) document.title = t.meta.title;
+    document.documentElement.lang = t.htmlLang || 'en';
+
+    var privacy = document.getElementById('privacy-link');
+    if (privacy && t.privacyHref) privacy.setAttribute('href', t.privacyHref);
+
+    // Re-apply the active egg filter so badges and allergens follow the language.
+    applyVariant(currentVariant);
+
+    document.querySelectorAll('#lang button').forEach(function (b) {
+      b.classList.toggle('on', b.getAttribute('data-lang') === lang);
+    });
+
+    try { localStorage.setItem('kannoLang', lang); } catch (e) { /* private mode */ }
+  }
+
+  function initLang() {
+    // The legal pages ship one file per language and load no dictionary.
+    if (!I18N[DEFAULT_LANG]) return;
+
+    var stored = null;
+    try { stored = localStorage.getItem('kannoLang'); } catch (e) { /* private mode */ }
+    applyLang(stored || DEFAULT_LANG);
+
+    var group = document.getElementById('lang');
+    if (!group) return;
+    group.addEventListener('click', function (ev) {
+      var btn = ev.target.closest('button[data-lang]');
+      if (btn) applyLang(btn.getAttribute('data-lang'));
+    });
+  }
+
+  /* ---------- Egg-variant filter ----------
+     Only the badge and the allergen line change: every style is produced
+     both with and without egg, so the card set stays the same. */
+
+  var currentVariant = 'all';
+
+  function applyVariant(variant) {
+    if (['all', 'egg', 'noegg'].indexOf(variant) === -1) variant = 'all';
+    currentVariant = variant;
+
+    var t = dict().products || {};
+    var badge = variant === 'egg' ? t.badgeEgg : variant === 'noegg' ? t.badgeNoEgg : t.badgeAll;
+    var allergens = variant === 'egg' ? t.allergensEgg : variant === 'noegg' ? t.allergensNoEgg : t.allergensAll;
+
+    document.querySelectorAll('.card').forEach(function (card) {
+      if (card.classList.contains('card-custom')) return;
+      var b = card.querySelector('.badge');
+      var a = card.querySelector('.allergens');
+      if (b && typeof badge === 'string') b.textContent = badge;
+      if (a && typeof allergens === 'string') a.textContent = allergens;
+    });
+
+    document.querySelectorAll('#filters .chip').forEach(function (c) {
+      c.classList.toggle('on', c.getAttribute('data-filter') === variant);
+    });
+  }
+
+  function initFilters() {
+    var group = document.getElementById('filters');
+    if (!group) return;
+    group.addEventListener('click', function (ev) {
+      var btn = ev.target.closest('.chip');
+      if (btn) applyVariant(btn.getAttribute('data-filter'));
+    });
+  }
+
   /* ---------- Scroll reveal ---------- */
 
   function initReveal() {
@@ -21,38 +135,6 @@
     els.forEach(function (el) { io.observe(el); });
   }
 
-  /* ---------- Egg-variant filter ----------
-     Only the badge and the allergen line change: every style is produced
-     both with and without egg, so the card set stays the same. */
-
-  var VARIANTS = {
-    all:   { badge: 'With or without egg', allergens: 'Gluten (egg optional)' },
-    egg:   { badge: 'With egg',            allergens: 'Gluten, egg' },
-    noegg: { badge: 'Egg-free',            allergens: 'Gluten' }
-  };
-
-  function initFilters() {
-    var group = document.getElementById('filters');
-    if (!group) return;
-
-    group.addEventListener('click', function (ev) {
-      var btn = ev.target.closest('.chip');
-      if (!btn) return;
-
-      var variant = VARIANTS[btn.getAttribute('data-filter')] || VARIANTS.all;
-
-      group.querySelectorAll('.chip').forEach(function (c) {
-        c.classList.toggle('on', c === btn);
-      });
-
-      document.querySelectorAll('.card').forEach(function (card) {
-        if (card.classList.contains('card-custom')) return;
-        card.querySelector('.badge').textContent = variant.badge;
-        card.querySelector('.allergens').textContent = variant.allergens;
-      });
-    });
-  }
-
   /* ---------- Contact form ----------
      No backend yet: hand the inquiry to the visitor's mail client and
      confirm in place, so nothing is silently dropped. */
@@ -69,23 +151,24 @@
         return;
       }
 
+      var t = dict().contact || {};
       var data = new FormData(form);
       var name = [data.get('firstName'), data.get('lastName')].filter(Boolean).join(' ');
       var body = [
-        'Name: ' + name,
-        'E-mail: ' + data.get('email'),
-        'Contacting as: ' + data.get('role'),
+        t.mailName + ': ' + name,
+        t.mailEmail + ': ' + data.get('email'),
+        t.mailRole + ': ' + data.get('role'),
         '',
         data.get('message') || ''
       ].join('\n');
 
       window.location.href = 'mailto:hello@kanno.pl' +
-        '?subject=' + encodeURIComponent('Noodle inquiry — ' + name) +
+        '?subject=' + encodeURIComponent(t.mailSubject + ' — ' + name) +
         '&body=' + encodeURIComponent(body);
 
-      document.getElementById('submit-btn').textContent = 'Thank you — we will reply shortly';
+      document.getElementById('submit-btn').textContent = t.submitSent;
       var note = document.getElementById('form-note');
-      note.textContent = 'Your mail client should open with the inquiry ready to send. If it does not, write to hello@kanno.pl.';
+      note.textContent = t.formNote;
       note.hidden = false;
     });
   }
@@ -110,8 +193,9 @@
     });
   }
 
-  initReveal();
+  initLang();
   initFilters();
+  initReveal();
   initForm();
   initBurger();
 })();
