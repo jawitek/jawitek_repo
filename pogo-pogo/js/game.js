@@ -59,12 +59,24 @@
      mniej więcej szerokość kapibary, w pionie zostaje po staremu.       */
   var HIT_W = 20, HIT_H = 26;
   var HIT_BUOY = 18, HIT_SHARK = 20;
+  var RAMP_W = 30, RAMP_H = 20;       // strefa najazdu na skocznię
+
+  /* Skocznia wodna. Kontakt nie zabija — wyrzuca w powietrze. W locie
+     kolizje są wyłączone, ale bezwładność flaminga jest mocniejsza,
+     a przy lądowaniu obowiązuje ostrzejszy próg wychylenia.            */
+  var JUMP_TIME  = 1.2;               // czas lotu
+  var JUMP_SCALE = 0.25;              // o tyle rośnie totem w szczycie
+  var JUMP_BOOST = 0.35;              // o tyle przyspiesza woda w szczycie
+  var AIR_COUPLE = 1.5;               // mnożnik bezwładności w powietrzu
+  var LAND_LIMIT = 25 * Math.PI / 180;
+  var LAND_GRACE = 0.30;              // nietykalność tuż po wodowaniu
+  var JUMP_BONUS = 50;                // metrów za udane lądowanie
   var BEST_KEY = "pogo-pogo:best";
 
   /* Wersja zasobów. Przeglądarki trzymały stary game.js i stare sprite'y po
      wdrożeniu — gracz widział poprzednią wersję gry mimo udanej publikacji.
      PODBIJ TĘ LICZBĘ (i te w index.html) przy każdym wdrożeniu.          */
-  var VER = "2";
+  var VER = "3";
 
   /* ------------------------------------------------------------ narzędzia */
 
@@ -114,7 +126,8 @@
     capybara:       { w: 56, anchor: "bottom", fbW: 58, fbH: 64, fb: fbCapybara },
     flamingo:       { w: 62, anchor: "bottom", fbW: 48, fbH: 78, fb: fbFlamingo },
     obstacle_buoy:  { w: 44, anchor: "center", fbW: 40, fbH: 52, fb: fbBuoy },
-    obstacle_shark: { w: 58, anchor: "center", fbW: 64, fbH: 46, fb: fbShark }
+    obstacle_shark: { w: 58, anchor: "center", fbW: 64, fbH: 46, fb: fbShark },
+    ramp:           { w: 82, anchor: "center", fbW: 82, fbH: 52, fb: fbRamp }
   };
 
   function loadArt(list, done) {
@@ -416,6 +429,45 @@
     ctx.fill();
   }
 
+  function fbRamp(w, h) {                         // zaczep: środek
+    var hw = w / 2, hh = h / 2;
+    ctx.lineJoin = "round";
+
+    ctx.fillStyle = "rgba(4,40,64,.2)";
+    ctx.beginPath();
+    ctx.ellipse(0, hh * 0.8, hw * 0.9, hh * 0.25, 0, 0, 6.2832);
+    ctx.fill();
+
+    ctx.fillStyle = "#D9534F";                    // pływaki
+    ctx.beginPath();
+    ctx.ellipse(0, hh * 0.45, hw * 0.92, hh * 0.28, 0, 0, 6.2832);
+    ctx.fill();
+    ctx.strokeStyle = "#1A1A1A";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.fillStyle = "#F0AD4E";                    // najazd
+    ctx.beginPath();
+    ctx.moveTo(-hw * 0.72, hh * 0.4);
+    ctx.lineTo(-hw * 0.5, -hh * 0.85);
+    ctx.lineTo(hw * 0.5, -hh * 0.85);
+    ctx.lineTo(hw * 0.72, hh * 0.4);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.strokeStyle = "#FFF";                     // strzałki w górę
+    ctx.lineWidth = 4;
+    ctx.lineCap = "round";
+    for (var i = -1; i <= 1; i++) {
+      ctx.beginPath();
+      ctx.moveTo(i * hw * 0.3 - 8, hh * 0.1);
+      ctx.lineTo(i * hw * 0.3, -hh * 0.4);
+      ctx.lineTo(i * hw * 0.3 + 8, hh * 0.1);
+      ctx.stroke();
+    }
+  }
+
   /* ---------------------------------------------------------------- woda */
 
   var waterPattern = null;
@@ -574,6 +626,9 @@
     obstacles: [],
     spray: [],
     spawn: 0,
+    jumpT: 0,
+    landGrace: 0,
+    toast: null,
     gapTime: 1.1,
     safeX: W / 2,
     level: 0,
@@ -592,6 +647,9 @@
     game.obstacles.length = 0;
     game.spray.length = 0;
     game.spawn = 1.1;
+    game.jumpT = 0;
+    game.landGrace = 0;
+    game.toast = null;
     game.gapTime = 1.1;
     game.safeX = W / 2;
     game.level = 0;
@@ -637,10 +695,20 @@
     el.bestM.textContent = best;
     el.cause.textContent = game.wipe && game.wipe.cause === "tilt"
       ? "Flaming poszedł do wody."
-      : "A niech to flaming kopnie!";
+      : game.wipe && game.wipe.cause === "land"
+        ? "Twarde lądowanie!"
+        : "A niech to flaming kopnie!";
     el.hud.hidden = true;
     show(el.over, true);
   }
+
+  /* Parabola lotu: 0 przy odbiciu i przy wodowaniu, 1 w szczycie. */
+  function jumpH() {
+    if (game.jumpT <= 0) return 0;
+    return Math.sin(Math.PI * (1 - game.jumpT / JUMP_TIME));
+  }
+
+  function toast(text) { game.toast = { text: text, t: 0 }; }
 
   function splash(x, y, k) {
     game.spray.push({
@@ -684,6 +752,19 @@
         y: -60,
         vx: (fromLeft ? 1 : -1) * rand(60, 90 + 110 * d),
         r: HIT_SHARK
+      });
+      return;
+    }
+
+    /* Skocznia idzie sama, w zasięgu korytarza, żeby dało się ją złapać —
+       ale korytarza NIE przesuwa, więc można ją minąć bez kary.        */
+    if (L >= 1 && Math.random() < 0.15) {
+      var rr = 0.35 * Math.min(SKI_VX_MAX * gapTime,
+                               0.5 * SKI_ACCEL * gapTime * gapTime);
+      game.obstacles.push({
+        type: "ramp",
+        x: clamp(game.safeX + rand(-rr, rr), LANE_LO, LANE_HI),
+        y: -60, vx: 0, r: 0, used: false
       });
       return;
     }
@@ -753,7 +834,13 @@
 
     /* ------------------------------------------------------------- PLAY */
 
-    game.speed = Math.min(SPEED_CAP, SPEED_MIN + SPEED_STEP * level());
+    /* faza powietrzna — odliczanie przed resztą, żeby `h` było aktualne */
+    var wasAir = game.jumpT > 0;
+    if (wasAir) game.jumpT = Math.max(0, game.jumpT - dt);
+    if (game.landGrace > 0) game.landGrace -= dt;
+    var h = jumpH();
+
+    game.speed = Math.min(SPEED_CAP, SPEED_MIN + SPEED_STEP * level()) * (1 + JUMP_BOOST * h);
 
     /* Skok prędkości bez sygnału czyta się jak zacięcie — licznik metrów
        pulsuje, żeby było wiadomo, że to gra przyspieszyła.              */
@@ -787,23 +874,43 @@
     /* flaming — odwrócone wahadło na sprężynie.
        Skręt w lewo (ax < 0) wyrzuca ptaka w prawo, stąd minus.          */
     var b = game.bird;
-    b.w += (-ski.ax * COUPLE - SPRING * b.a) * dt;
+    /* W powietrzu wiatr i brak oporu wody bujają ptakiem mocniej. */
+    var couple = COUPLE * (h > 0 ? AIR_COUPLE : 1);
+    b.w += (-ski.ax * couple - SPRING * b.a) * dt;
     b.w -= b.w * Math.min(1, DAMP * dt);
     b.a += b.w * dt;
 
     /* Panika dla Reaction Cam. Sam odczyt chwilowy migotałby: `ax` jest
        niezerowe tylko przez 0,17 s rozpędu, więc mina wracałaby do spokoju
        w środku skrętu. Szybki atak, wolne opadanie.                      */
-    var pt = panicTarget();
+    var pt = (game.jumpT > 0) ? 1 : panicTarget();
     b.panic += (pt - b.panic) * Math.min(1, (pt > b.panic ? 18 : 3.5) * dt);
 
     /* Przekroczenie progu nie kończy przejazdu od razu — dopiero utrzymanie
        się poza nim. Jeden pechowy wychył wybacza, uporczywe szarpanie nie. */
-    if (Math.abs(b.a) > TILT_LIMIT) {
+    /* W locie zwykły próg nie obowiązuje — rozliczenie następuje przy
+       wodowaniu, i to ostrzejsze. Inaczej kara byłaby podwójna.        */
+    if (game.jumpT > 0) {
+      b.over = 0;
+    } else if (Math.abs(b.a) > TILT_LIMIT) {
       b.over += dt;
       if (b.over > TILT_GRACE) { wipeout("tilt"); return; }
     } else {
       b.over = 0;
+    }
+
+    /* wodowanie */
+    if (wasAir && game.jumpT === 0) {
+      if (Math.abs(b.a) > LAND_LIMIT) { wipeout("land"); return; }
+      game.dist += JUMP_BONUS;
+      game.landGrace = LAND_GRACE;
+      toast("PERFECT LANDING!  +" + JUMP_BONUS + " m");
+      for (var sp = 0; sp < 34; sp++) splash(ski.x + rand(-26, 26), SKI_Y + 12, 1.6);
+    }
+
+    if (game.toast) {
+      game.toast.t += dt;
+      if (game.toast.t > 1.5) game.toast = null;
     }
 
     /* trasa */
@@ -818,6 +925,24 @@
     /* kolizje — okrąg skutera kontra okrąg przeszkody */
     for (var i = 0; i < game.obstacles.length; i++) {
       var o = game.obstacles[i];
+
+      if (o.type === "ramp") {
+        /* Skocznia nie zabija. Łapiemy ją tylko na wodzie i tylko raz. */
+        if (!o.used && game.jumpT <= 0) {
+          var rx = (o.x - ski.x) / (HIT_W + RAMP_W);
+          var ry = (o.y - SKI_Y) / (HIT_H + RAMP_H);
+          if (rx * rx + ry * ry < 1) {
+            o.used = true;
+            game.jumpT = JUMP_TIME;
+            for (var t0 = 0; t0 < 16; t0++) splash(ski.x + rand(-20, 20), SKI_Y + 10, 1.2);
+          }
+        }
+        continue;
+      }
+
+      /* W powietrzu i chwilę po wodowaniu przelatujemy nad wszystkim */
+      if (game.jumpT > 0 || game.landGrace > 0) continue;
+
       var dx = (o.x - ski.x) / (HIT_W + o.r);
       var dy = (o.y - SKI_Y) / (HIT_H + o.r);
       if (dx * dx + dy * dy < 1) { wipeout("hit"); return; }
@@ -886,6 +1011,9 @@
       if (o.type === "buoy") {
         ctx.rotate(Math.sin(game.t * 2 + o.x) * 0.09);
         sprite("obstacle_buoy");
+      } else if (o.type === "ramp") {
+        ctx.rotate(Math.sin(game.t * 1.6 + o.x) * 0.05);
+        sprite("ramp");
       } else {
         ctx.scale(o.vx < 0 ? -1 : 1, 1);
         sprite("obstacle_shark");
@@ -897,6 +1025,8 @@
 
     drawRider(a);
 
+    drawToast(a);
+
     /* Reaction Cam to interfejs, a nie świat — wraca do bazowej macierzy,
        żeby nie drgała razem z ekranem przy wywrotce.                    */
     ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
@@ -907,9 +1037,22 @@
   function drawRider(a) {
     var ski = game.ski;
     var tilt = game.bird.a + game.bird.w * a;
+    var h = jumpH();
+    var sx = ski.x + ski.vx * a;
+
+    /* Cień zostaje na wodzie i odjeżdża w dół — to on niesie informację
+       o locie. Totem tylko rośnie, jakby leciał w stronę kamery.       */
+    if (h > 0.002) {
+      ctx.fillStyle = "rgba(4,40,64," + (0.32 * (1 - 0.35 * h)).toFixed(3) + ")";
+      ctx.beginPath();
+      ctx.ellipse(sx, SKI_Y + 26 + 30 * h, 44 * (1 - 0.2 * h), 13 * (1 - 0.2 * h),
+                  0, 0, 6.2832);
+      ctx.fill();
+    }
 
     ctx.save();
-    ctx.translate(ski.x + ski.vx * a, SKI_Y);
+    ctx.translate(sx, SKI_Y);
+    if (h > 0.002) ctx.scale(1 + JUMP_SCALE * h, 1 + JUMP_SCALE * h);
     ctx.rotate(ski.roll * 0.5);
     sprite("jetski");
 
@@ -1248,6 +1391,28 @@
     ctx.restore();
   }
 
+  /* Komunikat po udanym wodowaniu — wypływa w górę i gaśnie. */
+  function drawToast(a) {
+    if (!game.toast) return;
+    var t = game.toast.t + a;
+    var al = clamp(1 - (t - 0.9) / 0.55, 0, 1);
+    if (al <= 0) return;
+
+    ctx.save();
+    ctx.globalAlpha = al;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = "900 italic 25px 'Trebuchet MS','Segoe UI',sans-serif";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = "#08324A";
+    ctx.fillStyle = "#FFC94D";
+    var y = H * 0.42 - Math.min(t, 1.2) * 26;
+    ctx.strokeText(game.toast.text, W / 2, y);
+    ctx.fillText(game.toast.text, W / 2, y);
+    ctx.restore();
+  }
+
   /* Na menu totem stoi spokojnie i tylko się kołysze. */
   function drawIdleTotem() {
     if (!el.splash.hidden) return;      // jest splash art, nie dublujemy
@@ -1296,7 +1461,7 @@
 
   loadArt(
     ["jetski", "capybara", "flamingo", "obstacle_buoy", "obstacle_shark",
-     "water_tile", "totem_duo", "face_chill", "face_panic"],
+     "water_tile", "totem_duo", "face_chill", "face_panic", "ramp"],
     function () {
       if (ART.totem_duo) {
         el.splash.hidden = false;
