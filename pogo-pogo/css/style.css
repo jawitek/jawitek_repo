@@ -1,0 +1,202 @@
+/* ==========================================================================
+   Pogo Pogo — chrome wokół canvasu: ekrany, HUD, sterowanie
+   Sama gra rysuje się w <canvas>; tutaj jest wyłącznie interfejs.
+   ========================================================================== */
+
+:root{
+  --sea:#0288D1;
+  --sky:#4FC3F7;
+  --foam:#FFFFFF;
+  --coral:#FF7043;
+  --flamingo:#FF6F9C;
+  --gold:#FFC94D;
+  --ink:#08324A;
+
+  --font:'Trebuchet MS','Segoe UI',system-ui,-apple-system,sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+
+html,body{height:100%;overscroll-behavior:none}
+body{
+  margin:0;
+  font-family:var(--font);
+  background:#04263A;
+  color:var(--foam);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* -------------------------------- scena --------------------------------
+   Stały format pionowy 9:16. Canvas wypełnia scenę, a wszystkie nakładki
+   są pozycjonowane względem tego samego pudełka, więc interfejs i grafika
+   nigdy się nie rozjeżdżają.                                              */
+.stage{
+  position:relative;
+  width:min(100vw, calc(100dvh * 9 / 16));
+  height:min(100dvh, calc(100vw * 16 / 9));
+  overflow:hidden;
+  background:var(--sea);
+  box-shadow:0 0 60px rgba(0,0,0,.45);
+  touch-action:none;
+  user-select:none;
+  -webkit-user-select:none;
+}
+
+canvas{display:block;width:100%;height:100%}
+
+/* Typografia skaluje się z wysokością sceny — ten sam układ na telefonie
+   i na desktopie. --stage-h ustawia game.js przy każdym resize.          */
+.screen,.hud{font-size:calc(var(--stage-h, 640px) / 34)}
+
+/* ------------------------------- ekrany --------------------------------- */
+.screen{
+  position:absolute;
+  inset:0;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:2em 1.6em;
+  text-align:center;
+  background:linear-gradient(180deg,rgba(2,40,62,.2) 0%,rgba(2,40,62,.6) 100%);
+}
+.screen.is-on{display:flex}
+.screen[hidden]{display:none}
+
+/* Menu: tekst wyżej, bo dolną trzecią zajmuje totem rysowany na canvasie. */
+#screen-menu{justify-content:flex-start;padding-top:13%}
+
+.splash{
+  width:min(58%,15em);
+  height:auto;
+  margin-bottom:.4em;
+  filter:drop-shadow(0 .3em .6em rgba(2,40,62,.5));
+}
+.splash[hidden]{display:none}
+
+.logo{
+  display:flex;
+  flex-direction:column;
+  line-height:.82;
+  letter-spacing:-.03em;
+  transform:rotate(-4deg);
+  filter:drop-shadow(0 .1em 0 rgba(8,50,74,.35));
+}
+.logo span{
+  font-size:3em;
+  font-weight:900;
+  font-style:italic;
+  -webkit-text-stroke:.055em var(--ink);
+  paint-order:stroke fill;
+}
+.logo-1{color:var(--gold)}
+.logo-2{color:var(--flamingo);margin-left:1.1em}
+
+.tagline{
+  margin:.9em 0 0;
+  font-size:.9em;
+  font-weight:700;
+  line-height:1.35;
+  color:#EAF7FF;
+  text-shadow:0 .08em .3em rgba(2,40,62,.6);
+}
+
+.prompt{
+  margin:1.5em 0 0;
+  font-size:1.15em;
+  font-weight:900;
+  letter-spacing:.14em;
+  text-shadow:0 .1em 0 rgba(8,50,74,.5);
+  animation:pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{opacity:1;transform:scale(1)}
+  50%{opacity:.55;transform:scale(.965)}
+}
+@media (prefers-reduced-motion:reduce){.prompt{animation:none}}
+
+.best{
+  margin:.45em 0 0;
+  font-size:.78em;
+  font-weight:700;
+  letter-spacing:.1em;
+  color:rgba(255,255,255,.78);
+}
+
+.hint{
+  position:absolute;
+  left:1.6em;right:1.6em;bottom:1.5em;
+  margin:0;
+  font-size:.62em;
+  line-height:1.6;
+  font-weight:700;
+  color:rgba(255,255,255,.7);
+}
+
+/* ---------------------------- koniec gry -------------------------------- */
+.banner{
+  font-size:2.3em;
+  font-weight:900;
+  font-style:italic;
+  letter-spacing:-.02em;
+  color:var(--coral);
+  -webkit-text-stroke:.05em var(--ink);
+  paint-order:stroke fill;
+  transform:rotate(-3deg);
+}
+.cause{
+  margin:.9em 0 1.1em;
+  font-size:.72em;
+  font-weight:700;
+  letter-spacing:.06em;
+  color:rgba(255,255,255,.8);
+}
+.score-line{
+  margin:.15em 0;
+  font-size:.92em;
+  font-weight:700;
+  letter-spacing:.08em;
+}
+.score-line b{font-size:1.35em}
+.score-line.dim{color:rgba(255,255,255,.7)}
+
+.btn{
+  margin-top:1.4em;
+  font:inherit;
+  font-size:1em;
+  font-weight:900;
+  letter-spacing:.12em;
+  color:var(--ink);
+  background:var(--gold);
+  border:0;
+  border-bottom:.22em solid #C79427;
+  border-radius:.7em;
+  padding:.7em 2.2em;
+  cursor:pointer;
+}
+.btn:active{transform:translateY(.1em);border-bottom-width:.12em}
+:where(a,button):focus-visible{outline:.15em solid var(--gold);outline-offset:.2em}
+
+/* --------------------------------- HUD ---------------------------------- */
+.hud{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  font-weight:900;
+  text-shadow:0 .08em .25em rgba(2,40,62,.65);
+}
+.hud[hidden]{display:none}
+
+.hud-distance{
+  position:absolute;
+  top:.9em;left:50%;
+  transform:translateX(-50%);
+  display:flex;align-items:baseline;gap:.18em;
+}
+.hud-distance b{font-size:2em;letter-spacing:-.02em}
+.hud-distance span{font-size:.75em;opacity:.85}

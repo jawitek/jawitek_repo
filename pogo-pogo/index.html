@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no, maximum-scale=1">
+<title>Pogo Pogo</title>
+<meta name="description" content="Pogo Pogo — zręcznościowa gra przeglądarkowa. Kapibara na skuterze wodnym balansuje spanikowanym flamingiem.">
+<meta name="theme-color" content="#0288D1">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta property="og:title" content="Pogo Pogo">
+<meta property="og:description" content="Kapibara na skuterze wodnym balansuje spanikowanym flamingiem. Nie zgub flaminga.">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="stage" id="stage">
+  <canvas id="game" aria-label="Pogo Pogo — obszar gry" role="img"></canvas>
+
+  <!-- ---------------------- Ekran 1 · menu startowe --------------------- -->
+  <div class="screen is-on" id="screen-menu">
+    <img class="splash" id="splash" src="assets/totem_duo.svg" alt="" hidden>
+
+    <div class="logo">
+      <span class="logo-1">POGO</span>
+      <span class="logo-2">POGO</span>
+    </div>
+    <p class="tagline">Kapibara się nie przejmuje.<br>Flaming owszem.</p>
+
+    <p class="prompt">TAP TO START</p>
+    <p class="best">REKORD · <span id="best-menu">0</span> m</p>
+
+    <p class="hint">Przytrzymaj lewą albo prawą połowę ekranu.<br>Na klawiaturze: A / D lub strzałki.</p>
+  </div>
+
+  <!-- ------------------------ Ekran 2 · HUD gry ------------------------- -->
+  <div class="hud" id="hud" hidden>
+    <div class="hud-distance"><b id="hud-dist">0</b><span>m</span></div>
+  </div>
+
+  <!-- --------------------- Ekran 3 · koniec gry ------------------------- -->
+  <div class="screen" id="screen-over" hidden>
+    <div class="banner">WIPEOUT!</div>
+    <p class="cause" id="over-cause"></p>
+    <p class="score-line">WYNIK · <b id="over-score">0</b> m</p>
+    <p class="score-line dim">REKORD · <b id="over-best">0</b> m</p>
+    <button class="btn" id="retry" type="button">RETRY</button>
+  </div>
+</div>
+
+<script src="js/game.js"></script>
+</body>
+</html>
