@@ -9,6 +9,8 @@ production in central Poland.
 
 - `index.html` — single page: hero, stats, about, noodle portfolio,
   production/packing, quality & site, contact form, footer
+- `privacy.html` — GDPR privacy policy, English translation of the Polish
+  original supplied as PDF (the Polish text remains the authoritative version)
 - `css/style.css` — full stylesheet, including the responsive layer the
   desktop-only prototype did not have
 - `js/main.js` — scroll reveals, egg-variant filter, contact form, mobile menu
