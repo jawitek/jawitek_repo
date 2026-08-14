@@ -176,6 +176,54 @@ sterowania.** Wchodząc w skok z dowolnym wychyleniem, sprężyna zdąży ścią
 ptaka do pionu w 1,2 s (tłumienie zbija amplitudę do ~21% na okres). Kto skręca
 w locie, ląduje na ryju.
 
+## Przedmioty, drugie życie i near miss
+
+Dwa sloty w interfejsie, na wysokości postaci nad strefami kciuków. Puste są
+wygaszone, pełne świecą. Łapią dotyk (reszta HUD ma `pointer-events: none`)
+i nie uruchamiają sterowania, bo obsługa dotyku sceny pomija cele wewnątrz
+`<button>`.
+
+**Zasada unikalności:** dany przedmiot nie pojawi się na rzece, dopóki gracz go
+trzyma albo jest aktywny. Na wodzie nigdy nie leżą więc dwa zegary naraz.
+
+### Zegar (lewy slot, `Q` lub dotknięcie)
+
+3 s na `SLOW_FACTOR` (30%) prędkości, przy łagodniejszym wahadle
+(`SLOW_COUPLE` 0,45× bezwładności, `SLOW_DAMP` 1,7× tłumienia). Po zakończeniu
+tempo jest **resetowane do bazowego** i rozpędza się od nowa z `SPEED_RECOVER`
+(110 px/s²). To druga połowa nagrody: nie tylko trzy sekundy spokoju, ale
+i oddech po nich — powrót do 600 px/s zajmuje potem ok. 3,7 s.
+
+### Serce (prawy slot, biernie)
+
+Jedno dodatkowe życie. Pochłania **każdą** śmiertelną przyczynę — bojkę,
+rekina, przewrócony totem i twarde lądowanie — bo wszystkie idą przez jedną
+funkcję `fatal()`. Zamiast końca przejazdu:
+
+- serce pęka (różowe cząstki),
+- flaming wylatuje za burtę, kręcąc się,
+- gra toczy się dalej **samą kapibarą**: bez wahadła sterowanie jest stabilne,
+  ale nie ma już żadnej ochrony,
+- kolejne zebrane serce **odradza flaminga** zamiast trafić do slotu.
+
+Bez ptaka Reaction Cam wraca do twarzy rysowanych w kodzie, bo `face_chill.svg`
+i `face_panic.svg` mają flaminga wkomponowanego na stałe. Osobny `face_alone.svg`
+domknąłby to ładniej.
+
+### Near miss
+
+Minięcie bojki albo rekina bliżej niż `NEAR_MISS` (15 px prześwitu między
+obrysami) daje `+10 m` i komiksowy dymek. Rozliczane dokładnie w chwili
+mijania — gdy przeszkoda przecina wysokość skutera — a nie w każdej klatce, więc
+jedno minięcie liczy się raz.
+
+### Podgląd stanu do testów
+
+Zbieranie przedmiotów jest zbyt rzadkie, by trafić w nie losowo w teście, a
+pochłonięcia śmierci przez serce nie widać w DOM. `game.js` wystawia więc
+`window.pogoDebug()` — **wyłącznie** gdy adres zawiera `?debug`. Mechaniki są
+sprawdzane na wymuszonych buildach (np. każda fala to przedmiot).
+
 ## Reaction Cam
 
 Okrągły podgląd twarzy w lewym górnym rogu, z neonową obwódką. Cała treść jest

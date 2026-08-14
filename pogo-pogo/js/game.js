@@ -71,12 +71,25 @@
   var LAND_LIMIT = 25 * Math.PI / 180;
   var LAND_GRACE = 0.30;              // nietykalność tuż po wodowaniu
   var JUMP_BONUS = 50;                // metrów za udane lądowanie
+
+  /* Przedmioty. Slow-mo resetuje narastające tempo — po nim gra rozpędza się
+     od nowa, co jest właściwą nagrodą: nie tylko 3 s spokoju, ale i oddech
+     po nich. Serce działa biernie jako jedno dodatkowe życie.           */
+  var ITEM_R      = 22;               // promień zbierania
+  var SLOW_TIME   = 3.0;
+  var SLOW_FACTOR = 0.30;
+  var SLOW_COUPLE = 0.45;             // w spowolnieniu ptak buja się łagodniej
+  var SLOW_DAMP   = 1.7;              // i szybciej się uspokaja
+  var SPEED_RECOVER = 110;            // px/s² rozpędzania po spowolnieniu
+  var NEAR_MISS   = 15;               // px prześwitu liczone jako „o włos"
+  var NEAR_BONUS  = 10;               // metrów za near miss
+  var NEAR_TEXTS  = ["LUCKY!", "CLOSE ONE!", "STILL CHILL", "SWEATY!"];
   var BEST_KEY = "pogo-pogo:best";
 
   /* Wersja zasobów. Przeglądarki trzymały stary game.js i stare sprite'y po
      wdrożeniu — gracz widział poprzednią wersję gry mimo udanej publikacji.
      PODBIJ TĘ LICZBĘ (i te w index.html) przy każdym wdrożeniu.          */
-  var VER = "3";
+  var VER = "4";
 
   /* ------------------------------------------------------------ narzędzia */
 
@@ -127,7 +140,9 @@
     flamingo:       { w: 62, anchor: "bottom", fbW: 48, fbH: 78, fb: fbFlamingo },
     obstacle_buoy:  { w: 44, anchor: "center", fbW: 40, fbH: 52, fb: fbBuoy },
     obstacle_shark: { w: 58, anchor: "center", fbW: 64, fbH: 46, fb: fbShark },
-    ramp:           { w: 82, anchor: "center", fbW: 82, fbH: 52, fb: fbRamp }
+    ramp:           { w: 82, anchor: "center", fbW: 82, fbH: 52, fb: fbRamp },
+    item_slowmo:    { w: 40, anchor: "center", fbW: 40, fbH: 40, fb: fbSlowmo },
+    item_heart:     { w: 40, anchor: "center", fbW: 40, fbH: 40, fb: fbHeart }
   };
 
   function loadArt(list, done) {
@@ -468,6 +483,43 @@
     }
   }
 
+  function fbSlowmo(w, h) {                       // zaczep: środek
+    var r = w * 0.42;
+    ctx.lineJoin = "round";
+    ctx.fillStyle = "#FFC94D";
+    ctx.beginPath(); ctx.arc(0, 0, r, 0, 6.2832); ctx.fill();
+    ctx.strokeStyle = "#1A1A1A"; ctx.lineWidth = 3.5; ctx.stroke();
+    ctx.fillStyle = "#FFF6E0";
+    ctx.beginPath(); ctx.arc(0, 0, r * 0.72, 0, 6.2832); ctx.fill();
+    ctx.strokeStyle = "#1A1A1A"; ctx.lineWidth = 3; ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(0, 0); ctx.lineTo(0, -r * 0.5);
+    ctx.moveTo(0, 0); ctx.lineTo(r * 0.36, r * 0.16);
+    ctx.stroke();
+    ctx.beginPath();                                // koronka
+    ctx.moveTo(-r * 0.26, -r * 1.06); ctx.lineTo(r * 0.26, -r * 1.06);
+    ctx.lineWidth = 5; ctx.stroke();
+  }
+
+  function fbHeart(w, h) {                          // zaczep: środek
+    var k = w * 0.030;
+    ctx.save();
+    ctx.scale(k, k);
+    ctx.beginPath();
+    ctx.moveTo(0, 11);
+    ctx.bezierCurveTo(-13, 1, -12, -9, -5.5, -9);
+    ctx.bezierCurveTo(-1.5, -9, 0, -5.5, 0, -5.5);
+    ctx.bezierCurveTo(0, -5.5, 1.5, -9, 5.5, -9);
+    ctx.bezierCurveTo(12, -9, 13, 1, 0, 11);
+    ctx.closePath();
+    ctx.fillStyle = "#FF6F9C"; ctx.fill();
+    ctx.strokeStyle = "#1A1A1A"; ctx.lineWidth = 2.2; ctx.lineJoin = "round";
+    ctx.stroke();
+    ctx.fillStyle = "rgba(255,255,255,.65)";
+    ctx.beginPath(); ctx.ellipse(-4.4, -3.6, 2.2, 1.5, -0.5, 0, 6.2832); ctx.fill();
+    ctx.restore();
+  }
+
   /* ---------------------------------------------------------------- woda */
 
   var waterPattern = null;
@@ -571,6 +623,7 @@
     var k = e.key.toLowerCase();
     if (k === "arrowleft"  || k === "a") { input.left  = true; e.preventDefault(); }
     if (k === "arrowright" || k === "d") { input.right = true; e.preventDefault(); }
+    if (k === "q") { useSlowmo(); e.preventDefault(); }
     if (k === " " || k === "enter") { tap(); e.preventDefault(); }
   });
   window.addEventListener("keyup", function (e) {
@@ -596,6 +649,8 @@
     bestO:  document.getElementById("over-best"),
     cause:  document.getElementById("over-cause"),
     retry:  document.getElementById("retry"),
+    slotS:  document.getElementById("slot-slowmo"),
+    slotH:  document.getElementById("slot-heart"),
     splash: document.getElementById("splash")
   };
 
@@ -609,6 +664,34 @@
   function saveBest() { try { localStorage.setItem(BEST_KEY, String(best)); } catch (e) {} }
 
   el.retry.addEventListener("click", function (e) { e.stopPropagation(); startRun(); });
+
+  /* Ikony przedmiotów: dopóki plików nie ma, w slotach zostaje znak
+     zastępczy. Gdy się pojawią, podmieniają się same.                  */
+  Array.prototype.forEach.call(document.querySelectorAll(".slot-ico"), function (img) {
+    img.addEventListener("load", function () {
+      if (!img.naturalWidth) return;
+      img.hidden = false;
+      var g = img.parentNode.querySelector(".slot-glyph");
+      if (g) g.hidden = true;
+    });
+  });
+
+  function refreshSlots() {
+    el.slotS.classList.toggle("is-full", game.slots.slowmo || game.slowT > 0);
+    el.slotS.classList.toggle("is-live", game.slowT > 0);
+    el.slotH.classList.toggle("is-full", game.slots.heart);
+  }
+
+  function useSlowmo() {
+    if (game.mode !== PLAY || !game.slots.slowmo || game.slowT > 0) return;
+    game.slots.slowmo = false;
+    game.slowT = SLOW_TIME;
+    refreshSlots();
+    pop(W / 2, H * 0.36, "SLOW-MO!", 1.25);
+  }
+
+  el.slotS.addEventListener("click", function (e) { e.stopPropagation(); useSlowmo(); });
+  el.slotH.addEventListener("click", function (e) { e.stopPropagation(); });
 
   /* --------------------------------------------------------------- świat */
 
@@ -626,6 +709,12 @@
     obstacles: [],
     spray: [],
     spawn: 0,
+    items: [],
+    pops: [],
+    slots: { slowmo: false, heart: false },
+    slowT: 0,
+    hasBird: true,
+    flyaway: null,
     jumpT: 0,
     landGrace: 0,
     toast: null,
@@ -647,6 +736,13 @@
     game.obstacles.length = 0;
     game.spray.length = 0;
     game.spawn = 1.1;
+    game.items.length = 0;
+    game.pops.length = 0;
+    game.slots.slowmo = false;
+    game.slots.heart = false;
+    game.slowT = 0;
+    game.hasBird = true;
+    game.flyaway = null;
     game.jumpT = 0;
     game.landGrace = 0;
     game.toast = null;
@@ -657,6 +753,7 @@
     el.dist.classList.remove("bump");
     game.wipe = null;
 
+    refreshSlots();
     show(el.menu, false);
     show(el.over, false);
     el.hud.hidden = false;
@@ -666,6 +763,42 @@
   function tap() {
     if (game.mode === MENU) startRun();
     else if (game.mode === OVER && game.lockout <= 0) startRun();
+  }
+
+  /* Każde śmiertelne zdarzenie idzie tędy. Serce w slocie zamienia je na
+     utratę flaminga zamiast końca przejazdu.                           */
+  function fatal(cause) {
+    if (game.slots.heart) {
+      game.slots.heart = false;
+      refreshSlots();
+      loseBird();
+      return;
+    }
+    wipeout(cause);
+  }
+
+  function loseBird() {
+    game.hasBird = false;
+    game.bird.a = 0; game.bird.w = 0; game.bird.over = 0; game.bird.panic = 0;
+    game.landGrace = Math.max(game.landGrace, 0.8);   // chwila na otrząśnięcie się
+    game.shake = 10;
+
+    /* flaming wylatuje bokiem, kręcąc się */
+    var dir = Math.random() < 0.5 ? -1 : 1;
+    game.flyaway = {
+      x: game.ski.x, y: SKI_Y + PIVOT_DY,
+      vx: dir * rand(190, 260), vy: -rand(340, 420),
+      rot: 0, vrot: dir * rand(7, 11)
+    };
+
+    for (var i = 0; i < 22; i++) {                    // pękające serce
+      game.spray.push({
+        x: game.ski.x + rand(-10, 10), y: SKI_Y + PIVOT_DY,
+        vx: rand(-150, 150), vy: rand(-220, -40),
+        r: rand(2, 4.5), life: rand(0.4, 0.9), pink: true
+      });
+    }
+    pop(game.ski.x, SKI_Y + PIVOT_DY - 20, "FLAMING ZA BURTĄ!", 1.1);
   }
 
   function wipeout(cause) {
@@ -710,6 +843,13 @@
 
   function toast(text) { game.toast = { text: text, t: 0 }; }
 
+  /* Komiksowy dymek w miejscu zdarzenia — near miss, spowolnienie, utrata
+     flaminga. Rośnie, unosi się i gaśnie.                              */
+  function pop(x, y, text, size) {
+    game.pops.push({ x: x, y: y, text: text, t: 0, size: size || 1 });
+    if (game.pops.length > 8) game.pops.shift();
+  }
+
   function splash(x, y, k) {
     game.spray.push({
       x: x, y: y,
@@ -752,6 +892,23 @@
         y: -60,
         vx: (fromLeft ? 1 : -1) * rand(60, 90 + 110 * d),
         r: HIT_SHARK
+      });
+      return;
+    }
+
+    /* Przedmiot idzie sam, w zasięgu korytarza. Zasada unikalności: dany
+       przedmiot nie pojawia się, dopóki gracz go trzyma albo jest aktywny —
+       więc na rzece nigdy nie leżą dwa zegary naraz.                    */
+    var want = [];
+    if (!game.slots.slowmo && game.slowT <= 0) want.push("item_slowmo");
+    if (!game.slots.heart) want.push("item_heart");
+    if (want.length && Math.random() < 0.13) {
+      var ir = 0.35 * Math.min(SKI_VX_MAX * gapTime,
+                               0.5 * SKI_ACCEL * gapTime * gapTime);
+      game.items.push({
+        kind: want[Math.floor(Math.random() * want.length)],
+        x: clamp(game.safeX + rand(-ir, ir), LANE_LO, LANE_HI),
+        y: -60
       });
       return;
     }
@@ -840,7 +997,24 @@
     if (game.landGrace > 0) game.landGrace -= dt;
     var h = jumpH();
 
-    game.speed = Math.min(SPEED_CAP, SPEED_MIN + SPEED_STEP * level()) * (1 + JUMP_BOOST * h);
+    /* Spowolnienie: przez SLOW_TIME lecimy na SLOW_FACTOR prędkości, a po
+       jego końcu tempo jest RESETOWANE do bazowego i rozpędza się od nowa.
+       To druga połowa nagrody — nie tylko 3 s spokoju, ale i oddech po. */
+    var wasSlow = game.slowT > 0;
+    if (wasSlow) {
+      game.slowT -= dt;
+      if (game.slowT <= 0) {
+        game.slowT = 0;
+        game.speed = SPEED_MIN;      // reset narastającego tempa
+        refreshSlots();
+      }
+    }
+
+    var target = Math.min(SPEED_CAP, SPEED_MIN + SPEED_STEP * level()) * (1 + JUMP_BOOST * h);
+    if (game.slowT > 0) target *= SLOW_FACTOR;
+
+    if (game.slowT > 0) game.speed += (target - game.speed) * Math.min(1, 9 * dt);
+    else game.speed = Math.min(target, game.speed + SPEED_RECOVER * dt);
 
     /* Skok prędkości bez sygnału czyta się jak zacięcie — licznik metrów
        pulsuje, żeby było wiadomo, że to gra przyspieszyła.              */
@@ -874,34 +1048,41 @@
     /* flaming — odwrócone wahadło na sprężynie.
        Skręt w lewo (ax < 0) wyrzuca ptaka w prawo, stąd minus.          */
     var b = game.bird;
-    /* W powietrzu wiatr i brak oporu wody bujają ptakiem mocniej. */
-    var couple = COUPLE * (h > 0 ? AIR_COUPLE : 1);
-    b.w += (-ski.ax * couple - SPRING * b.a) * dt;
-    b.w -= b.w * Math.min(1, DAMP * dt);
-    b.a += b.w * dt;
+    if (game.hasBird) {
+      /* W powietrzu wiatr i brak oporu wody bujają ptakiem mocniej,
+         w spowolnieniu odwrotnie — łatwiej go opanować.               */
+      var couple = COUPLE * (h > 0 ? AIR_COUPLE : 1) * (game.slowT > 0 ? SLOW_COUPLE : 1);
+      var damp = DAMP * (game.slowT > 0 ? SLOW_DAMP : 1);
+      b.w += (-ski.ax * couple - SPRING * b.a) * dt;
+      b.w -= b.w * Math.min(1, damp * dt);
+      b.a += b.w * dt;
+    } else {
+      /* Bez flaminga nie ma wahadła — sterowanie jest po prostu stabilne. */
+      b.a = 0; b.w = 0; b.over = 0; b.panic = 0;
+    }
 
     /* Panika dla Reaction Cam. Sam odczyt chwilowy migotałby: `ax` jest
        niezerowe tylko przez 0,17 s rozpędu, więc mina wracałaby do spokoju
        w środku skrętu. Szybki atak, wolne opadanie.                      */
-    var pt = (game.jumpT > 0) ? 1 : panicTarget();
+    var pt = !game.hasBird ? 0 : (game.jumpT > 0) ? 1 : panicTarget();
     b.panic += (pt - b.panic) * Math.min(1, (pt > b.panic ? 18 : 3.5) * dt);
 
     /* Przekroczenie progu nie kończy przejazdu od razu — dopiero utrzymanie
        się poza nim. Jeden pechowy wychył wybacza, uporczywe szarpanie nie. */
     /* W locie zwykły próg nie obowiązuje — rozliczenie następuje przy
        wodowaniu, i to ostrzejsze. Inaczej kara byłaby podwójna.        */
-    if (game.jumpT > 0) {
+    if (game.jumpT > 0 || !game.hasBird) {
       b.over = 0;
     } else if (Math.abs(b.a) > TILT_LIMIT) {
       b.over += dt;
-      if (b.over > TILT_GRACE) { wipeout("tilt"); return; }
+      if (b.over > TILT_GRACE) { fatal("tilt"); return; }
     } else {
       b.over = 0;
     }
 
     /* wodowanie */
     if (wasAir && game.jumpT === 0) {
-      if (Math.abs(b.a) > LAND_LIMIT) { wipeout("land"); return; }
+      if (game.hasBird && Math.abs(b.a) > LAND_LIMIT) { fatal("land"); return; }
       game.dist += JUMP_BONUS;
       game.landGrace = LAND_GRACE;
       toast("PERFECT LANDING!  +" + JUMP_BONUS + " m");
@@ -911,6 +1092,18 @@
     if (game.toast) {
       game.toast.t += dt;
       if (game.toast.t > 1.5) game.toast = null;
+    }
+
+    if (game.flyaway) {
+      var fa = game.flyaway;
+      fa.vy += 620 * dt;
+      fa.x += fa.vx * dt; fa.y += fa.vy * dt; fa.rot += fa.vrot * dt;
+      if (fa.y > H + 120 || fa.x < -120 || fa.x > W + 120) game.flyaway = null;
+    }
+
+    for (var pi = game.pops.length - 1; pi >= 0; pi--) {
+      game.pops[pi].t += dt;
+      if (game.pops[pi].t > 0.6) game.pops.splice(pi, 1);
     }
 
     /* trasa */
@@ -945,7 +1138,43 @@
 
       var dx = (o.x - ski.x) / (HIT_W + o.r);
       var dy = (o.y - SKI_Y) / (HIT_H + o.r);
-      if (dx * dx + dy * dy < 1) { wipeout("hit"); return; }
+      if (dx * dx + dy * dy < 1) { fatal("hit"); return; }
+
+      /* Near miss: rozliczany dokładnie w chwili mijania, po prześwicie
+         między obrysami.                                               */
+      if (!o.nearDone && o.y >= SKI_Y) {
+        o.nearDone = true;
+        var gap = Math.abs(o.x - ski.x) - (o.r + HIT_W);
+        if (gap >= 0 && gap < NEAR_MISS) {
+          game.dist += NEAR_BONUS;
+          pop(o.x, SKI_Y - 24, NEAR_TEXTS[Math.floor(Math.random() * NEAR_TEXTS.length)], 1);
+        }
+      }
+    }
+
+    /* zbieranie przedmiotów */
+    for (var k2 = game.items.length - 1; k2 >= 0; k2--) {
+      var it = game.items[k2];
+      it.y += game.speed * dt;
+      if (it.y > H + 80) { game.items.splice(k2, 1); continue; }
+
+      var idx = it.x - ski.x, idy = it.y - SKI_Y;
+      if (idx * idx + idy * idy < (ITEM_R + HIT_W) * (ITEM_R + HIT_W)) {
+        game.items.splice(k2, 1);
+        if (it.kind === "item_slowmo") {
+          game.slots.slowmo = true;
+          pop(ski.x, SKI_Y - 96, "SLOW-MO GOTOWE", 0.9);
+        } else if (!game.hasBird) {
+          game.hasBird = true;                 // serce odradza flaminga
+          game.bird.a = 0; game.bird.w = 0; game.bird.panic = 0;
+          pop(ski.x, SKI_Y - 118, "FLAMING WRACA!", 1.1);
+        } else {
+          game.slots.heart = true;
+          pop(ski.x, SKI_Y - 96, "TARCZA", 0.9);
+        }
+        refreshSlots();
+        for (var s2 = 0; s2 < 12; s2++) splash(it.x, it.y, 0.9);
+      }
     }
 
     /* kilwater — częstotliwość liczona z czasu, nie z liczby kroków */
@@ -996,6 +1225,7 @@
     for (var i = 0; i < game.spray.length; i++) {
       var p = game.spray[i];
       ctx.globalAlpha = clamp(p.life * 2, 0, 1) * 0.85;
+      ctx.fillStyle = p.pink ? "#FF6F9C" : "rgba(255,255,255,.8)";
       ctx.beginPath();
       ctx.arc(p.x + p.vx * a, p.y + (p.vy + game.speed * 0.35) * a, p.r, 0, 6.2832);
       ctx.fill();
@@ -1021,10 +1251,22 @@
       ctx.restore();
     }
 
+    /* przedmioty — kołyszą się na wodzie */
+    for (var ii = 0; ii < game.items.length; ii++) {
+      var it = game.items[ii];
+      ctx.save();
+      ctx.translate(it.x, it.y + game.speed * a);
+      ctx.translate(0, Math.sin(game.t * 3 + it.x) * 3);
+      ctx.rotate(Math.sin(game.t * 2 + it.x) * 0.12);
+      sprite(it.kind);
+      ctx.restore();
+    }
+
     if (game.mode === MENU) { drawIdleTotem(); return; }
 
     drawRider(a);
 
+    drawPops(a);
     drawToast(a);
 
     /* Reaction Cam to interfejs, a nie świat — wraca do bazowej macierzy,
@@ -1064,8 +1306,8 @@
     ctx.restore();
 
     /* flaming obraca się wokół stawu na czubku głowy kapibary.
-       Po wipeoucie już go tu nie ma — jest w wodzie.                 */
-    if (game.mode === PLAY) {
+       Po wipeoucie i po utracie serca już go tu nie ma.              */
+    if (game.mode === PLAY && game.hasBird) {
       ctx.save();
       ctx.translate(0, PIVOT_DY);
       ctx.rotate(tilt);
@@ -1082,8 +1324,18 @@
       ctx.restore();
     }
 
+    /* flaming wyrzucony za burtę po zużyciu serca */
+    if (game.flyaway) {
+      ctx.save();
+      ctx.translate(game.flyaway.x + game.flyaway.vx * a,
+                    game.flyaway.y + game.flyaway.vy * a);
+      ctx.rotate(game.flyaway.rot + game.flyaway.vrot * a);
+      sprite("flamingo");
+      ctx.restore();
+    }
+
     /* ostrzeżenie: im bliżej progu, tym mocniejsza czerwona winieta */
-    var risk = clamp((Math.abs(tilt) / TILT_LIMIT - 0.55) / 0.45, 0, 1);
+    var risk = game.hasBird ? clamp((Math.abs(tilt) / TILT_LIMIT - 0.55) / 0.45, 0, 1) : 0;
     if (risk > 0 && game.mode === PLAY) {
       var v = ctx.createRadialGradient(W / 2, H / 2, H * 0.28, W / 2, H / 2, H * 0.62);
       v.addColorStop(0, "rgba(229,57,53,0)");
@@ -1151,7 +1403,7 @@
       ctx.stroke();
     }
 
-    if (FACE.face_chill) {
+    if (FACE.face_chill && game.hasBird) {
       /* Dostarczone twarze: spokojna zawsze pod spodem, panika nakładana
          z przezroczystością, więc reakcja jest płynna, a nie przełącznikiem.
          Kapibara jest w obu plikach tym samym kształtem, więc przenikanie
@@ -1236,7 +1488,7 @@
     ctx.restore();
 
     /* --- flaming: cała ekspresja siedzi tutaj -------------------------- */
-    if (game.mode === PLAY) {
+    if (game.mode === PLAY && game.hasBird) {
       ctx.save();
       ctx.translate(0, 6);
       ctx.rotate(tilt * 1.5);                     // wychylenie wzmocnione
@@ -1391,6 +1643,30 @@
     ctx.restore();
   }
 
+  /* Dymki zdarzeń: rosną skokiem, unoszą się i gasną w 0,6 s. */
+  function drawPops(a) {
+    for (var i = 0; i < game.pops.length; i++) {
+      var p = game.pops[i];
+      var t = clamp((p.t + a) / 0.6, 0, 1);
+      var sc = (0.6 + 0.55 * Math.min(1, t / 0.22)) * p.size;
+      ctx.save();
+      ctx.globalAlpha = 1 - t * t;
+      ctx.translate(clamp(p.x, 44, W - 44), p.y - t * 34);
+      ctx.scale(sc, sc);
+      ctx.rotate(-0.06);
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.font = "900 italic 20px 'Trebuchet MS','Segoe UI',sans-serif";
+      ctx.lineJoin = "round";
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = "#08324A";
+      ctx.fillStyle = "#FFF6E5";
+      ctx.strokeText(p.text, 0, 0);
+      ctx.fillText(p.text, 0, 0);
+      ctx.restore();
+    }
+  }
+
   /* Komunikat po udanym wodowaniu — wypływa w górę i gaśnie. */
   function drawToast(a) {
     if (!game.toast) return;
@@ -1457,11 +1733,27 @@
     if (!document.hidden) last = 0;
   });
 
+  /* Podgląd stanu dla testów — włączany wyłącznie przez ?debug w adresie.
+     Bez niego gra nie wystawia na zewnątrz niczego, a części mechanik
+     (serce pochłaniające śmierć, powrót flaminga) nie da się rzetelnie
+     sprawdzić z poziomu DOM.                                           */
+  if (location.search.indexOf("debug") >= 0) {
+    window.pogoDebug = function () {
+      return {
+        mode: game.mode, dist: Math.floor(game.dist),
+        hasBird: game.hasBird, slowT: game.slowT, jumpT: game.jumpT,
+        speed: Math.round(game.speed),
+        slowmo: game.slots.slowmo, heart: game.slots.heart
+      };
+    };
+  }
+
   /* ---------------------------------------------------------------- start */
 
   loadArt(
     ["jetski", "capybara", "flamingo", "obstacle_buoy", "obstacle_shark",
-     "water_tile", "totem_duo", "face_chill", "face_panic", "ramp"],
+     "water_tile", "totem_duo", "face_chill", "face_panic", "ramp",
+     "item_slowmo", "item_heart"],
     function () {
       if (ART.totem_duo) {
         el.splash.hidden = false;
