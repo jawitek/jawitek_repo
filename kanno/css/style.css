@@ -162,8 +162,12 @@ h2 {
 
 .lang button,
 .lang a {
+  -webkit-appearance: none;
+  appearance: none;
   background: none;
   border: 0;
+  border-radius: 0;
+  box-shadow: none;
   padding: 4px 2px;
   font-family: inherit;
   font-size: 12px;
