@@ -162,6 +162,25 @@ całą wysokość i plamy światła niezawinięte na krawędziach, przez co przy
 (zmierzone: pion 0,0, poziom 4,9 różnicy na krawędziach) i gra sama przeszła na
 tańsze rysowanie.
 
+### Kierunek i trzy prędkości
+
+Wszystko płynie **w dół**, tak jak nadpływające przeszkody. Brzmi trywialnie,
+ale przy przejściu z `CanvasPattern` na ręczne kafelkowanie znak przesunięcia
+się odwrócił i woda przez jedno wydanie płynęła pod prąd. Kierunek jest teraz
+sprawdzany pomiarem: test bierze kolumnę pikseli w dwóch chwilach i szuka
+przesunięcia, przy którym najlepiej na siebie zachodzą.
+
+Trzy warstwy mają różne prędkości, licząc od prędkości przeszkód:
+
+| warstwa | mnożnik | po co |
+| --- | --- | --- |
+| kafelek wody + piana tła | `WATER_LAG` 0,8× | wolniejsze tło nie męczy wzroku przy 600 px/s i nie odciąga uwagi od bojek |
+| bojki, rekiny, skocznie, przedmioty | 1,0× | to jest tor gry |
+| kreski pędu przy krawędziach | `PARALLAX` 1,4× | najszybsza warstwa czyta się jako pęd |
+
+Kreski celowo liczą się od prędkości **przeszkód**, a nie od spowolnionej wody —
+inaczej wypadłyby wolniej niż bojki i cała hierarchia głębi by się odwróciła.
+
 ### Druga warstwa: kreski pędu
 
 Białe półprzezroczyste kreski przy lewej i prawej krawędzi, przewijane
@@ -250,6 +269,12 @@ tempo jest **resetowane do bazowego** i rozpędza się od nowa z `SPEED_RECOVER`
 (110 px/s²). To druga połowa nagrody: nie tylko trzy sekundy spokoju, ale
 i oddech po nich — powrót do 600 px/s zajmuje potem ok. 3,7 s.
 
+Obwód slotu jest w trakcie działania **paskiem postępu**: zużyta część
+ciemnieje ze złotego na przygaszony, więc widać, ile czasu zostało. Wcześniej
+slot tylko pulsował, co mówiło „działa", ale nie „ile jeszcze". Robi to
+`conic-gradient` sterowany jedną zmienną CSS, ustawianą raz na klatkę i tylko
+przez te trzy sekundy.
+
 ### Serce (prawy slot, biernie)
 
 Jedno dodatkowe życie. Pochłania **każdą** śmiertelną przyczynę — bojkę,
@@ -262,9 +287,10 @@ funkcję `fatal()`. Zamiast końca przejazdu:
   ale nie ma już żadnej ochrony,
 - kolejne zebrane serce **odradza flaminga** zamiast trafić do slotu.
 
-Bez ptaka Reaction Cam wraca do twarzy rysowanych w kodzie, bo `face_chill.svg`
-i `face_panic.svg` mają flaminga wkomponowanego na stałe. Osobny `face_alone.svg`
-domknąłby to ładniej.
+Bez ptaka okienko pokazuje `face_alone.svg` — samą kapibarę. `face_chill.svg`
+i `face_panic.svg` mają flaminga wkomponowanego na stałe, więc nie nadają się
+do tego stanu. Dopóki pliku brakuje, kapibarę rysuje kod (gałąź zapasowa
+w `drawCam`).
 
 ### Near miss
 
