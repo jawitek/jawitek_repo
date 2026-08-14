@@ -133,9 +133,19 @@ funkcją dwóch liczb: kąta wahadła i `panic` (0–1).
 
 Kapibara jest we wszystkich stanach identyczna — to jest cały żart.
 
-**Rysowane w kodzie, nie ze sprite'ów.** Mimika musi reagować w czasie
-rzeczywistym, a pliki SVG mają zamrożone twarze. Przy okazji kapibara dostaje
-tu różowe okulary, których w `capybara.svg` nie ma.
+**Grafika: `face_chill.svg` i `face_panic.svg`.** Obie to gotowe kompozycje
+okienka — okrąg `r=62` w płótnie 128. Spokojna leży zawsze pod spodem, panika
+jest nakładana z przezroczystością równą `panic`, więc reakcja jest płynnym
+przenikaniem, a nie przełącznikiem. Kapibara to w obu plikach ten sam kształt,
+więc przenikanie jej nie rusza — zmienia się wyłącznie flaming.
+
+Twarze **nie** przechodzą przez dopasowanie do obrysu, którym idzie reszta
+sprite'ów: mają wpasować się w ramkę tak, jak skomponował je autor, a
+dociąganie do narysowanych pikseli przesunęłoby kadr. Wpasowanie liczone jest
+z promienia 62, nie z obrysu treści.
+
+Gdyby plików zabrakło, okienko rysuje twarze w kodzie (funkcja `drawCam` ma
+pełną gałąź zapasową) — mniej ładnie, ale gra działa.
 
 **Panika jest stanem fizyki, nie odczytem chwili.** Pierwsza wersja liczyła ją
 wprost z `ski.ax`, ale `ax` jest niezerowe tylko przez 0,17 s rozpędu — mina
