@@ -1,24 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
-  <!-- Baza / Poduszka siodełka (dopasowana do skutera) -->
+  <!-- Baza / Poduszka siodełka -->
   <rect x="24" y="210" width="208" height="34" rx="17" fill="#006D77" stroke="#1A1A1A" stroke-width="7" stroke-linejoin="round"/>
 
   <!-- Grupa Kapibary -->
   <!-- Ucho lewe (w tle) -->
-  <path d="M72 74 C62 74 60 88 70 94 Z" fill="#6A3B14" stroke="#1A1A1A" stroke-width="6"/>
+  <path d="M68 62 C56 62 54 78 66 84 Z" fill="#6A3B14" stroke="#1A1A1A" stroke-width="6"/>
 
-  <!-- Główna bryła ciała i głowy (Zwarty, stabilny tułów 3/4) -->
-  <path d="M 85 64 
-           C 115 64, 155 64, 175 68 
-           C 195 72, 212 88, 212 110 
-           C 212 125, 204 135, 196 142 
+  <!-- Główna bryła ciała: NATURALNIE ZAOKRĄGLONA GŁOWA I PLECY -->
+  <path d="M 78 68 
+           C 85 45, 120 42, 148 48 
+           C 176 54, 208 72, 212 98 
+           C 215 118, 202 134, 196 142 
            C 208 165, 208 195, 202 215 
            L 44 215 
-           C 36 190, 36 145, 54 110 
-           C 64 90, 72 64, 85 64 Z" 
+           C 34 185, 34 140, 52 105 
+           C 60 88, 70 76, 78 68 Z" 
         fill="#A65B24" stroke="#1A1A1A" stroke-width="8" stroke-linejoin="round"/>
 
-  <!-- Płaski czubek głowy (punkt podparcia pod stopy flaminga) -->
-  <ellipse cx="130" cy="72" rx="38" ry="12" fill="#BA6F35" stroke="#8F4818" stroke-width="3"/>
+  <!-- Naturalne cieniowanie i fałdka na karku/głowie (pełna, puszysta bryła) -->
+  <path d="M 85 55 C 110 50, 140 54, 160 62" fill="none" stroke="#BA6F35" stroke-width="5" stroke-linecap="round"/>
 
   <!-- Brzuch / Udo (Zaokrąglenie sylwetki) -->
   <path d="M 160 215 C 175 195, 175 165, 155 150 C 145 142, 140 148, 142 165 C 145 190, 155 210, 160 215 Z" fill="#8F4818" opacity="0.3"/>
@@ -28,20 +28,19 @@
   <path d="M 172 170 C 185 175, 192 188, 186 200 C 182 208, 175 212, 168 212" fill="#8F4818" stroke="#1A1A1A" stroke-width="6" stroke-linecap="round"/>
 
   <!-- Ucho prawe (bliżej gracza) -->
-  <path d="M 124 80 C 120 70, 134 68, 142 76 C 146 82, 138 90, 128 88 Z" fill="#8F4818" stroke="#1A1A1A" stroke-width="6"/>
+  <path d="M 118 64 C 114 52, 130 50, 138 58 C 142 64, 134 74, 122 72 Z" fill="#8F4818" stroke="#1A1A1A" stroke-width="6"/>
 
   <!-- Profil nosa/pyszczka -->
-  <path d="M 206 102 C 212 108, 212 116, 204 122" fill="none" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round"/>
+  <path d="M 208 94 C 214 100, 214 108, 206 114" fill="none" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round"/>
 
-  <!-- Różowe okulary przeciwsłoneczne (Widok profilowy/retro) -->
-  <!-- Zausznik okularów -->
-  <path d="M 132 86 L 178 78 L 198 82" fill="none" stroke="#FF4D8D" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M 132 86 L 178 78 L 198 82" fill="none" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Różowe okulary retro -->
+  <path d="M 126 72 L 174 66 L 198 72" fill="none" stroke="#FF4D8D" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 126 72 L 174 66 L 198 72" fill="none" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 
   <!-- Oprawka boczna -->
-  <polygon points="174,74 206,78 202,104 170,96" fill="#FF4D8D" stroke="#1A1A1A" stroke-width="6" stroke-linejoin="round"/>
-  <!-- Szkło z odbiciem światła -->
-  <polygon points="178,78 200,82 198,100 174,93" fill="#3A0CA3"/>
-  <polygon points="182,80 192,82 186,96 178,93" fill="#4CC9F0" opacity="0.8"/>
-  <line x1="184" y1="82" x2="194" y2="84" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+  <polygon points="172,62 206,68 200,94 168,86" fill="#FF4D8D" stroke="#1A1A1A" stroke-width="6" stroke-linejoin="round"/>
+  <!-- Szkło z odbiciem -->
+  <polygon points="176,66 200,72 196,90 172,83" fill="#3A0CA3"/>
+  <polygon points="180,68 192,72 186,86 176,83" fill="#4CC9F0" opacity="0.8"/>
+  <line x1="182" y1="70" x2="192" y2="74" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
 </svg>
