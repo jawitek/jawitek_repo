@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 100" width="160" height="100">
+  <!-- Pływaki / Baza skoczni -->
+  <rect x="15" y="65" width="130" height="25" rx="8" fill="#D9534F" stroke="#1A1A1A" stroke-width="5" stroke-linejoin="round"/>
+  <rect x="25" y="75" width="110" height="8" rx="4" fill="#C9302C"/>
+
+  <!-- Piana / Woda wokół skoczni -->
+  <path d="M5 85 Q15 75 25 85 Q35 95 45 85 Q55 75 65 85 Q75 95 85 85 Q95 75 105 85 Q115 95 125 85 Q135 75 145 85 Q155 95 160 85" fill="none" stroke="#E0F7FA" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Powierzchnia najazdu (Trapez w stylu arcade z żółto-czarnymi pasami ostrzegawczymi) -->
+  <path d="M30 70 L130 70 L115 25 L45 25 Z" fill="#F4D03F" stroke="#1A1A1A" stroke-width="5" stroke-linejoin="round"/>
+
+  <!-- Pasy dynamiczne / Strzałki prędkości na rampie -->
+  <!-- Pas 1 -->
+  <polygon points="50,68 62,68 56,30 48,30" fill="#2C3E50"/>
+  <!-- Pas 2 (Środek - strzałka BOOST) -->
+  <polygon points="73,68 87,68 83,30 77,30" fill="#E67E22"/>
+  <polygon points="75,55 85,55 80,40" fill="#FFFFFF"/>
+  <!-- Pas 3 -->
+  <polygon points="98,68 110,68 104,30 112,30" fill="#2C3E50"/>
+
+  <!-- Krawędź wybicia (Góra skoczni) -->
+  <line x1="42" y1="25" x2="118" y2="25" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+  <line x1="45" y1="23" x2="115" y2="23" stroke="#1A1A1A" stroke-width="3"/>
+</svg>
