@@ -61,6 +61,11 @@
   var HIT_BUOY = 18, HIT_SHARK = 20;
   var BEST_KEY = "pogo-pogo:best";
 
+  /* Wersja zasobów. Przeglądarki trzymały stary game.js i stare sprite'y po
+     wdrożeniu — gracz widział poprzednią wersję gry mimo udanej publikacji.
+     PODBIJ TĘ LICZBĘ (i te w index.html) przy każdym wdrożeniu.          */
+  var VER = "2";
+
   /* ------------------------------------------------------------ narzędzia */
 
   var clamp = function (v, a, b) { return v < a ? a : v > b ? b : v; };
@@ -126,7 +131,7 @@
         ART[name] = null;
         if (--left === 0) done();
       };
-      img.src = "assets/" + name + ".svg";
+      img.src = "assets/" + name + ".svg?v=" + VER;
     });
   }
 

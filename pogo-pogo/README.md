@@ -19,6 +19,21 @@ pogo-pogo/
 Bez build-stepu i bez zależności. Lokalnie: `python3 -m http.server` w tym
 katalogu i wejście na `http://localhost:8000/`. Produkcyjnie: GitHub Pages.
 
+## Wersjonowanie zasobów — PODBIJ PRZY KAŻDYM WDROŻENIU
+
+Adresy plików mają `?v=N`. Bez tego przeglądarka trzyma stary `game.js`
+i stare sprite'y po wdrożeniu, a gracz ogląda poprzednią wersję gry mimo
+udanej publikacji na Pages. Zdarzyło się to raz i kosztowało sporo zamieszania,
+bo build kończył się sukcesem i wszystko *wyglądało* na wdrożone.
+
+Podbicie wersji to **dwa miejsca**:
+
+- `index.html` — cztery wystąpienia `?v=N` (favicon, CSS, skrypt, splash)
+- `js/game.js` — stała `VER`, od której wersjonują się sprite'y w `assets/`
+
+Ta sama konwencja co na stronie Kanno w korzeniu repo (tam licznik idzie
+niezależnie).
+
 ## Sterowanie
 
 | Wejście | Efekt |
