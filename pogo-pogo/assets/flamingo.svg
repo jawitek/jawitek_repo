@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  
+  <g stroke="#1a1a1a" stroke-width="3" stroke-linejoin="round">
+    <path d="M30 40 C22 34 20 24 26 18 C34 20 38 28 36 38 Z" fill="#ffb6d9"></path>
+    <path d="M226 30 C234 24 236 14 230 8 C222 10 218 18 220 28 Z" fill="#ffb6d9"></path>
+    <path d="M14 90 C6 86 2 78 8 72 C16 74 20 80 18 88 Z" fill="#ff7fb0"></path>
+    <path d="M244 84 C252 80 256 72 250 66 C242 68 238 76 240 84 Z" fill="#ff7fb0"></path>
+  </g>
+
+  
+  <path d="M108 118 C74 108 40 86 16 52 C10 42 12 30 22 26 C30 40 46 56 64 68 C50 60 38 48 30 34 C40 32 50 40 58 52 C56 38 60 26 70 20 C76 32 76 46 74 60 C82 46 92 38 104 38 C102 54 92 66 80 76 C96 74 110 80 120 92 C112 102 108 110 108 118 Z" fill="#ff5fa8" stroke="#1a1a1a" stroke-width="6" stroke-linejoin="round"></path>
+
+  
+  <path d="M148 118 C182 108 216 86 240 52 C246 42 244 30 234 26 C226 40 210 56 192 68 C206 60 218 48 226 34 C216 32 206 40 198 52 C200 38 196 26 186 20 C180 32 180 46 182 60 C174 46 164 38 152 38 C154 54 164 66 176 76 C160 74 146 80 136 92 C144 102 148 110 148 118 Z" fill="#ff5fa8" stroke="#1a1a1a" stroke-width="6" stroke-linejoin="round"></path>
+
+  
+  <path d="M96 132 C90 108 106 88 128 88 C150 88 166 108 160 132 C164 152 156 172 128 176 C100 172 92 152 96 132 Z" fill="#ff7fb0" stroke="#1a1a1a" stroke-width="6" stroke-linejoin="round"></path>
+
+  
+  <path d="M148 100 C158 84 158 64 148 50 C160 48 172 56 176 70 C180 84 172 96 158 102 Z" fill="#ff7fb0" stroke="#1a1a1a" stroke-width="6" stroke-linejoin="round"></path>
+
+  
+  <circle cx="168" cy="52" r="22" fill="#ff7fb0" stroke="#1a1a1a" stroke-width="6"></circle>
+
+  
+  <path d="M150 34 L162 40" stroke="#1a1a1a" stroke-width="4" stroke-linecap="round"></path>
+  <path d="M150 44 L160 46" stroke="#1a1a1a" stroke-width="4" stroke-linecap="round"></path>
+
+  
+  <circle cx="164" cy="50" r="12" fill="#ffffff" stroke="#1a1a1a" stroke-width="5"></circle>
+  <circle cx="167" cy="52" r="5" fill="#1a1a1a"></circle>
+  <circle cx="169" cy="49" r="2" fill="#ffffff"></circle>
+
+  
+  <path d="M186 56 C198 56 206 62 208 70 C200 74 190 72 184 66 Z" fill="#ff9a3d" stroke="#1a1a1a" stroke-width="5" stroke-linejoin="round"></path>
+
+  
+  <g stroke="#ff9a3d" stroke-width="9" stroke-linecap="round">
+    <line x1="118" y1="172" x2="114" y2="252"></line>
+    <line x1="138" y1="172" x2="140" y2="252"></line>
+  </g>
+  <g stroke="#1a1a1a" stroke-width="3" stroke-linecap="round" fill="none">
+    <line x1="118" y1="172" x2="114" y2="252"></line>
+    <line x1="138" y1="172" x2="140" y2="252"></line>
+  </g>
+
+  
+  <path d="M100 256 L114 246 L128 256 Z" fill="#ff9a3d" stroke="#1a1a1a" stroke-width="5" stroke-linejoin="round"></path>
+  <path d="M126 256 L140 246 L154 256 Z" fill="#ff9a3d" stroke="#1a1a1a" stroke-width="5" stroke-linejoin="round"></path>
+</svg>
