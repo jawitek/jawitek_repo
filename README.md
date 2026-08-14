@@ -1,67 +1,72 @@
-# Kanno Noodle — website
+# jawitek_repo — static sites
 
-Live at https://jawitek.github.io/jawitek_repo/
+Independent static sites, one folder each, served by GitHub Pages from `main`.
+No build step: every folder is plain HTML/CSS/JS and can be served by any
+static host (`python3 -m http.server` locally).
 
-The production website lives at the repository root, built from the design
-bundle the client exported from Claude Design (`Kanno Noodle Website.html`).
-It is a B2B site for the noodle production business: Japanese recipes,
-production in central Poland.
+| Site | Folder | URL |
+| --- | --- | --- |
+| Kanno Noodle | `kanno/` | https://jawitek.github.io/jawitek_repo/kanno/ |
+| Na Zaspę 3 | `nazaspe3/` | https://jawitek.github.io/jawitek_repo/nazaspe3/ |
+| Pogo Pogo | `pogo-pogo/` | https://jawitek.github.io/jawitek_repo/pogo-pogo/ |
 
-- `index.html` — single page: hero, stats, about, noodle portfolio,
-  production/packing, quality & site, contact form, footer
-- `privacy.html` — GDPR privacy policy, English translation of the Polish
-  original supplied as PDF (the Polish text remains the authoritative version)
-- `css/style.css` — full stylesheet, including the responsive layer the
-  desktop-only prototype did not have
-- `js/main.js` — scroll reveals, egg-variant filter, contact form, mobile menu
-- `assets/` — logo (dark and white wordmark variants), hero and section
-  photography, six product shots, packaging and map images, favicon
+The repository root holds only a redirect from `/` to `/kanno/`, so links to
+the old root address keep working.
 
-All photography ships with the repo — nothing is hotlinked, so the site
-renders identically offline and on any host.
+```
+├── index.html      redirect to kanno/
+├── kanno/          Kanno Noodle — B2B site for the ramen noodle production
+│   ├── index.html
+│   ├── privacy.html     GDPR privacy policy
+│   ├── instagram.html   Instagram post grid mockup
+│   ├── css/ js/ assets/
+│   └── brand/           logo master files (SVG / PDF / PNG)
+├── nazaspe3/       Na Zaspę 3 — office space to let, Gdańsk Nowy Port
+│   ├── index.html
+│   ├── css/ js/ assets/
+│   └── README.md        details, and what is still stubbed
+├── pogo-pogo/      Pogo Pogo — browser game
+│   ├── index.html
+│   ├── css/ js/ assets/
+│   └── README.md SPEC.md
+├── .agents/skills/ nano-banana-2 image generation skill
+└── .nojekyll       serve files verbatim, no Jekyll processing
+```
 
-No build step. Serve the repository root with any static host: GitHub Pages
-(currently in use), Netlify, or `python3 -m http.server` locally.
+## Adding another site
 
-### Known gaps
+Give it its own folder with its own `css/`, `js/` and `assets/`, exactly like
+the ones above, and it will be served at `/<folder>/`. Nothing is shared
+between sites, so nothing collides.
 
-- **Languages.** The header shows EN / PL / JA exactly as designed, but only
-  English copy exists — the PL and JA chips are inert until translations are
-  supplied.
-- **Contact form.** There is no backend. Submitting composes a pre-filled
-  message to hello@kanno.pl in the visitor's mail client. Wiring it to a form
-  service (Formspree, Netlify Forms) or an endpoint would make it a true form.
-- **Product photo mapping.** The bundle shipped six unnamed product images;
-  they were matched to the five noodle styles by appearance. Worth a check
-  against the real product line, and easy to swap in `index.html`.
+## History
 
-The older "Direction A · Editorial / Wabi" concept and the Instagram post
-grid remain in `project/` and `kanno-instagram.html` for reference.
+Kanno Noodle and Na Zaspę 3 were implemented from Claude Design prototypes.
+The design bundles that produced them — `project/` (Kanno prototypes,
+`direction-a.jsx` and friends) and `chats/` (the design conversation
+transcript) — were removed from `main` once the sites were built: they were
+working material, and everything in the repository is published publicly by
+GitHub Pages. They remain in the git history if you ever need them:
 
----
+```
+git log --oneline --diff-filter=D -- project chats
+git checkout <commit>^ -- project chats
+```
 
-# CODING AGENTS: READ THIS FIRST
+The Kanno logo master files were kept out of that removal and live in
+`kanno/brand/`.
 
-This is a **handoff bundle** from Claude Design (claude.ai/design).
+## Known gaps — Kanno
 
-A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
+- **Languages.** The header shows EN / PL / JA as designed, but only English
+  copy exists; the PL and JA chips are inert until translations are supplied.
+- **Contact form.** No backend. Submitting composes a pre-filled message to
+  hello@kanno.pl in the visitor's mail client. Wiring it to a form service
+  (Formspree, Netlify Forms) would make it a true form.
+- **Product photo mapping.** The design bundle shipped six unnamed product
+  images, matched to the five noodle styles by appearance. Worth checking
+  against the real product line; easy to swap in `kanno/index.html`.
+- **`instagram.html` hotlinks Unsplash** for six of its photos, so that page
+  depends on an external host. The main site hotlinks nothing.
 
-## What you should do — IMPORTANT
-
-**Read the chat transcripts first.** There are 1 chat transcript(s) in `chats/`. The transcripts show the full back-and-forth between the user and the design assistant — they tell you **what the user actually wants** and **where they landed** after iterating. Don't skip them. The final HTML files are the output, but the chat is where the intent lives.
-
-**Read `project/Kanno Instagram.html` in full.** The user had this file open when they triggered the handoff, so it's almost certainly the primary design they want built. Read it top to bottom — don't skim. Then **follow its imports**: open every file it pulls in (shared components, CSS, scripts) so you understand how the pieces fit together before you start implementing.
-
-**If anything is ambiguous, ask the user to confirm before you start implementing.** It's much cheaper to clarify scope up front than to build the wrong thing.
-
-## About the design files
-
-The design medium is **HTML/CSS/JS** — these are prototypes, not production code. Your job is to **recreate them pixel-perfectly** in whatever technology makes sense for the target codebase (React, Vue, native, whatever fits). Match the visual output; don't copy the prototype's internal structure unless it happens to fit.
-
-**Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
-
-## Bundle contents
-
-- `README.md` — this file
-- `chats/` — conversation transcripts (read these!)
-- `project/` — the `Kanno` project files (HTML prototypes, assets, components)
+`nazaspe3/README.md` and `pogo-pogo/README.md` cover those two sites.
