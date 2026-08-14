@@ -122,20 +122,31 @@ a `setTransform` na wzorcu sprowadza go z powrotem do jednostek logicznych.
 
 ## Krzywa trudności
 
-Sterowana jedną funkcją `difficulty()` — 0 na starcie, 1 po `RAMP_M` (900 m):
+Trudność rośnie **skokowo, nie płynnie**: co `LEVEL_M` (90 m) wchodzi kolejny
+z `LEVELS` (6) progów. Płynna rampa była nieczytelna — gracz nie miał poczucia
+postępu, tylko powolne zaciskanie pętli.
 
-| | start | po 900 m |
-| --- | --- | --- |
-| prędkość | 190 px/s | 500 px/s |
-| odstęp między falami | 0,94–1,67 s | 0,35–0,62 s |
-| szansa na rekina | 6% | 52% |
-| bojek w fali | 1 | 1–3 |
+| próg | dystans | prędkość | odstęp fal | rekiny | czas do progu |
+| --- | --- | --- | --- | --- | --- |
+| 0 | 0 m | 190 px/s | 0,82–1,39 s | 8% | 0 s |
+| 1 | 90 m | 250 px/s | 0,72–1,22 s | 16% | 8,5 s |
+| 2 | 180 m | 310 px/s | 0,63–1,06 s | 25% | 15 s |
+| 3 | 270 m | 370 px/s | 0,53–0,90 s | 33% | 20 s |
+| 4 | 360 m | 430 px/s | 0,43–0,73 s | 41% | 25 s |
+| 5 | 450 m | 490 px/s | 0,34–0,57 s | 50% | 28 s |
+| 6 | 540 m | 550 px/s | 0,24–0,41 s | 58% | 32 s |
+
+Pełna trudność wypada po 32 s zamiast po 47 s — przejazdy są krótsze i gęstsze.
+
+Skok prędkości bez sygnału czyta się jak zacięcie, więc na każdym progu pulsuje
+licznik metrów (klasa `bump`). To jedyne, co odróżnia próg od błędu.
 
 Rekin wchodzi z boku i przecina ekran, więc zawsze pojawia się sam — o „kilku
-rekinach naraz" decyduje częstotliwość fal, nie ich liczebność. Bojki
-przeciwnie: wchodzą grupami, a przy losowaniu pozycji pilnowany jest minimalny
-rozstaw `BUOY_SEP` (128 px), więc między każdą parą zawsze zostaje luka szersza
-niż skuter. Bez tego dałoby się wygenerować ścianę nie do ominięcia.
+rekinach naraz" decyduje częstotliwość fal, nie ich liczebność. Bojki wchodzą
+po jednej lub dwie, z wymuszonym rozstawem `BUOY_SEP` (128 px), więc między
+parą zawsze zostaje luka szersza niż skuter. Trzeciej bojki celowo nie ma:
+przy tym rozstawie trzy mieszczą się w pasie tylko w jednym układzie, więc
+byłaby to zawsze ta sama sztywna ściana.
 
 ## Grafika
 

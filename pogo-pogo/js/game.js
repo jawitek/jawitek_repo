@@ -37,8 +37,9 @@
   var FIXED      = 1 / 120;           // stały krok fizyki — próg musi wypadać
                                       // tak samo przy 30 i 144 fps
 
-  var SPEED_MIN  = 190, SPEED_MAX = 500;   // px/s przewijania wody
-  var RAMP_M     = 900;               // po tylu metrach pełna prędkość i gęstość
+  var SPEED_MIN  = 190, SPEED_MAX = 550;   // px/s przewijania wody
+  var LEVEL_M    = 90;                // co tyle metrów kolejny próg trudności
+  var LEVELS     = 6;                 // tyle progów do maksimum (540 m)
   var PX_PER_M   = 18;
 
   var WATER_TILE = 256;               // logiczny bok kafelka wody
@@ -533,6 +534,7 @@
     obstacles: [],
     spray: [],
     spawn: 0,
+    level: 0,
     shake: 0,
     wipe: null,
     lockout: 0
@@ -548,7 +550,9 @@
     game.obstacles.length = 0;
     game.spray.length = 0;
     game.spawn = 1.1;
+    game.level = 0;
     game.shake = 0;
+    el.dist.classList.remove("bump");
     game.wipe = null;
 
     show(el.menu, false);
@@ -604,12 +608,14 @@
     });
   }
 
-  /* 0 na starcie, 1 po RAMP_M metrach — steruje prędkością, gęstością trasy
-     i tym, ile przeszkód wchodzi naraz.                                  */
-  function difficulty() { return clamp(game.dist / RAMP_M, 0, 1); }
+  /* Trudność rośnie skokowo, nie płynnie: co LEVEL_M metrów wchodzi kolejny
+     próg i od razu widać, że zrobiło się szybciej. Steruje prędkością,
+     gęstością trasy i tym, ile przeszkód wchodzi naraz.                   */
+  function level() { return Math.min(LEVELS, Math.floor(game.dist / LEVEL_M)); }
+  function difficulty() { return level() / LEVELS; }
 
   function spawnDelay() {
-    return rand(0.82, 1.45) * (1.15 - 0.72 * difficulty());
+    return rand(0.78, 1.32) * (1.05 - 0.74 * difficulty());
   }
 
   function spawnWave() {
@@ -617,7 +623,7 @@
 
     /* Rekin wchodzi z boku i przecina ekran, więc idzie sam — o „kilku
        rekinach naraz" decyduje częstotliwość, nie liczebność fali.      */
-    if (Math.random() < 0.06 + 0.46 * d) {
+    if (Math.random() < 0.08 + 0.50 * d) {
       var fromLeft = Math.random() < 0.5;
       game.obstacles.push({
         type: "shark",
@@ -629,11 +635,11 @@
       return;
     }
 
-    /* Fala bojek: 1 na starcie, z czasem 2, rzadziej 3. Rozstaw pilnowany
-       przy losowaniu, więc między każdą parą zawsze da się przejechać.  */
-    var n = 1;
-    if (Math.random() < 0.32 * d) n++;
-    if (Math.random() < 0.10 * d) n++;
+    /* Fala bojek: 1 na starcie, z czasem 2. Trzeciej celowo nie ma — przy
+       rozstawie BUOY_SEP trzy bojki mieszczą się w pasie tylko w jednym
+       układzie, więc byłaby to zawsze ta sama, sztywna ściana. Gęstość
+       bierze się z częstotliwości fal, nie z ich liczebności.           */
+    var n = 1 + (Math.random() < 0.50 * d ? 1 : 0);
 
     var lo = SKI_MARGIN - 6, hi = W - SKI_MARGIN + 6;
     var xs = [];
@@ -685,6 +691,16 @@
     /* ------------------------------------------------------------- PLAY */
 
     game.speed = SPEED_MIN + (SPEED_MAX - SPEED_MIN) * difficulty();
+
+    /* Skok prędkości bez sygnału czyta się jak zacięcie — licznik metrów
+       pulsuje, żeby było wiadomo, że to gra przyspieszyła.              */
+    var lv = level();
+    if (lv !== game.level) {
+      game.level = lv;
+      el.dist.classList.remove("bump");
+      void el.dist.offsetWidth;          // wymuszenie restartu animacji
+      el.dist.classList.add("bump");
+    }
     game.scrollV = game.speed;
     game.scroll += game.speed * dt;
     game.dist += game.speed * dt / PX_PER_M;
