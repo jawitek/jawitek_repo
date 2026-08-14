@@ -99,7 +99,7 @@
   /* Wersja zasobów. Przeglądarki trzymały stary game.js i stare sprite'y po
      wdrożeniu — gracz widział poprzednią wersję gry mimo udanej publikacji.
      PODBIJ TĘ LICZBĘ (i te w index.html) przy każdym wdrożeniu.          */
-  var VER = "7";
+  var VER = "8";
 
   /* ------------------------------------------------------------ narzędzia */
 
@@ -741,6 +741,7 @@
     retry:  document.getElementById("retry"),
     slotS:  document.getElementById("slot-slowmo"),
     slotH:  document.getElementById("slot-heart"),
+    slotArc: document.getElementById("slot-arc"),
     splash: document.getElementById("splash")
   };
 
@@ -1409,6 +1410,13 @@
     if (game.mode === MENU) { drawIdleTotem(); return; }
 
     drawRider(a);
+
+    /* Pierścień odliczania — jedna zmienna CSS na klatkę, i tylko przez
+       te trzy sekundy, w których zegar działa.                         */
+    if (game.slowT > 0) {
+      el.slotArc.style.setProperty("--p",
+        clamp((game.slowT - a) / SLOW_TIME, 0, 1).toFixed(3));
+    }
 
     drawPops(a);
     drawToast(a);

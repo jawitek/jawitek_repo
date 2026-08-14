@@ -6,13 +6,13 @@
 <title>Pogo Pogo</title>
 <meta name="description" content="Pogo Pogo — zręcznościowa gra przeglądarkowa. Kapibara na skuterze wodnym balansuje spanikowanym flamingiem.">
 <meta name="theme-color" content="#0288D1">
-<link rel="icon" href="assets/favicon.svg?v=7" type="image/svg+xml">
+<link rel="icon" href="assets/favicon.svg?v=8" type="image/svg+xml">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta property="og:title" content="Pogo Pogo">
 <meta property="og:description" content="Kapibara na skuterze wodnym balansuje spanikowanym flamingiem. Nie zgub flaminga.">
 <meta property="og:type" content="website">
-<link rel="stylesheet" href="css/style.css?v=7">
+<link rel="stylesheet" href="css/style.css?v=8">
 </head>
 <body>
 
@@ -21,7 +21,7 @@
 
   <!-- ---------------------- Ekran 1 · menu startowe --------------------- -->
   <div class="screen is-on" id="screen-menu">
-    <img class="splash" id="splash" src="assets/totem_duo.svg?v=7" alt="" hidden>
+    <img class="splash" id="splash" src="assets/totem_duo.svg?v=8" alt="" hidden>
 
     <div class="logo">
       <span class="logo-1">POGO</span>
@@ -43,11 +43,12 @@
          dotyk (reszta HUD ma pointer-events: none) i nie mogą uruchamiać
          sterowania — obsługa dotyku sceny pomija cele wewnątrz <button>. -->
     <button class="slot slot-l" id="slot-slowmo" type="button" aria-label="Zegar spowolnienia">
-      <img class="slot-ico" src="assets/item_slowmo.svg?v=7" alt="" hidden>
+      <span class="slot-arc" id="slot-arc"></span>
+      <img class="slot-ico" src="assets/item_slowmo.svg?v=8" alt="" hidden>
       <span class="slot-glyph">&#9201;</span>
     </button>
     <button class="slot slot-r" id="slot-heart" type="button" aria-label="Serce">
-      <img class="slot-ico" src="assets/item_heart.svg?v=7" alt="" hidden>
+      <img class="slot-ico" src="assets/item_heart.svg?v=8" alt="" hidden>
       <span class="slot-glyph">&#9829;</span>
     </button>
   </div>
@@ -62,6 +63,6 @@
   </div>
 </div>
 
-<script src="js/game.js?v=7"></script>
+<script src="js/game.js?v=8"></script>
 </body>
 </html>

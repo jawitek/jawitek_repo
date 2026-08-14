@@ -269,6 +269,12 @@ tempo jest **resetowane do bazowego** i rozpędza się od nowa z `SPEED_RECOVER`
 (110 px/s²). To druga połowa nagrody: nie tylko trzy sekundy spokoju, ale
 i oddech po nich — powrót do 600 px/s zajmuje potem ok. 3,7 s.
 
+Obwód slotu jest w trakcie działania **paskiem postępu**: zużyta część
+ciemnieje ze złotego na przygaszony, więc widać, ile czasu zostało. Wcześniej
+slot tylko pulsował, co mówiło „działa", ale nie „ile jeszcze". Robi to
+`conic-gradient` sterowany jedną zmienną CSS, ustawianą raz na klatkę i tylko
+przez te trzy sekundy.
+
 ### Serce (prawy slot, biernie)
 
 Jedno dodatkowe życie. Pochłania **każdą** śmiertelną przyczynę — bojkę,
