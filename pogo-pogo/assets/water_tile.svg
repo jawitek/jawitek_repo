@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <rect width="256" height="256" fill="#1cb5e0"></rect>
+
+  
+  <g fill="none" stroke="#0e9fc7" stroke-width="6" stroke-linecap="round" opacity="0.55">
+    <path d="M0 32 C64 24 192 40 256 32"></path>
+    <path d="M0 96 C64 88 192 104 256 96"></path>
+    <path d="M0 160 C64 152 192 168 256 160"></path>
+    <path d="M0 224 C64 216 192 232 256 224"></path>
+  </g>
+
+  
+  <g fill="none" stroke="#eafcff" stroke-width="4" stroke-linecap="round" opacity="0.8">
+    <path d="M0 26 C32 20 96 32 128 26 C160 20 224 32 256 26"></path>
+    <path d="M0 90 C32 84 96 96 128 90 C160 84 224 96 256 90"></path>
+    <path d="M0 154 C32 148 96 160 128 154 C160 148 224 160 256 154"></path>
+    <path d="M0 218 C32 212 96 224 128 218 C160 212 224 224 256 218"></path>
+  </g>
+
+  
+  <g fill="#ffffff" opacity="0.25">
+    <ellipse cx="48" cy="64" rx="14" ry="4"></ellipse>
+    <ellipse cx="180" cy="64" rx="10" ry="3"></ellipse>
+    <ellipse cx="112" cy="192" rx="16" ry="4"></ellipse>
+    <ellipse cx="220" cy="128" rx="12" ry="3"></ellipse>
+  </g>
+</svg>
