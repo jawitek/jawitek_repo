@@ -141,21 +141,26 @@ Tło to kafelek `water_tile.svg`, przewijany o `speed · dt` co klatkę
 i przepalony na bitmapę w rozdzielczości ekranu. Proceduralne linie zostały
 wyłącznie jako **zapas**, gdy pliku brakuje.
 
-### Kafelkowanie jest lustrzane, nie zwykłe
+### Bezszwowość jest mierzona, nie zakładana
 
-Dostarczony kafelek nie jest bezszwowy: ma pionowy gradient na całą wysokość
-i plamy światła, które nie zawijają się na krawędziach. Przy zwykłym `repeat`
-widać przez to **twarde pasy co 256 px i pionowy szew** — gradient zaczyna się
-od nowa w każdym rzędzie.
+Kafelek bywa podmieniany, a od tego, czy jest bezszwowy, zależy sposób
+rysowania. Zamiast zakładać, `isSeamless()` **mierzy** to przy przepalaniu:
+porównuje przeciwległe krawędzie, bo przy zwykłym powtarzaniu stykają się one
+ze sobą.
 
-Dlatego co druga kolumna i co drugi wiersz są odbijane. Stykają się wtedy
-zawsze dwie identyczne krawędzie, więc szwy znikają dla **dowolnego** kafelka,
-także takiego, który ktoś wgra później. Gradient zamienia się w płynną falę
-jasność-ciemność o okresie 512 px, co na wodzie czyta się jak głębia. Kosztem
-jest lustrzana powtarzalność wzoru — niezauważalna przy tej teksturze.
+- **Krawędzie pasują** → zwykłe kafelkowanie. Najtańsze i bez powtarzalności
+  wzoru.
+- **Nie pasują** → co druga kolumna i co drugi wiersz są odbijane. Stykają się
+  wtedy zawsze dwie identyczne krawędzie, więc szew nie ma jak powstać. Kosztem
+  jest lustrzana powtarzalność, na wodzie niezauważalna.
+- **Odczyt pikseli niemożliwy** (otwarcie przez `file://`) → lustro, bo nigdy
+  nie pokazuje szwu i jest bezpieczniejszym domyślnym.
 
-Bezszwowy kafelek (gradient zapętlony w pionie, plamy zawinięte na krawędziach)
-wyglądałby jeszcze lepiej i pozwoliłby wrócić do zwykłego powtarzania.
+Historia jest tu pouczająca: pierwszy wgrany kafelek miał pionowy gradient na
+całą wysokość i plamy światła niezawinięte na krawędziach, przez co przy zwykłym
+`repeat` pojawiały się twarde pasy co 256 px. Kolejna wersja jest bezszwowa
+(zmierzone: pion 0,0, poziom 4,9 różnicy na krawędziach) i gra sama przeszła na
+tańsze rysowanie.
 
 ### Druga warstwa: kreski pędu
 

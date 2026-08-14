@@ -98,7 +98,7 @@
   /* Wersja zasobów. Przeglądarki trzymały stary game.js i stare sprite'y po
      wdrożeniu — gracz widział poprzednią wersję gry mimo udanej publikacji.
      PODBIJ TĘ LICZBĘ (i te w index.html) przy każdym wdrożeniu.          */
-  var VER = "5";
+  var VER = "6";
 
   /* ------------------------------------------------------------ narzędzia */
 
@@ -262,10 +262,34 @@
     var side = Math.max(2, Math.round(WATER_TILE * scaleX));
     var c = document.createElement("canvas");
     c.width = side; c.height = side;
-    var g = c.getContext("2d");
+    var g = c.getContext("2d", { willReadFrequently: true });
     g.imageSmoothingQuality = "high";
     g.drawImage(img, 0, 0, side, side);
     waterCanvas = c;
+    waterMirror = !isSeamless(g, side);
+  }
+
+  /* Czy przeciwległe krawędzie kafelka do siebie pasują? Przy zwykłym
+     powtarzaniu stykają się ze sobą, więc rozjazd widać jako szew. Mierzymy
+     to zamiast zakładać — kafelek bywa podmieniany, a od odpowiedzi zależy,
+     czy wolno użyć taniego `repeat`, czy trzeba odbijać.
+     Gdy odczyt pikseli jest niemożliwy (file://), wybieramy lustro: nigdy nie
+     pokazuje szwu, więc jest bezpieczniejszym domyślnym.                */
+  function isSeamless(g, side) {
+    try {
+      var d = g.getImageData(0, 0, side, side).data;
+      var at = function (x, y) { return (y * side + x) * 4; };
+      var sumH = 0, sumV = 0;
+      for (var i = 0; i < side; i++) {
+        var a = at(0, i), b = at(side - 1, i);
+        sumH += Math.abs(d[a] - d[b]) + Math.abs(d[a + 1] - d[b + 1]) + Math.abs(d[a + 2] - d[b + 2]);
+        var c2 = at(i, 0), e = at(i, side - 1);
+        sumV += Math.abs(d[c2] - d[e]) + Math.abs(d[c2 + 1] - d[e + 1]) + Math.abs(d[c2 + 2] - d[e + 2]);
+      }
+      return (sumH / side) < 24 && (sumV / side) < 24;
+    } catch (err) {
+      return false;
+    }
   }
 
   /* Kafelkowanie LUSTRZANE, nie zwykłe powtarzanie.
@@ -279,17 +303,21 @@
      powtarzalność wzoru, na wodzie niezauważalna.                      */
   function drawWaterTiles(scroll) {
     var t = WATER_TILE;
-    var off = mod(scroll, t * 2);        // okres wzoru to dwa kafelki
+    var period = waterMirror ? t * 2 : t;   // z lustrem wzór powtarza się co dwa
+    var off = mod(scroll, period);
     var rows = Math.ceil((H + off) / t) + 1;
     var cols = Math.ceil(W / t) + 1;
 
     for (var i = -1; i < rows; i++) {
       var y = i * t - off;
-      var flipY = mod(i, 2) === 1;
       for (var j = 0; j < cols; j++) {
+        if (!waterMirror) {
+          ctx.drawImage(waterCanvas, j * t, y, t, t);
+          continue;
+        }
         ctx.save();
         ctx.translate(j * t + t / 2, y + t / 2);
-        ctx.scale(mod(j, 2) === 1 ? -1 : 1, flipY ? -1 : 1);
+        ctx.scale(mod(j, 2) === 1 ? -1 : 1, mod(i, 2) === 1 ? -1 : 1);
         ctx.drawImage(waterCanvas, -t / 2, -t / 2, t, t);
         ctx.restore();
       }
@@ -556,7 +584,7 @@
 
   /* ---------------------------------------------------------------- woda */
 
-  var waterCanvas = null;
+  var waterCanvas = null, waterMirror = false;
 
   /* Warstwa 2 paralaksy: kreski pędu przy krawędziach, przewijane PARALLAX
      razy szybciej niż woda. Krawędzie, bo środek jest zajęty przez trasę,
