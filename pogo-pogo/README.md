@@ -206,6 +206,13 @@ Faza liczona jest z **przebytej drogi, nie z czasu**. Dzięki temu spowolnienie
 i skok zmieniają tempo pokonywania toru, ale nie jego kształt — rekin, którego
 gracz zdążył odczytać, zachowuje się tak samo po włączeniu zegara.
 
+Częstotliwość jest liczona **na sztukę**, przy spawnie, tak żeby prędkość
+boczna nie przekroczyła `SHARK_VLAT` (140 px/s). Stała częstotliwość dawała
+`v = amp · FREQ · przewijanie`, więc przy 600 px/s i amplitudzie 50 płetwa
+śmigała **900 px/s** — 3,6× szybciej niż gracz, co wyglądało karykaturalnie.
+Teraz maksimum to ~157 px/s (drobne przekroczenie wynika z ograniczenia
+długości fali do `SHARK_WAVE`, żeby tor pozostał czytelny na jednym ekranie).
+
 Płetwa jest odbijana w stronę płynięcia i przechylana o `SHARK_TILT` (6°)
 proporcjonalnie do prędkości bocznej, więc kąt natarcia rośnie na środku
 wymachu i zeruje się w punktach zwrotnych.
@@ -261,7 +268,7 @@ i nie uruchamiają sterowania, bo obsługa dotyku sceny pomija cele wewnątrz
 **Zasada unikalności:** dany przedmiot nie pojawi się na rzece, dopóki gracz go
 trzyma albo jest aktywny. Na wodzie nigdy nie leżą więc dwa zegary naraz.
 
-### Zegar (lewy slot, `Q` lub dotknięcie)
+### Zegar — odpala się sam po najechaniu
 
 3 s na `SLOW_FACTOR` (30%) prędkości, przy łagodniejszym wahadle
 (`SLOW_COUPLE` 0,45× bezwładności, `SLOW_DAMP` 1,7× tłumienia). Po zakończeniu
@@ -269,11 +276,29 @@ tempo jest **resetowane do bazowego** i rozpędza się od nowa z `SPEED_RECOVER`
 (110 px/s²). To druga połowa nagrody: nie tylko trzy sekundy spokoju, ale
 i oddech po nich — powrót do 600 px/s zajmuje potem ok. 3,7 s.
 
+Ikona pojawia się **tylko na czas działania** i znika po zakończeniu. Stale
+widoczny, wygaszony slot sugerował przedmiot w zapasie, którego nie było.
+Sloty nie łapią też dotyku — to wskaźniki, nie przyciski, więc nie odbierają
+sterowania tam, gdzie leży kciuk.
+
 Obwód slotu jest w trakcie działania **paskiem postępu**: zużyta część
 ciemnieje ze złotego na przygaszony, więc widać, ile czasu zostało. Wcześniej
 slot tylko pulsował, co mówiło „działa", ale nie „ile jeszcze". Robi to
 `conic-gradient` sterowany jedną zmienną CSS, ustawianą raz na klatkę i tylko
 przez te trzy sekundy.
+
+### Odstęp fal to DYSTANS, nie czas
+
+`game.spawn` odlicza piksele trasy, nie sekundy. Liczony czasem oznaczał, że
+w spowolnieniu świat sunie na 30% prędkości, a fale wciąż sypią się co tyle
+samo sekund — czyli **3,3× gęściej w przestrzeni**. Zegar zamiast ulgi dawał
+ścianę przeszkód.
+
+Zmierzone po poprawce: 8,25 fali na 100 m normalnie, 8,20 w spowolnieniu.
+
+Uwaga przy powtarzaniu tego pomiaru: liczenie *przeszkód* zamiast *fal* daje
+fałszywy alarm, bo w spowolnieniu zegar nie może się zrespić (zasada
+unikalności) i jego sloty zamieniają się w bojki. Mierzyć trzeba kadencję fal.
 
 ### Serce (prawy slot, biernie)
 
