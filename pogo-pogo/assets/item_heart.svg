@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Cień serca -->
+  <path d="M50 86 C20 62 10 44 10 28 A18 18 0 0 1 46 18 L50 24 L54 18 A18 18 0 0 1 90 28 C90 44 80 62 50 86 Z" fill="#D90429"/>
+  <!-- Główne soczyste serce -->
+  <path d="M50 82 C22 58 12 42 12 28 A16 16 0 0 1 46 18 L50 23 L54 18 A16 16 0 0 1 88 28 C88 42 78 58 50 82 Z" fill="#FF006E" stroke="#1A1A1A" stroke-width="6" stroke-linejoin="round"/>
+  <!-- Błysk komiksowy (Highlight) -->
+  <path d="M24 24 A8 8 0 0 1 38 20" fill="none" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round"/>
+</svg>
