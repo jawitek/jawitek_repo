@@ -92,13 +92,14 @@
   var SHARK_TILT = 6 * Math.PI / 180; // kąt natarcia płetwy
 
   var PARALLAX   = 1.4;               // o ile szybciej lecą kreski pędu
+  var WATER_LAG  = 0.8;               // tło płynie wolniej niż przeszkody
   var WAKE_LIFE  = 0.75;              // jak długo żyje bąbelek smugi
   var BEST_KEY = "pogo-pogo:best";
 
   /* Wersja zasobów. Przeglądarki trzymały stary game.js i stare sprite'y po
      wdrożeniu — gracz widział poprzednią wersję gry mimo udanej publikacji.
      PODBIJ TĘ LICZBĘ (i te w index.html) przy każdym wdrożeniu.          */
-  var VER = "6";
+  var VER = "7";
 
   /* ------------------------------------------------------------ narzędzia */
 
@@ -240,7 +241,7 @@
   var FACE = {};
 
   function bakeFaces() {
-    ["face_chill", "face_panic"].forEach(function (n) {
+    ["face_chill", "face_panic", "face_alone"].forEach(function (n) {
       var img = ART[n];
       if (!img) { FACE[n] = null; return; }
       var size = 2 * CAM_R * (64 / 62) * 1.02;      // r=62 ma trafić w CAM_R
@@ -304,12 +305,15 @@
   function drawWaterTiles(scroll) {
     var t = WATER_TILE;
     var period = waterMirror ? t * 2 : t;   // z lustrem wzór powtarza się co dwa
-    var off = mod(scroll, period);
-    var rows = Math.ceil((H + off) / t) + 1;
+    var off = mod(scroll * WATER_LAG, period);
     var cols = Math.ceil(W / t) + 1;
+    var first = -Math.ceil(period / t) - 1;
 
-    for (var i = -1; i < rows; i++) {
-      var y = i * t - off;
+    /* `+ off`, nie `- off`: tło ma uciekać w dół pod skuterem, tak samo jak
+       nadpływające przeszkody. Przy przejściu z wzorca na kafelki znak się
+       odwrócił i woda płynęła pod prąd.                                 */
+    for (var i = first; i * t + off < H + t; i++) {
+      var y = i * t + off;
       for (var j = 0; j < cols; j++) {
         if (!waterMirror) {
           ctx.drawImage(waterCanvas, j * t, y, t, t);
@@ -628,7 +632,7 @@
 
       ctx.lineCap = "round";
       for (var i = 0; i < 16; i++) {
-        var wy = mod(i * 48 - scroll, H + 96) - 48;
+        var wy = mod(i * 48 + scroll * WATER_LAG, H + 96) - 48;
         ctx.beginPath();
         for (var x = -20; x <= W + 20; x += 24) {
           var yy = wy + Math.sin(x * 0.028 + i * 1.7 + t * 1.4) * 4;
@@ -644,7 +648,7 @@
     for (var k = 0; k < foam.length; k++) {
       var f = foam[k];
       ctx.beginPath();
-      ctx.arc(f.x, mod(f.y - scroll * f.s, H + 20) - 10, f.r, 0, 6.2832);
+      ctx.arc(f.x, mod(f.y + scroll * WATER_LAG * f.s, H + 20) - 10, f.r, 0, 6.2832);
       ctx.fill();
     }
 
@@ -652,7 +656,7 @@
     ctx.lineCap = "round";
     for (var q = 0; q < lines.length; q++) {
       var ln = lines[q];
-      var ly = mod(ln.y - scroll * PARALLAX, H + 80) - 40;
+      var ly = mod(ln.y + scroll * PARALLAX, H + 80) - 40;
       ctx.strokeStyle = "rgba(255,255,255," + ln.a.toFixed(2) + ")";
       ctx.lineWidth = ln.w;
       ctx.beginPath();
@@ -1543,7 +1547,15 @@
       ctx.stroke();
     }
 
-    if (FACE.face_chill && game.hasBird) {
+    if (!game.hasBird && FACE.face_alone) {
+      /* Po utracie flaminga w okienku zostaje sama kapibara. Bez tego pliku
+         kod rysuje ją samodzielnie (gałąź zapasowa niżej), bo face_chill
+         i face_panic mają ptaka wkomponowanego na stałe.                */
+      ctx.save();
+      var fa2 = FACE.face_alone;
+      ctx.drawImage(fa2.c, -fa2.s / 2, -fa2.s / 2, fa2.s, fa2.s);
+      ctx.restore();
+    } else if (FACE.face_chill && game.hasBird) {
       /* Dostarczone twarze: spokojna zawsze pod spodem, panika nakładana
          z przezroczystością, więc reakcja jest płynna, a nie przełącznikiem.
          Kapibara jest w obu plikach tym samym kształtem, więc przenikanie
@@ -1893,7 +1905,7 @@
   loadArt(
     ["jetski", "capybara", "flamingo", "obstacle_buoy", "obstacle_shark",
      "water_tile", "totem_duo", "face_chill", "face_panic", "ramp",
-     "item_slowmo", "item_heart", "shark_fin"],
+     "item_slowmo", "item_heart", "shark_fin", "face_alone"],
     function () {
       if (ART.totem_duo) {
         el.splash.hidden = false;
