@@ -37,13 +37,17 @@
   var FIXED      = 1 / 120;           // stały krok fizyki — próg musi wypadać
                                       // tak samo przy 30 i 144 fps
 
-  var SPEED_MIN  = 190, SPEED_MAX = 550;   // px/s przewijania wody
-  var LEVEL_M    = 90;                // co tyle metrów kolejny próg trudności
-  var LEVELS     = 6;                 // tyle progów do maksimum (540 m)
+  var SPEED_MIN  = 190;               // px/s przewijania wody na starcie
+  var SPEED_STEP = 58;                // przyrost na próg
+  var SPEED_CAP  = 600;               // wyżej czas reakcji spada poniżej uczciwego
+  var LEVEL_M    = 80;                // co tyle metrów kolejny próg trudności
   var PX_PER_M   = 18;
 
   var WATER_TILE = 256;               // logiczny bok kafelka wody
-  var BUOY_SEP   = 128;               // najmniejszy rozstaw bojek w jednej fali
+  var BUOY_SEP   = 52;                // tyle, żeby bojki się nie nakładały
+  var LANE_LO    = SKI_MARGIN + 8;
+  var LANE_HI    = W - SKI_MARGIN - 8;
+  var CLEAR      = HIT_BUOY + HIT_SKI + 24;   // korytarz przejazdu: 24 px luzu
 
   var HIT_SKI = 26, HIT_BUOY = 18, HIT_SHARK = 20;
   var BEST_KEY = "pogo-pogo:best";
@@ -529,11 +533,13 @@
     speed: SPEED_MIN,
     dist: 0,
     ski: { x: W / 2, vx: 0, ax: 0, roll: 0 },
-    bird: { a: 0, w: 0, over: 0 },
+    bird: { a: 0, w: 0, over: 0, panic: 0 },
     scrollV: 0,
     obstacles: [],
     spray: [],
     spawn: 0,
+    gapTime: 1.1,
+    safeX: W / 2,
     level: 0,
     shake: 0,
     wipe: null,
@@ -546,10 +552,12 @@
     game.speed = SPEED_MIN;
     game.dist = 0;
     game.ski.x = W / 2; game.ski.vx = 0; game.ski.ax = 0; game.ski.roll = 0;
-    game.bird.a = 0; game.bird.w = 0; game.bird.over = 0;
+    game.bird.a = 0; game.bird.w = 0; game.bird.over = 0; game.bird.panic = 0;
     game.obstacles.length = 0;
     game.spray.length = 0;
     game.spawn = 1.1;
+    game.gapTime = 1.1;
+    game.safeX = W / 2;
     game.level = 0;
     game.shake = 0;
     el.dist.classList.remove("bump");
@@ -608,43 +616,56 @@
     });
   }
 
-  /* Trudność rośnie skokowo, nie płynnie: co LEVEL_M metrów wchodzi kolejny
-     próg i od razu widać, że zrobiło się szybciej. Steruje prędkością,
-     gęstością trasy i tym, ile przeszkód wchodzi naraz.                   */
-  function level() { return Math.min(LEVELS, Math.floor(game.dist / LEVEL_M)); }
-  function difficulty() { return level() / LEVELS; }
+  /* Trudność rośnie skokowo i BEZ SUFITU. Wcześniej wszystko zatrzymywało się
+     na szóstym progu, więc po ~540 m gra była płaska w nieskończoność —
+     dawało się jechać kilka tysięcy metrów z nudów. Prędkość ma sufit, bo
+     powyżej niego czas reakcji spada poniżej uczciwego, ale gęstość trasy
+     rośnie dalej i to ona kończy przejazd.                                */
+  function level() { return Math.floor(game.dist / LEVEL_M); }
 
   function spawnDelay() {
-    return rand(0.78, 1.32) * (1.05 - 0.74 * difficulty());
+    return Math.max(0.17, 1.05 * Math.pow(0.87, level())) * rand(0.82, 1.22);
   }
 
-  function spawnWave() {
-    var d = difficulty();
+  /* gapTime — ile czasu minęło od poprzedniej fali. Z tego wynika, jak daleko
+     skuter zdążył się przemieścić, a więc jak daleko wolno odsunąć korytarz. */
+  function spawnWave(gapTime) {
+    var L = level();
+    var d = clamp(L / 6, 0, 1);
 
-    /* Rekin wchodzi z boku i przecina ekran, więc idzie sam — o „kilku
-       rekinach naraz" decyduje częstotliwość, nie liczebność fali.      */
-    if (Math.random() < 0.08 + 0.50 * d) {
+    /* Rekin przecina ekran w poprzek, więc idzie sam. Na wyższych progach
+       tnie szybciej — wolny rekin przelatywał bokiem i nic nie robił.   */
+    if (Math.random() < 0.10 + 0.28 * d) {
       var fromLeft = Math.random() < 0.5;
       game.obstacles.push({
         type: "shark",
         x: fromLeft ? -50 : W + 50,
         y: -60,
-        vx: (fromLeft ? 1 : -1) * rand(45, 95),
+        vx: (fromLeft ? 1 : -1) * rand(60, 90 + 110 * d),
         r: HIT_SHARK
       });
       return;
     }
 
-    /* Fala bojek: 1 na starcie, z czasem 2. Trzeciej celowo nie ma — przy
-       rozstawie BUOY_SEP trzy bojki mieszczą się w pasie tylko w jednym
-       układzie, więc byłaby to zawsze ta sama, sztywna ściana. Gęstość
-       bierze się z częstotliwości fal, nie z ich liczebności.           */
-    var n = 1 + (Math.random() < 0.50 * d ? 1 : 0);
+    /* Fala bojek buduje się WOKÓŁ korytarza, a nie losowo. Korytarz może
+       odsunąć się najwyżej o tyle, ile skuter zdąży pokonać przez gapTime,
+       więc każda kolejna fala jest osiągalna z luki w poprzedniej. Dzięki
+       tej gwarancji bojki nie muszą już trzymać szerokiego rozstawu między
+       sobą i mogą tworzyć ścianę z jedną luką.                          */
+    /* Przy krótkich odstępach ogranicza nie prędkość maksymalna, tylko
+       rozpęd — z miejsca w 0,17 s skuter przejedzie 22 px, a nie 42.   */
+    var reach = 0.35 * Math.min(SKI_VX_MAX * gapTime,
+                                      0.5 * SKI_ACCEL * gapTime * gapTime);
+    var safeX = clamp(game.safeX + rand(-reach, reach), LANE_LO, LANE_HI);
 
-    var lo = SKI_MARGIN - 6, hi = W - SKI_MARGIN + 6;
+    var n = 1 + (Math.random() < 0.55 * clamp(L / 4, 0, 1) ? 1 : 0)
+              + (Math.random() < 0.30 * clamp(L / 8, 0, 1) ? 1 : 0);
+
     var xs = [];
-    for (var tries = 0; tries < 40 && xs.length < n; tries++) {
-      var x = rand(lo, hi), ok = true;
+    for (var tries = 0; tries < 60 && xs.length < n; tries++) {
+      var x = rand(LANE_LO - 14, LANE_HI + 14);
+      if (Math.abs(x - safeX) < CLEAR) continue;      // korytarz zostaje pusty
+      var ok = true;
       for (var i = 0; i < xs.length; i++) {
         if (Math.abs(xs[i] - x) < BUOY_SEP) { ok = false; break; }
       }
@@ -654,6 +675,7 @@
     for (var k = 0; k < xs.length; k++) {
       game.obstacles.push({ type: "buoy", x: xs[k], y: -60, vx: 0, r: HIT_BUOY });
     }
+    game.safeX = safeX;
   }
 
   /* ------------------------------------------------------------- symulacja */
@@ -690,7 +712,7 @@
 
     /* ------------------------------------------------------------- PLAY */
 
-    game.speed = SPEED_MIN + (SPEED_MAX - SPEED_MIN) * difficulty();
+    game.speed = Math.min(SPEED_CAP, SPEED_MIN + SPEED_STEP * level());
 
     /* Skok prędkości bez sygnału czyta się jak zacięcie — licznik metrów
        pulsuje, żeby było wiadomo, że to gra przyspieszyła.              */
@@ -728,6 +750,12 @@
     b.w -= b.w * Math.min(1, DAMP * dt);
     b.a += b.w * dt;
 
+    /* Panika dla Reaction Cam. Sam odczyt chwilowy migotałby: `ax` jest
+       niezerowe tylko przez 0,17 s rozpędu, więc mina wracałaby do spokoju
+       w środku skrętu. Szybki atak, wolne opadanie.                      */
+    var pt = panicTarget();
+    b.panic += (pt - b.panic) * Math.min(1, (pt > b.panic ? 18 : 3.5) * dt);
+
     /* Przekroczenie progu nie kończy przejazdu od razu — dopiero utrzymanie
        się poza nim. Jeden pechowy wychył wybacza, uporczywe szarpanie nie. */
     if (Math.abs(b.a) > TILT_LIMIT) {
@@ -739,7 +767,11 @@
 
     /* trasa */
     game.spawn -= dt;
-    if (game.spawn <= 0) { spawnWave(); game.spawn = spawnDelay(); }
+    if (game.spawn <= 0) {
+      spawnWave(game.gapTime);
+      game.gapTime = spawnDelay();
+      game.spawn = game.gapTime;
+    }
     moveObstacles(dt);
 
     /* kolizje — okrąg skutera kontra okrąg przeszkody */
@@ -823,6 +855,11 @@
     if (game.mode === MENU) { drawIdleTotem(); return; }
 
     drawRider(a);
+
+    /* Reaction Cam to interfejs, a nie świat — wraca do bazowej macierzy,
+       żeby nie drgała razem z ekranem przy wywrotce.                    */
+    ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
+    drawCam(a);
   }
 
   /* Skuter + kapibara + flaming. W trakcie WIPEOUT flaming leci osobno. */
@@ -870,6 +907,278 @@
       ctx.fillStyle = v;
       ctx.fillRect(0, 0, W, H);
     }
+  }
+
+  /* ------------------------------------------------------------ REACTION CAM
+     Okrągły podgląd twarzy w lewym górnym rogu. Rysowany w kodzie, a nie
+     z podmienianych SVG, bo mimika musi reagować w czasie rzeczywistym na
+     kąt wahadła — gotowe sprite'y mają zamrożone twarze.
+     Cała treść jest funkcją dwóch liczb: `tilt` i `panic`.               */
+
+  var CAM_X = 56, CAM_Y = 60, CAM_R = 38;
+  var PANIC_FROM = 15 * Math.PI / 180;   // od tego kąta flaming zaczyna panikować
+
+  /* Do czego panika DĄŻY: wychylenie albo gwałtowność skrętu. Szarpnięcie
+     kierownicą przeraża ptaka, zanim jeszcze zdąży się przechylić.       */
+  function panicTarget() {
+    var byTilt  = clamp((Math.abs(game.bird.a) - PANIC_FROM) / (TILT_LIMIT - PANIC_FROM), 0, 1);
+    var bySteer = clamp(Math.abs(game.ski.ax) / SKI_ACCEL, 0, 1) * 0.7;
+    return Math.max(byTilt, bySteer);
+  }
+
+  /* Ramka przechodzi ze złotej w koralową płynnie — próg skokowy migotał
+     w okolicy wartości granicznej.                                      */
+  function ringColor(p) {
+    return "rgb(" + Math.round(255 + 0 * p) + "," +
+                    Math.round(201 + (112 - 201) * p) + "," +
+                    Math.round(77 + (67 - 77) * p) + ")";
+  }
+
+  function drawCam(a) {
+    if (game.mode === MENU) return;
+
+    var tilt  = game.bird.a + game.bird.w * a;
+    var panic = game.bird.panic;
+    var wiped = (game.mode === WIPE || game.mode === OVER);
+    var wt    = wiped && game.wipe ? clamp((game.wipe.t + a) / 0.45, 0, 1) : 0;
+
+    ctx.save();
+    ctx.translate(CAM_X, CAM_Y);
+
+    /* ---------------------------------------------------- wnętrze okienka */
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(0, 0, CAM_R, 0, 6.2832);
+    ctx.clip();
+
+    var g = ctx.createLinearGradient(0, -CAM_R, 0, CAM_R);
+    g.addColorStop(0, "#3CB4E0");
+    g.addColorStop(1, "#0A6FA8");
+    ctx.fillStyle = g;
+    ctx.fillRect(-CAM_R, -CAM_R, CAM_R * 2, CAM_R * 2);
+
+    ctx.strokeStyle = "rgba(255,255,255,.22)";   // woda w tle płynie
+    ctx.lineWidth = 2;
+    for (var i = 0; i < 3; i++) {
+      var wy = mod(i * 26 - (game.scroll + game.scrollV * a) * 0.3, 78) - 39;
+      ctx.beginPath();
+      ctx.moveTo(-CAM_R, wy);
+      ctx.lineTo(CAM_R, wy);
+      ctx.stroke();
+    }
+
+    /* Obie głowy razem zajmują całą średnicę, więc treść jedzie odrobinę
+       mniejsza — inaczej dziób i podbródek ucinają się o krawędź.      */
+    ctx.save();
+    ctx.scale(0.86, 0.86);
+
+    /* --- kapibara: niewzruszona bez względu na wszystko ---------------- */
+    ctx.save();
+    ctx.translate(0, 17);
+    ctx.lineJoin = "round";
+
+    ctx.fillStyle = "#8B5E33";
+    ctx.beginPath();
+    ctx.ellipse(-21, -15, 7, 6, 0, 0, 6.2832);
+    ctx.ellipse(21, -15, 7, 6, 0, 0, 6.2832);
+    ctx.fill();
+
+    ctx.fillStyle = "#A9764A";
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 26, 22, 0, 0, 6.2832);
+    ctx.fill();
+    ctx.strokeStyle = "#3A2716";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.fillStyle = "#FF6F9C";                    // różowe okulary
+    ctx.beginPath();
+    ctx.ellipse(-11, -4, 10, 7, 0, 0, 6.2832);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(11, -4, 10, 7, 0, 0, 6.2832);
+    ctx.fill();
+    ctx.strokeStyle = "#3A2716";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.ellipse(-11, -4, 10, 7, 0, 0, 6.2832);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(11, -4, 10, 7, 0, 0, 6.2832);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-2, -4); ctx.lineTo(2, -4);
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(255,255,255,.6)";       // odblask w szkłach
+    ctx.beginPath();
+    ctx.ellipse(-14, -7, 3.4, 2, -0.5, 0, 6.2832);
+    ctx.ellipse(8, -7, 3.4, 2, -0.5, 0, 6.2832);
+    ctx.fill();
+
+    ctx.fillStyle = "#8B5E33";                    // pysk
+    ctx.beginPath();
+    ctx.ellipse(0, 11, 9, 6, 0, 0, 6.2832);
+    ctx.fill();
+    ctx.fillStyle = "#3A2716";
+    ctx.beginPath();
+    ctx.ellipse(0, 8, 3.6, 2.4, 0, 0, 6.2832);
+    ctx.fill();
+    ctx.restore();
+
+    /* --- flaming: cała ekspresja siedzi tutaj -------------------------- */
+    if (game.mode === PLAY) {
+      ctx.save();
+      ctx.translate(0, 6);
+      ctx.rotate(tilt * 1.5);                     // wychylenie wzmocnione
+      if (panic > 0.02) {                          // drżenie głowy
+        ctx.translate(rand(-1, 1) * 2.4 * panic, rand(-1, 1) * 2.4 * panic);
+      }
+      ctx.translate(0, -34);
+      ctx.lineJoin = "round";
+
+      ctx.strokeStyle = "#FF6F9C";                // szyja
+      ctx.lineWidth = 9;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(0, 32);
+      ctx.quadraticCurveTo(7, 15, 2, 5);
+      ctx.stroke();
+
+      ctx.fillStyle = "#FF83A9";                  // głowa
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 13, 11, 0, 0, 6.2832);
+      ctx.fill();
+      ctx.strokeStyle = "#7A2540";
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      var er = 3.8 + 3.4 * panic;                 // oczy rosną w panice
+      ctx.fillStyle = "#FFF";
+      ctx.beginPath();
+      ctx.ellipse(-4, -2, er, er * 0.95, 0, 0, 6.2832);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(6, -2, er, er * 0.95, 0, 0, 6.2832);
+      ctx.fill();
+      ctx.strokeStyle = "#7A2540";
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.ellipse(-4, -2, er, er * 0.95, 0, 0, 6.2832);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.ellipse(6, -2, er, er * 0.95, 0, 0, 6.2832);
+      ctx.stroke();
+
+      var pr = 2.2 - 0.8 * panic;                 // źrenice się kurczą
+      ctx.fillStyle = "#151515";
+      ctx.beginPath();
+      ctx.arc(-4, -2, pr, 0, 6.2832);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(6, -2, pr, 0, 6.2832);
+      ctx.fill();
+
+      var open = 5 + 11 * panic;                  // dziób się otwiera
+      ctx.fillStyle = "#FFC94D";
+      ctx.strokeStyle = "#7A2540";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(9, 2);
+      ctx.lineTo(26, -1 - open * 0.35);
+      ctx.lineTo(26, -1 + open * 0.65);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    }
+    ctx.restore();   // koniec zmniejszenia treści
+
+    /* --- wipeout: najpierw uderzenie, potem zmoczenie ------------------ */
+    if (wiped) {
+      /* faza 1: rozbryzg w obiektyw, pierwsze ~0,15 s */
+      if (wt < 0.34) {
+        var f = 1 - wt / 0.34;
+        ctx.fillStyle = "rgba(255,255,255," + (f * 0.75).toFixed(3) + ")";
+        ctx.beginPath();
+        ctx.arc(0, 6, CAM_R * (0.3 + 1.1 * (1 - f)), 0, 6.2832);
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(255,255,255," + (f * 0.9).toFixed(3) + ")";
+        ctx.lineWidth = 3;
+        ctx.lineCap = "round";
+        for (var sp = 0; sp < 8; sp++) {
+          var ang = sp * 0.7854 + 0.3;
+          var r0 = CAM_R * (0.25 + 0.7 * (1 - f));
+          ctx.beginPath();
+          ctx.moveTo(Math.cos(ang) * r0, 6 + Math.sin(ang) * r0);
+          ctx.lineTo(Math.cos(ang) * (r0 + 9), 6 + Math.sin(ang) * (r0 + 9));
+          ctx.stroke();
+        }
+      }
+
+      /* faza 2: woda podchodzi — na tyle przezroczysta, żeby zmoczoną
+         kapibarę było widać pod powierzchnią.                          */
+      var lv = CAM_R - 2 * CAM_R * wt;
+      ctx.fillStyle = "rgba(41,182,246,.62)";
+      ctx.beginPath();
+      ctx.moveTo(-CAM_R, lv);
+      for (var x = -CAM_R; x <= CAM_R; x += 7) {
+        ctx.lineTo(x, lv + Math.sin(x * 0.4 + (game.t + a) * 11) * 3.2);
+      }
+      ctx.lineTo(CAM_R, CAM_R);
+      ctx.lineTo(-CAM_R, CAM_R);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.strokeStyle = "rgba(255,255,255,.7)";   // lustro wody
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (var x2 = -CAM_R; x2 <= CAM_R; x2 += 7) {
+        var yy = lv + Math.sin(x2 * 0.4 + (game.t + a) * 11) * 3.2;
+        if (x2 === -CAM_R) ctx.moveTo(x2, yy); else ctx.lineTo(x2, yy);
+      }
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(255,255,255,.85)";    // bąbelki
+      for (var bb = 0; bb < 7; bb++) {
+        var bx = -26 + bb * 9;
+        var by = lv + 10 + mod(bb * 13 - (game.t + a) * 40, 42);
+        ctx.beginPath();
+        ctx.arc(bx, by, 1.6 + (bb % 3), 0, 6.2832);
+        ctx.fill();
+      }
+    }
+
+    ctx.restore();   // koniec obcięcia do koła
+
+    /* ------------------------------------------------------------ ramka */
+    ctx.beginPath();
+    ctx.arc(0, 0, CAM_R + 1, 0, 6.2832);
+    ctx.lineWidth = 7;
+    ctx.strokeStyle = "#08324A";
+    ctx.stroke();
+
+    var ring = ringColor(wiped ? 1 : panic);
+    ctx.shadowColor = ring;
+    ctx.shadowBlur = 8 + 8 * (wiped ? 1 : panic);
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = ring;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    /* czerwona kropka „na żywo" — puls 1 Hz */
+    if (!wiped && Math.sin((game.t + a) * 6.2832) > -0.3) {
+      ctx.fillStyle = "#FF3B30";
+      ctx.beginPath();
+      ctx.arc(CAM_R * 0.72, -CAM_R * 0.72, 4, 0, 6.2832);
+      ctx.fill();
+      ctx.lineWidth = 1.6;
+      ctx.strokeStyle = "#08324A";
+      ctx.stroke();
+    }
+
+    ctx.restore();
   }
 
   /* Na menu totem stoi spokojnie i tylko się kołysze. */
