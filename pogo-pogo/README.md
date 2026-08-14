@@ -3,7 +3,7 @@
 Zręcznościowa gra przeglądarkowa. Kapibara w okularach siedzi bez emocji na
 skuterze wodnym i trzyma na głowie flaminga, który ma histerię. Skuter płynie
 sam, gracz tylko skręca — a każdy skręt rozbuja flaminga siłą bezwładności.
-Wychylenie ponad 50° oznacza koniec przejazdu.
+Utrzymanie wychylenia ponad 62° oznacza koniec przejazdu.
 
 Serwowana pod `/<repo>/pogo-pogo/`, niezależnie od pozostałych projektów w repo.
 Zakres MVP opisuje [`SPEC.md`](SPEC.md).
@@ -120,6 +120,18 @@ zmianie rozmiaru okna), a w pętli rysowania trafia już tylko gotowa bitmapa 1:
 Kafelek wody idzie tą samą drogą — wzorzec powstaje z przepalonego płótna,
 a `setTransform` na wzorcu sprowadza go z powrotem do jednostek logicznych.
 
+## Obszar kolizji i czas na reakcję
+
+Skuter ma **elipsę**, nie koło: `HIT_W` 20 px w poziomie, `HIT_H` 26 px w pionie.
+Zahaczenie palika bokiem było najczęstszą przyczyną poczucia niesprawiedliwości —
+grafika skutera ma 96 px szerokości, ale kadłub z załogą jest dużo węższy, więc
+w poziomie liczy się mniej więcej szerokość kapibary. W pionie zostało po
+staremu. `CLEAR` liczy się od `HIT_W`, więc korytarz przejazdu sam się dostroił.
+
+Sam skuter siedzi też niżej — `SKI_Y` z 0,74 na 0,81 wysokości ekranu. To czysty
+zysk czasu: przy 600 px/s przeszkoda leci przez ekran 0,96 s zamiast 0,89 s,
+a przy 190 px/s — 3,04 s zamiast 2,81 s.
+
 ## Reaction Cam
 
 Okrągły podgląd twarzy w lewym górnym rogu, z neonową obwódką. Cała treść jest
@@ -157,17 +169,22 @@ z ekranem przy wywrotce — to interfejs, nie część świata.
 
 ## Krzywa trudności
 
-Trudność rośnie **skokowo i bez sufitu**: co `LEVEL_M` (80 m) wchodzi kolejny
-próg. Pierwsza wersja zatrzymywała wszystko na szóstym progu i po ~540 m gra
-robiła się płaska — dało się jechać 4 000 m i poddać z nudów.
+Trudność rośnie **skokowo i bez sufitu**. Pierwsza wersja zatrzymywała wszystko
+na szóstym progu i po ~540 m gra robiła się płaska — dało się jechać 4 000 m
+i poddać z nudów.
+
+Pierwsze dwa progi są bliżej startu (`LEVEL_1` 50 m, `LEVEL_2` 115 m), bo
+początek za długo nie robił nic ciekawego. Dalej co `LEVEL_M` (80 m).
 
 | próg | dystans | prędkość | odstęp fal | bojki w fali |
 | --- | --- | --- | --- | --- |
 | 0 | 0 m | 190 px/s | 0,86–1,28 s | 1 |
-| 4 | 320 m | 422 px/s | 0,49–0,73 s | 1–2 |
-| 8 | 640 m | 600 px/s (sufit) | 0,28–0,42 s | 1–3 |
-| 12 | 960 m | 600 px/s | 0,16–0,24 s | 1–3 |
-| 16+ | 1280 m | 600 px/s | 0,14–0,21 s (podłoga) | 1–3 |
+| 1 | 50 m | 248 px/s | 0,75–1,11 s | 1 |
+| 2 | 115 m | 306 px/s | 0,65–0,97 s | 1–2 |
+| 4 | 275 m | 422 px/s | 0,49–0,73 s | 1–2 |
+| 8 | 595 m | 600 px/s (sufit) | 0,28–0,42 s | 1–3 |
+| 12 | 915 m | 600 px/s | 0,16–0,24 s | 1–3 |
+| 16+ | 1235 m | 600 px/s | 0,14–0,21 s (podłoga) | 1–3 |
 
 Prędkość ma sufit 600 px/s, bo powyżej niego czas dojazdu przeszkody spada
 poniżej czasu potrzebnego na przejechanie pasa — to już nie jest trudność,

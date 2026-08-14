@@ -15,7 +15,9 @@
 
   var W = 360, H = 640;               // logiczna rozdzielczość (9:16)
 
-  var SKI_Y      = H * 0.74;          // skuter stoi w miejscu, świat płynie
+  /* Skuter stoi w miejscu, świat płynie. Im niżej, tym dłużej przeszkoda
+     jedzie przez ekran, zanim dojedzie — czysty zysk czasu na reakcję.  */
+  var SKI_Y      = H * 0.81;
   var SKI_VX_MAX = 250;               // px/s
   var SKI_ACCEL  = 1500;              // px/s² przy wciśniętym kierunku
   var SKI_DRAG   = 5.5;               // wyhamowanie bez dotyku
@@ -40,16 +42,23 @@
   var SPEED_MIN  = 190;               // px/s przewijania wody na starcie
   var SPEED_STEP = 58;                // przyrost na próg
   var SPEED_CAP  = 600;               // wyżej czas reakcji spada poniżej uczciwego
-  var LEVEL_M    = 80;                // co tyle metrów kolejny próg trudności
+  var LEVEL_1    = 50;                // pierwszy próg — blisko startu
+  var LEVEL_2    = 115;               // drugi próg
+  var LEVEL_M    = 80;                // dalej co tyle metrów
   var PX_PER_M   = 18;
 
   var WATER_TILE = 256;               // logiczny bok kafelka wody
   var BUOY_SEP   = 52;                // tyle, żeby bojki się nie nakładały
   var LANE_LO    = SKI_MARGIN + 8;
   var LANE_HI    = W - SKI_MARGIN - 8;
-  var CLEAR      = HIT_BUOY + HIT_SKI + 24;   // korytarz przejazdu: 24 px luzu
+  var CLEAR      = HIT_BUOY + HIT_W + 24;     // korytarz przejazdu: 24 px luzu
 
-  var HIT_SKI = 26, HIT_BUOY = 18, HIT_SHARK = 20;
+  /* Obszar kolizji skutera jest elipsą, nie kołem: zahaczenie palika bokiem
+     było najczęstszą przyczyną poczucia niesprawiedliwości, a skuter ma
+     96 px szerokości przy dużo węższym kadłubie. W poziomie liczy się więc
+     mniej więcej szerokość kapibary, w pionie zostaje po staremu.       */
+  var HIT_W = 20, HIT_H = 26;
+  var HIT_BUOY = 18, HIT_SHARK = 20;
   var BEST_KEY = "pogo-pogo:best";
 
   /* ------------------------------------------------------------ narzędzia */
@@ -623,7 +632,7 @@
     el.bestM.textContent = best;
     el.cause.textContent = game.wipe && game.wipe.cause === "tilt"
       ? "Flaming poszedł do wody."
-      : "Skuter w przeszkodę.";
+      : "A niech to flaming kopnie!";
     el.hud.hidden = true;
     show(el.over, true);
   }
@@ -643,7 +652,12 @@
      dawało się jechać kilka tysięcy metrów z nudów. Prędkość ma sufit, bo
      powyżej niego czas reakcji spada poniżej uczciwego, ale gęstość trasy
      rośnie dalej i to ona kończy przejazd.                                */
-  function level() { return Math.floor(game.dist / LEVEL_M); }
+  function level() {
+    var d = game.dist;
+    if (d < LEVEL_1) return 0;
+    if (d < LEVEL_2) return 1;
+    return 2 + Math.floor((d - LEVEL_2) / LEVEL_M);
+  }
 
   function spawnDelay() {
     return Math.max(0.17, 1.05 * Math.pow(0.87, level())) * rand(0.82, 1.22);
@@ -799,9 +813,9 @@
     /* kolizje — okrąg skutera kontra okrąg przeszkody */
     for (var i = 0; i < game.obstacles.length; i++) {
       var o = game.obstacles[i];
-      var dx = o.x - ski.x, dy = o.y - SKI_Y;
-      var rr = o.r + HIT_SKI;
-      if (dx * dx + dy * dy < rr * rr) { wipeout("hit"); return; }
+      var dx = (o.x - ski.x) / (HIT_W + o.r);
+      var dy = (o.y - SKI_Y) / (HIT_H + o.r);
+      if (dx * dx + dy * dy < 1) { wipeout("hit"); return; }
     }
 
     /* kilwater — częstotliwość liczona z czasu, nie z liczby kroków */
