@@ -413,6 +413,24 @@ Każdy element ma **dodatkowo** wektorowy kształt zastępczy rysowany w kodzie
 (funkcje `fb*` w `game.js`). Gdyby plik zniknął albo się nie wczytał, gra nadal
 działa — po prostu z prostszą grafiką.
 
+### Ułożenie totemu jest liczone, nie wpisane
+
+Wysokości sprite'ów biorą się z obrysu treści, więc każda podmiana grafiki albo
+zmiana skali przesuwałaby styki, a ręczne stałe trzeba by dostrajać od nowa.
+`layoutTotem()` przelicza je po przepaleniu bitmap:
+
+```
+capyDy  = −skiH · CAPY_SEAT          dół kapibary na siodełku
+pivotDy = capyDy − capyH + HEAD_SINK stopy flaminga na czaszce
+```
+
+`HEAD_SINK` (7 px) sprawia, że stopy lekko wchodzą w obrys głowy, zamiast
+stykać się z nią styk w styk — bez tego przy każdym wychyleniu pojawiała się
+szczelina. Pivot wahadła leży dokładnie w tym punkcie styku.
+
+Szerokość kapibary (68 px przy skuterze 96 px) zmierzona z `totem_duo.svg` —
+jedynego pliku pokazującego zamierzoną kompozycję we trzech.
+
 ### Skalowanie liczone z obrysu, nie z rozmiaru pliku
 
 Pliki mają kwadratowe płótno (256×256, bojka i rekin 128×128), ale postacie nie

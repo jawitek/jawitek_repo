@@ -23,8 +23,14 @@
   var SKI_DRAG   = 5.5;               // wyhamowanie bez dotyku
   var SKI_MARGIN = 44;                // tyle, żeby skuter nie wystawał za ekran
 
-  var CAPY_DY    = -18;               // gdzie siada kapibara względem środka skutera
-  var PIVOT_DY   = -72;               // staw flaminga względem środka skutera
+  /* Ułożenie totemu jest LICZONE, nie wpisane. Wysokości sprite'ów biorą się
+     z obrysu treści, więc każda podmiana grafiki albo zmiana skali
+     przesuwałaby styki — a ręczne stałe trzeba by wtedy dostrajać od nowa.
+     `capyDy` i `pivotDy` wylicza layoutTotem() po przepaleniu bitmap.    */
+  var CAPY_SEAT  = 0.10;              // dół kapibary, ułamek wysokości skutera nad jego środkiem
+  var HEAD_SINK  = 7;                 // o tyle stopy flaminga wchodzą w obrys czaszki
+  var capyDy     = -18;               // przeliczane
+  var pivotDy    = -72;               // przeliczane
   var SPRING     = 30;                // rad/s² na radian wychylenia
   var DAMP       = 2.6;               // tłumienie
   var COUPLE     = 0.012;             // ile bezwładności skutera trafia w ptaka
@@ -99,7 +105,7 @@
   /* Wersja zasobów. Przeglądarki trzymały stary game.js i stare sprite'y po
      wdrożeniu — gracz widział poprzednią wersję gry mimo udanej publikacji.
      PODBIJ TĘ LICZBĘ (i te w index.html) przy każdym wdrożeniu.          */
-  var VER = "8";
+  var VER = "9";
 
   /* ------------------------------------------------------------ narzędzia */
 
@@ -146,7 +152,7 @@
      wykadrowaną nie zniekształci postaci.                              */
   var BOX = {
     jetski:         { w: 96, anchor: "center", fbW: 92, fbH: 62, fb: fbJetski },
-    capybara:       { w: 56, anchor: "bottom", fbW: 58, fbH: 64, fb: fbCapybara },
+    capybara:       { w: 68, anchor: "bottom", fbW: 58, fbH: 64, fb: fbCapybara },
     flamingo:       { w: 62, anchor: "bottom", fbW: 48, fbH: 78, fb: fbFlamingo },
     obstacle_buoy:  { w: 44, anchor: "center", fbW: 40, fbH: 52, fb: fbBuoy },
     obstacle_shark: { w: 58, anchor: "center", fbW: 64, fbH: 46, fb: fbShark },
@@ -232,6 +238,17 @@
     }
     bakeWater();
     bakeFaces();
+    layoutTotem();
+  }
+
+  /* Kapibara siada na siodełku, flaming staje jej na głowie. Oba styki
+     wynikają z rzeczywistych wysokości przepalonych bitmap, więc powiększenie
+     kapibary albo nowy rysunek nie zostawiają dziury ani zachodzenia.    */
+  function layoutTotem() {
+    var skiH  = BAKE.jetski   ? BAKE.jetski.h   : BOX.jetski.fbH;
+    var capyH = BAKE.capybara ? BAKE.capybara.h : BOX.capybara.fbH;
+    capyDy  = -skiH * CAPY_SEAT;
+    pivotDy = capyDy - capyH + HEAD_SINK;
   }
 
   /* Twarze do Reaction Cam NIE idą przez dopasowanie do obrysu jak reszta
@@ -879,19 +896,19 @@
     /* flaming wylatuje bokiem, kręcąc się */
     var dir = Math.random() < 0.5 ? -1 : 1;
     game.flyaway = {
-      x: game.ski.x, y: SKI_Y + PIVOT_DY,
+      x: game.ski.x, y: SKI_Y + pivotDy,
       vx: dir * rand(190, 260), vy: -rand(340, 420),
       rot: 0, vrot: dir * rand(7, 11)
     };
 
     for (var i = 0; i < 22; i++) {                    // pękające serce
       game.spray.push({
-        x: game.ski.x + rand(-10, 10), y: SKI_Y + PIVOT_DY,
+        x: game.ski.x + rand(-10, 10), y: SKI_Y + pivotDy,
         vx: rand(-150, 150), vy: rand(-220, -40),
         r: rand(2, 4.5), life: rand(0.4, 0.9), pink: true
       });
     }
-    pop(game.ski.x, SKI_Y + PIVOT_DY - 20, "FLAMING ZA BURTĄ!", 1.1);
+    pop(game.ski.x, SKI_Y + pivotDy - 20, "FLAMING ZA BURTĄ!", 1.1);
   }
 
   function wipeout(cause) {
@@ -902,7 +919,7 @@
       cause: cause,
       /* flaming odlatuje w stronę, w którą był wychylony */
       x: game.ski.x + Math.sin(game.bird.a) * 40,
-      y: SKI_Y + PIVOT_DY - 30,
+      y: SKI_Y + pivotDy - 30,
       vx: Math.sin(game.bird.a) * 260 + game.ski.vx * 0.6,
       vy: -260,
       rot: game.bird.a,
@@ -1452,7 +1469,7 @@
 
     /* kapibara siedzi sztywno, tylko lekko kładzie się w skręt */
     ctx.save();
-    ctx.translate(0, CAPY_DY);
+    ctx.translate(0, capyDy);
     ctx.rotate(ski.roll * 0.35);
     sprite("capybara");
     ctx.restore();
@@ -1461,7 +1478,7 @@
        Po wipeoucie i po utracie serca już go tu nie ma.              */
     if (game.mode === PLAY && game.hasBird) {
       ctx.save();
-      ctx.translate(0, PIVOT_DY);
+      ctx.translate(0, pivotDy);
       ctx.rotate(tilt);
       sprite("flamingo");
       ctx.restore();
@@ -1858,11 +1875,11 @@
     ctx.translate(W / 2, SKI_Y + 62);
     sprite("jetski");
     ctx.save();
-    ctx.translate(0, CAPY_DY);
+    ctx.translate(0, capyDy);
     sprite("capybara");
     ctx.restore();
     ctx.save();
-    ctx.translate(0, PIVOT_DY);
+    ctx.translate(0, pivotDy);
     ctx.rotate(sway);
     sprite("flamingo");
     ctx.restore();
