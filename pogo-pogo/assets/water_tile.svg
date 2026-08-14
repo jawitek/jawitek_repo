@@ -1,27 +1,48 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
-  <rect width="256" height="256" fill="#1cb5e0"></rect>
+  <defs>
+    <!-- Gradient głębi wody -->
+    <linearGradient id="oceanGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#00A8E8"/>
+      <stop offset="100%" stop-color="#0077B6"/>
+    </linearGradient>
+  </defs>
 
-  
-  <g fill="none" stroke="#0e9fc7" stroke-width="6" stroke-linecap="round" opacity="0.55">
-    <path d="M0 32 C64 24 192 40 256 32"></path>
-    <path d="M0 96 C64 88 192 104 256 96"></path>
-    <path d="M0 160 C64 152 192 168 256 160"></path>
-    <path d="M0 224 C64 216 192 232 256 224"></path>
+  <!-- Baza tła -->
+  <rect width="256" height="256" fill="url(#oceanGrad)"/>
+
+  <!-- Plamy światła / Kaustyka w tle (półprzezroczyste) -->
+  <g fill="#90E0EF" opacity="0.25">
+    <ellipse cx="64" cy="40" rx="30" ry="12"/>
+    <ellipse cx="192" cy="160" rx="36" ry="14"/>
+    <ellipse cx="140" cy="80" rx="20" ry="8"/>
+    <ellipse cx="40" cy="200" rx="24" ry="10"/>
   </g>
 
-  
-  <g fill="none" stroke="#eafcff" stroke-width="4" stroke-linecap="round" opacity="0.8">
-    <path d="M0 26 C32 20 96 32 128 26 C160 20 224 32 256 26"></path>
-    <path d="M0 90 C32 84 96 96 128 90 C160 84 224 96 256 90"></path>
-    <path d="M0 154 C32 148 96 160 128 154 C160 148 224 160 256 154"></path>
-    <path d="M0 218 C32 212 96 224 128 218 C160 212 224 224 256 218"></path>
-  </g>
+  <!-- FALA 1 (Góra kafelka - cień + piana) -->
+  <!-- Cień pod falą -->
+  <path d="M -10 64 Q 60 78 128 64 Q 196 50 266 64" fill="none" stroke="#023E8A" stroke-width="8" opacity="0.35" stroke-linecap="round"/>
+  <!-- Piana na fali -->
+  <path d="M -10 60 Q 60 74 128 60 Q 196 46 266 60" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+  <!-- Dodatkowy akcent piany -->
+  <path d="M 40 68 Q 65 74 90 70" fill="none" stroke="#E0FBFC" stroke-width="2.5" stroke-linecap="round"/>
 
-  
-  <g fill="#ffffff" opacity="0.25">
-    <ellipse cx="48" cy="64" rx="14" ry="4"></ellipse>
-    <ellipse cx="180" cy="64" rx="10" ry="3"></ellipse>
-    <ellipse cx="112" cy="192" rx="16" ry="4"></ellipse>
-    <ellipse cx="220" cy="128" rx="12" ry="3"></ellipse>
+  <!-- FALA 2 (Dół kafelka - przesunięta w fazie) -->
+  <!-- Cień pod falą -->
+  <path d="M -10 192 Q 60 178 128 192 Q 196 206 266 192" fill="none" stroke="#023E8A" stroke-width="8" opacity="0.35" stroke-linecap="round"/>
+  <!-- Piana na fali -->
+  <path d="M -10 188 Q 60 174 128 188 Q 196 202 266 188" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+  <!-- Akcent piany -->
+  <path d="M 160 198 Q 190 204 220 196" fill="none" stroke="#E0FBFC" stroke-width="2.5" stroke-linecap="round"/>
+
+  <!-- Bąbelki / Bliki słoneczne (iskry) -->
+  <g fill="#FFFFFF" opacity="0.7">
+    <!-- Błysk 1 -->
+    <polygon points="50,110 52,116 58,118 52,120 50,126 48,120 42,118 48,116"/>
+    <!-- Błysk 2 -->
+    <polygon points="210,30 211,34 215,35 211,36 210,40 209,36 205,35 209,34" transform="scale(0.8) translate(50, 0)"/>
+    <!-- Kropelki / Bąbelki -->
+    <circle cx="110" cy="130" r="3" fill="#CAF0F8"/>
+    <circle cx="170" cy="115" r="2" fill="#FFFFFF"/>
+    <circle cx="95" cy="225" r="2.5" fill="#CAF0F8"/>
   </g>
 </svg>
