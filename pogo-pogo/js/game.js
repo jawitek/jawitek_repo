@@ -37,13 +37,17 @@
   var FIXED      = 1 / 120;           // stały krok fizyki — próg musi wypadać
                                       // tak samo przy 30 i 144 fps
 
-  var SPEED_MIN  = 190, SPEED_MAX = 550;   // px/s przewijania wody
-  var LEVEL_M    = 90;                // co tyle metrów kolejny próg trudności
-  var LEVELS     = 6;                 // tyle progów do maksimum (540 m)
+  var SPEED_MIN  = 190;               // px/s przewijania wody na starcie
+  var SPEED_STEP = 58;                // przyrost na próg
+  var SPEED_CAP  = 600;               // wyżej czas reakcji spada poniżej uczciwego
+  var LEVEL_M    = 80;                // co tyle metrów kolejny próg trudności
   var PX_PER_M   = 18;
 
   var WATER_TILE = 256;               // logiczny bok kafelka wody
-  var BUOY_SEP   = 128;               // najmniejszy rozstaw bojek w jednej fali
+  var BUOY_SEP   = 52;                // tyle, żeby bojki się nie nakładały
+  var LANE_LO    = SKI_MARGIN + 8;
+  var LANE_HI    = W - SKI_MARGIN - 8;
+  var CLEAR      = HIT_BUOY + HIT_SKI + 24;   // korytarz przejazdu: 24 px luzu
 
   var HIT_SKI = 26, HIT_BUOY = 18, HIT_SHARK = 20;
   var BEST_KEY = "pogo-pogo:best";
@@ -534,6 +538,8 @@
     obstacles: [],
     spray: [],
     spawn: 0,
+    gapTime: 1.1,
+    safeX: W / 2,
     level: 0,
     shake: 0,
     wipe: null,
@@ -550,6 +556,8 @@
     game.obstacles.length = 0;
     game.spray.length = 0;
     game.spawn = 1.1;
+    game.gapTime = 1.1;
+    game.safeX = W / 2;
     game.level = 0;
     game.shake = 0;
     el.dist.classList.remove("bump");
@@ -608,43 +616,56 @@
     });
   }
 
-  /* Trudność rośnie skokowo, nie płynnie: co LEVEL_M metrów wchodzi kolejny
-     próg i od razu widać, że zrobiło się szybciej. Steruje prędkością,
-     gęstością trasy i tym, ile przeszkód wchodzi naraz.                   */
-  function level() { return Math.min(LEVELS, Math.floor(game.dist / LEVEL_M)); }
-  function difficulty() { return level() / LEVELS; }
+  /* Trudność rośnie skokowo i BEZ SUFITU. Wcześniej wszystko zatrzymywało się
+     na szóstym progu, więc po ~540 m gra była płaska w nieskończoność —
+     dawało się jechać kilka tysięcy metrów z nudów. Prędkość ma sufit, bo
+     powyżej niego czas reakcji spada poniżej uczciwego, ale gęstość trasy
+     rośnie dalej i to ona kończy przejazd.                                */
+  function level() { return Math.floor(game.dist / LEVEL_M); }
 
   function spawnDelay() {
-    return rand(0.78, 1.32) * (1.05 - 0.74 * difficulty());
+    return Math.max(0.17, 1.05 * Math.pow(0.87, level())) * rand(0.82, 1.22);
   }
 
-  function spawnWave() {
-    var d = difficulty();
+  /* gapTime — ile czasu minęło od poprzedniej fali. Z tego wynika, jak daleko
+     skuter zdążył się przemieścić, a więc jak daleko wolno odsunąć korytarz. */
+  function spawnWave(gapTime) {
+    var L = level();
+    var d = clamp(L / 6, 0, 1);
 
-    /* Rekin wchodzi z boku i przecina ekran, więc idzie sam — o „kilku
-       rekinach naraz" decyduje częstotliwość, nie liczebność fali.      */
-    if (Math.random() < 0.08 + 0.50 * d) {
+    /* Rekin przecina ekran w poprzek, więc idzie sam. Na wyższych progach
+       tnie szybciej — wolny rekin przelatywał bokiem i nic nie robił.   */
+    if (Math.random() < 0.10 + 0.28 * d) {
       var fromLeft = Math.random() < 0.5;
       game.obstacles.push({
         type: "shark",
         x: fromLeft ? -50 : W + 50,
         y: -60,
-        vx: (fromLeft ? 1 : -1) * rand(45, 95),
+        vx: (fromLeft ? 1 : -1) * rand(60, 90 + 110 * d),
         r: HIT_SHARK
       });
       return;
     }
 
-    /* Fala bojek: 1 na starcie, z czasem 2. Trzeciej celowo nie ma — przy
-       rozstawie BUOY_SEP trzy bojki mieszczą się w pasie tylko w jednym
-       układzie, więc byłaby to zawsze ta sama, sztywna ściana. Gęstość
-       bierze się z częstotliwości fal, nie z ich liczebności.           */
-    var n = 1 + (Math.random() < 0.50 * d ? 1 : 0);
+    /* Fala bojek buduje się WOKÓŁ korytarza, a nie losowo. Korytarz może
+       odsunąć się najwyżej o tyle, ile skuter zdąży pokonać przez gapTime,
+       więc każda kolejna fala jest osiągalna z luki w poprzedniej. Dzięki
+       tej gwarancji bojki nie muszą już trzymać szerokiego rozstawu między
+       sobą i mogą tworzyć ścianę z jedną luką.                          */
+    /* Przy krótkich odstępach ogranicza nie prędkość maksymalna, tylko
+       rozpęd — z miejsca w 0,17 s skuter przejedzie 22 px, a nie 42.   */
+    var reach = 0.35 * Math.min(SKI_VX_MAX * gapTime,
+                                      0.5 * SKI_ACCEL * gapTime * gapTime);
+    var safeX = clamp(game.safeX + rand(-reach, reach), LANE_LO, LANE_HI);
 
-    var lo = SKI_MARGIN - 6, hi = W - SKI_MARGIN + 6;
+    var n = 1 + (Math.random() < 0.55 * clamp(L / 4, 0, 1) ? 1 : 0)
+              + (Math.random() < 0.30 * clamp(L / 8, 0, 1) ? 1 : 0);
+
     var xs = [];
-    for (var tries = 0; tries < 40 && xs.length < n; tries++) {
-      var x = rand(lo, hi), ok = true;
+    for (var tries = 0; tries < 60 && xs.length < n; tries++) {
+      var x = rand(LANE_LO - 14, LANE_HI + 14);
+      if (Math.abs(x - safeX) < CLEAR) continue;      // korytarz zostaje pusty
+      var ok = true;
       for (var i = 0; i < xs.length; i++) {
         if (Math.abs(xs[i] - x) < BUOY_SEP) { ok = false; break; }
       }
@@ -654,6 +675,7 @@
     for (var k = 0; k < xs.length; k++) {
       game.obstacles.push({ type: "buoy", x: xs[k], y: -60, vx: 0, r: HIT_BUOY });
     }
+    game.safeX = safeX;
   }
 
   /* ------------------------------------------------------------- symulacja */
@@ -690,7 +712,7 @@
 
     /* ------------------------------------------------------------- PLAY */
 
-    game.speed = SPEED_MIN + (SPEED_MAX - SPEED_MIN) * difficulty();
+    game.speed = Math.min(SPEED_CAP, SPEED_MIN + SPEED_STEP * level());
 
     /* Skok prędkości bez sygnału czyta się jak zacięcie — licznik metrów
        pulsuje, żeby było wiadomo, że to gra przyspieszyła.              */
@@ -739,7 +761,11 @@
 
     /* trasa */
     game.spawn -= dt;
-    if (game.spawn <= 0) { spawnWave(); game.spawn = spawnDelay(); }
+    if (game.spawn <= 0) {
+      spawnWave(game.gapTime);
+      game.gapTime = spawnDelay();
+      game.spawn = game.gapTime;
+    }
     moveObstacles(dt);
 
     /* kolizje — okrąg skutera kontra okrąg przeszkody */

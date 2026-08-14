@@ -122,31 +122,56 @@ a `setTransform` na wzorcu sprowadza go z powrotem do jednostek logicznych.
 
 ## Krzywa trudności
 
-Trudność rośnie **skokowo, nie płynnie**: co `LEVEL_M` (90 m) wchodzi kolejny
-z `LEVELS` (6) progów. Płynna rampa była nieczytelna — gracz nie miał poczucia
-postępu, tylko powolne zaciskanie pętli.
+Trudność rośnie **skokowo i bez sufitu**: co `LEVEL_M` (80 m) wchodzi kolejny
+próg. Pierwsza wersja zatrzymywała wszystko na szóstym progu i po ~540 m gra
+robiła się płaska — dało się jechać 4 000 m i poddać z nudów.
 
-| próg | dystans | prędkość | odstęp fal | rekiny | czas do progu |
-| --- | --- | --- | --- | --- | --- |
-| 0 | 0 m | 190 px/s | 0,82–1,39 s | 8% | 0 s |
-| 1 | 90 m | 250 px/s | 0,72–1,22 s | 16% | 8,5 s |
-| 2 | 180 m | 310 px/s | 0,63–1,06 s | 25% | 15 s |
-| 3 | 270 m | 370 px/s | 0,53–0,90 s | 33% | 20 s |
-| 4 | 360 m | 430 px/s | 0,43–0,73 s | 41% | 25 s |
-| 5 | 450 m | 490 px/s | 0,34–0,57 s | 50% | 28 s |
-| 6 | 540 m | 550 px/s | 0,24–0,41 s | 58% | 32 s |
+| próg | dystans | prędkość | odstęp fal | bojki w fali |
+| --- | --- | --- | --- | --- |
+| 0 | 0 m | 190 px/s | 0,86–1,28 s | 1 |
+| 4 | 320 m | 422 px/s | 0,49–0,73 s | 1–2 |
+| 8 | 640 m | 600 px/s (sufit) | 0,28–0,42 s | 1–3 |
+| 12 | 960 m | 600 px/s | 0,16–0,24 s | 1–3 |
+| 16+ | 1280 m | 600 px/s | 0,14–0,21 s (podłoga) | 1–3 |
 
-Pełna trudność wypada po 32 s zamiast po 47 s — przejazdy są krótsze i gęstsze.
+Prędkość ma sufit 600 px/s, bo powyżej niego czas dojazdu przeszkody spada
+poniżej czasu potrzebnego na przejechanie pasa — to już nie jest trudność,
+tylko loteria. Powyżej ósmego progu rośnie już wyłącznie gęstość i to ona
+kończy przejazd.
 
 Skok prędkości bez sygnału czyta się jak zacięcie, więc na każdym progu pulsuje
 licznik metrów (klasa `bump`). To jedyne, co odróżnia próg od błędu.
 
-Rekin wchodzi z boku i przecina ekran, więc zawsze pojawia się sam — o „kilku
-rekinach naraz" decyduje częstotliwość fal, nie ich liczebność. Bojki wchodzą
-po jednej lub dwie, z wymuszonym rozstawem `BUOY_SEP` (128 px), więc między
-parą zawsze zostaje luka szersza niż skuter. Trzeciej bojki celowo nie ma:
-przy tym rozstawie trzy mieszczą się w pasie tylko w jednym układzie, więc
-byłaby to zawsze ta sama sztywna ściana.
+### Fala buduje się wokół korytarza
+
+Wcześniej bojki lądowały w losowych miejscach, więc większość fal w ogóle nie
+stała graczowi na drodze — stąd wrażenie, że „mało słupków". Teraz jest
+odwrotnie: najpierw wybierany jest **korytarz przejazdu** (`safeX`), a bojki są
+rozstawiane wszędzie poza nim. Każda fala wymusza więc konkretną pozycję.
+
+Korytarz może odsunąć się od poprzedniego najwyżej o tyle, ile skuter zdąży
+pokonać przez czas między falami:
+
+```
+reach = 0.35 · min(SKI_VX_MAX · gapTime,  ½ · SKI_ACCEL · gapTime²)
+```
+
+Drugi człon jest istotny: przy odstępie 0,17 s ogranicza nie prędkość
+maksymalna, tylko rozpęd — z miejsca skuter przejedzie wtedy 22 px, a nie 42.
+Współczynnik 0,35 dobrany empirycznie: symulacja idealnego gracza przez 180 s
+daje przy nim **zero** ścian nie do ominięcia, przy 0,8 było ich kilkanaście.
+Zapas idzie na to, że skuter zwykle nadjeżdża rozpędzony w przeciwną stronę,
+a zawracanie zjada prawie cały budżet ruchu.
+
+Dzięki tej gwarancji bojki nie muszą już trzymać szerokiego rozstawu między
+sobą (`BUOY_SEP` spadł ze 128 na 52 px — tyle, żeby się nie nakładały) i mogą
+tworzyć ścianę z jedną luką. `CLEAR` (24 px luzu ponad sumę promieni) ustala,
+ile wolno się pomylić: węziej robi się z tego rzut monetą, szerzej — dobry
+gracz przestaje ginąć w ogóle.
+
+Rekin przecina ekran w poprzek, więc zawsze idzie sam, i na wyższych progach
+tnie szybciej (do 200 px/s) — wolny przelatywał bokiem i nic nie robił. Jego
+udział w falach spadł z 58% na maks. 38%, bo to bojki są kośćcem trudności.
 
 ## Grafika
 
