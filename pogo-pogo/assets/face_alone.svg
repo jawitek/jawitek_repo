@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <!-- Maska przycinająca do wnętrza koła -->
+    <clipPath id="circleClipAlone">
+      <circle cx="64" cy="64" r="54"/>
+    </clipPath>
+  </defs>
+
+  <!-- Grupa przycięta wewnątrz koła -->
+  <g clip-path="url(#circleClipAlone)">
+    <!-- Tło wewnątrz wizjera (Chłodny, solowy błękit z subtelnym gradientem) -->
+    <rect width="128" height="128" fill="#3A86FF"/>
+    <circle cx="64" cy="64" r="54" fill="#00B4D8"/>
+
+    <!-- Puste niebo / powiew wiatru po flamingo (samotny lotnik) -->
+    <path d="M 20 30 Q 50 25 80 32 M 35 42 Q 65 38 95 44" stroke="#CAF0F8" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+
+    <!-- Jedno samotne różowe piórko unoszące się w tle -->
+    <path d="M 88 28 Q 96 20 94 34 Q 92 38 88 28 Z" fill="#FF758F" stroke="#1A1A1A" stroke-width="1.5"/>
+
+    <!-- KAPIBARA SOLO (Wycentrowana, stoicka, lekko uniesiona brew) -->
+    <!-- Uszy kapibary -->
+    <circle cx="34" cy="64" r="7.5" fill="#8F4818" stroke="#1A1A1A" stroke-width="3.5"/>
+    <circle cx="94" cy="64" r="7.5" fill="#8F4818" stroke="#1A1A1A" stroke-width="3.5"/>
+
+    <!-- Głowa i Pysk -->
+    <path d="M 38 68 C 38 48, 90 48, 90 68 C 96 78, 96 102, 90 114 C 80 125, 48 125, 38 114 C 32 102, 32 78, 38 68 Z" 
+          fill="#A65B24" stroke="#1A1A1A" stroke-width="5.5" stroke-linejoin="round"/>
+
+    <!-- Stoicki nos i nozdrza -->
+    <ellipse cx="64" cy="98" rx="14" ry="9" fill="#753C10"/>
+    <circle cx="59" cy="98" r="2" fill="#1A1A1A"/>
+    <circle cx="69" cy="98" r="2" fill="#1A1A1A"/>
+    <path d="M 64 103 L 64 108" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round"/>
+
+    <!-- Uniesiona jedna brew nad lewym okiem (stoickie zdziwienie / fokus) -->
+    <path d="M 38 60 Q 48 52 58 58" fill="none" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round"/>
+    <path d="M 70 59 Q 80 59 90 61" fill="none" stroke="#1A1A1A" stroke-width="3" stroke-linecap="round"/>
+
+    <!-- Różowe okulary retro (Lekko zawadiacko przesunięte) -->
+    <!-- Mostek -->
+    <rect x="58" y="73" width="12" height="4" fill="#FF4D8D" stroke="#1A1A1A" stroke-width="2"/>
+    <!-- Lewe szkło -->
+    <rect x="35" y="66" width="25" height="18" rx="4" fill="#FF4D8D" stroke="#1A1A1A" stroke-width="3"/>
+    <rect x="38" y="69" width="19" height="12" rx="2" fill="#2B0938"/>
+    <line x1="41" y1="71" x2="49" y2="79" stroke="#4CC9F0" stroke-width="2" stroke-linecap="round"/>
+    <!-- Prawe szkło -->
+    <rect x="68" y="66" width="25" height="18" rx="4" fill="#FF4D8D" stroke="#1A1A1A" stroke-width="3"/>
+    <rect x="71" y="69" width="19" height="12" rx="2" fill="#2B0938"/>
+    <line x1="74" y1="71" x2="82" y2="79" stroke="#4CC9F0" stroke-width="2" stroke-linecap="round"/>
+  </g>
+
+  <!-- Fioletowo-srebrna solowa ramka ("Lone Survivor" vibe) -->
+  <circle cx="64" cy="64" r="54" fill="none" stroke="#1A1A1A" stroke-width="8"/>
+  <circle cx="64" cy="64" r="54" fill="none" stroke="#7209B7" stroke-width="5"/>
+  <path d="M 30 25 A 54 54 0 0 1 80 13" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+</svg>
