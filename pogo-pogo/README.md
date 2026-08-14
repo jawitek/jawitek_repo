@@ -147,6 +147,35 @@ Sam skuter siedzi też niżej — `SKI_Y` z 0,74 na 0,81 wysokości ekranu. To c
 zysk czasu: przy 600 px/s przeszkoda leci przez ekran 0,96 s zamiast 0,89 s,
 a przy 190 px/s — 3,04 s zamiast 2,81 s.
 
+## Skocznia wodna
+
+Czerwona skocznia (`ramp.svg`) nie zabija — wyrzuca w powietrze na `JUMP_TIME`
+(1,2 s). Idzie zawsze sama, w zasięgu korytarza, żeby dało się ją złapać, ale
+korytarza **nie przesuwa**: minięcie jej nic nie kosztuje.
+
+W locie:
+
+- totem rośnie do `1 + JUMP_SCALE` (1,25×), jakby leciał w stronę kamery,
+- **cień zostaje na wodzie i odjeżdża w dół** — to on niesie informację o locie.
+  Totem celowo nie przesuwa się w górę: podnoszenie go i powiększanie naraz
+  dublowałoby sygnał i rozjeżdżało pozycję z tym, gdzie faktycznie wyląduje,
+- woda przewija się szybciej (`JUMP_BOOST`, +35% w szczycie),
+- kolizje są wyłączone, a po wodowaniu jeszcze przez `LAND_GRACE` (0,3 s) —
+  bez tego dało się wylądować wprost na bojce, której w locie nie było jak ominąć,
+- bezwładność flaminga jest `AIR_COUPLE` (1,5×) mocniejsza.
+
+Przy wodowaniu obowiązuje ostrzejszy próg `LAND_LIMIT` (25°). Przekroczenie to
+natychmiastowy koniec — „Twarde lądowanie!". Poniżej progu: rozbryzg, `+50 m`
+i napis „PERFECT LANDING!".
+
+**Zwykły próg 62° jest w locie zawieszony.** Rozliczenie następuje przy
+wodowaniu i jest ostrzejsze; utrzymanie obu naraz karałoby dwa razy za to samo.
+
+Konsekwencja dla gracza jest prosta i o to chodziło: **w powietrzu nie rusza się
+sterowania.** Wchodząc w skok z dowolnym wychyleniem, sprężyna zdąży ściągnąć
+ptaka do pionu w 1,2 s (tłumienie zbija amplitudę do ~21% na okres). Kto skręca
+w locie, ląduje na ryju.
+
 ## Reaction Cam
 
 Okrągły podgląd twarzy w lewym górnym rogu, z neonową obwódką. Cała treść jest
@@ -157,6 +186,9 @@ funkcją dwóch liczb: kąta wahadła i `panic` (0–1).
 | spokój | kąt < 15° | flaming czujny, dziób zamknięty, ramka złota |
 | panika | kąt ≥ 15° **albo** gwałtowny skręt | głowa drży, oczy rosną, źrenice się kurczą, dziób się otwiera, ramka przechodzi w koral |
 | wipeout | koniec przejazdu | rozbryzg w obiektyw, potem woda podchodzi do góry, bąbelki |
+
+Przez cały skok panika jest wymuszona na 1 — flaming panikuje w powietrzu
+niezależnie od kąta.
 
 Kapibara jest we wszystkich stanach identyczna — to jest cały żart.
 
