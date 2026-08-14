@@ -21,7 +21,8 @@
   var SKI_DRAG   = 5.5;               // wyhamowanie bez dotyku
   var SKI_MARGIN = 30;
 
-  var PIVOT_DY   = -52;               // staw flaminga względem środka skutera
+  var CAPY_DY    = -18;               // gdzie siada kapibara względem środka skutera
+  var PIVOT_DY   = -72;               // staw flaminga względem środka skutera
   var TILT_LIMIT = 50 * Math.PI / 180;
   var SPRING     = 30;                // rad/s² na radian wychylenia
   var DAMP       = 2.6;               // tłumienie
@@ -33,7 +34,7 @@
   var SPEED_MIN  = 250, SPEED_MAX = 470;   // px/s przewijania wody
   var PX_PER_M   = 18;
 
-  var HIT_SKI = 24, HIT_BUOY = 17, HIT_SHARK = 22;
+  var HIT_SKI = 26, HIT_BUOY = 18, HIT_SHARK = 20;
   var BEST_KEY = "pogo-pogo:best";
 
   /* ------------------------------------------------------------ narzędzia */
@@ -71,6 +72,18 @@
      samym pudełku — reszta kodu nie widzi różnicy.                        */
 
   var ART = {};   // nazwa -> HTMLImageElement albo null
+  var FIT = {};   // nazwa -> obrys treści w pliku, znormalizowany 0..1
+
+  /* Docelowa szerokość TREŚCI na ekranie i punkt zaczepienia. Wysokość
+     wynika z proporcji obrysu, więc podmiana grafiki na inaczej
+     wykadrowaną nie zniekształci postaci.                              */
+  var BOX = {
+    jetski:         { w: 96, anchor: "center", fbW: 92, fbH: 62, fb: fbJetski },
+    capybara:       { w: 56, anchor: "bottom", fbW: 58, fbH: 64, fb: fbCapybara },
+    flamingo:       { w: 62, anchor: "bottom", fbW: 48, fbH: 78, fb: fbFlamingo },
+    obstacle_buoy:  { w: 44, anchor: "center", fbW: 40, fbH: 52, fb: fbBuoy },
+    obstacle_shark: { w: 58, anchor: "center", fbW: 64, fbH: 46, fb: fbShark }
+  };
 
   function loadArt(list, done) {
     var left = list.length;
@@ -79,6 +92,7 @@
       var img = new Image();
       img.onload = function () {
         ART[name] = (img.naturalWidth || img.width) ? img : null;
+        if (ART[name] && BOX[name]) FIT[name] = measureContent(img);
         if (--left === 0) done();
       };
       img.onerror = function () {
@@ -89,12 +103,52 @@
     });
   }
 
-  /* Rysuje sprite w pudełku w×h. anchor: "center" albo "bottom". */
-  function sprite(name, w, h, anchor, fallback) {
-    var img = ART[name];
-    var oy  = anchor === "bottom" ? -h : -h / 2;
-    if (img) ctx.drawImage(img, -w / 2, oy, w, h);
-    else fallback(w, h);
+  /* Znajduje ciasny obrys narysowanych pikseli. Pliki z Claude Design mają
+     kwadratowe płótno z marginesami, a postać siedzi w nim gdzie indziej niż
+     na środku — bez tego kapibara byłaby rozciągnięta, a flaming obracałby
+     się wokół pustego miejsca pod nogami.                                 */
+  function measureContent(img) {
+    var S = 96, full = { x0: 0, y0: 0, x1: 1, y1: 1 };
+    try {
+      var c = document.createElement("canvas");
+      c.width = c.height = S;
+      var g = c.getContext("2d", { willReadFrequently: true });
+      g.drawImage(img, 0, 0, S, S);
+      var d = g.getImageData(0, 0, S, S).data;   // przy file:// rzuci SecurityError
+      var minX = S, minY = S, maxX = -1, maxY = -1;
+      for (var y = 0; y < S; y++) {
+        for (var x = 0; x < S; x++) {
+          if (d[(y * S + x) * 4 + 3] > 12) {
+            if (x < minX) minX = x;
+            if (x > maxX) maxX = x;
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
+          }
+        }
+      }
+      if (maxX < 0) return full;
+      return { x0: minX / S, y0: minY / S, x1: (maxX + 1) / S, y1: (maxY + 1) / S };
+    } catch (e) {
+      return full;   // canvas skażony (file://) — traktuj płótno jako treść
+    }
+  }
+
+  /* Rysuje sprite tak, żeby jego treść miała szerokość BOX[name].w
+     i trafiła punktem zaczepienia dokładnie w (0,0).                    */
+  function sprite(name) {
+    var cfg = BOX[name], img = ART[name];
+    if (!img) { cfg.fb(cfg.fbW, cfg.fbH); return; }
+
+    var f  = FIT[name] || { x0: 0, y0: 0, x1: 1, y1: 1 };
+    var fw = f.x1 - f.x0, fh = f.y1 - f.y0;
+    var cw = cfg.w;
+    var ch = cw / ((fw * img.naturalWidth) / (fh * img.naturalHeight));
+
+    var fullW = cw / fw, fullH = ch / fh;
+    ctx.drawImage(img,
+      -cw / 2 - f.x0 * fullW,
+      (cfg.anchor === "bottom" ? -ch : -ch / 2) - f.y0 * fullH,
+      fullW, fullH);
   }
 
   /* -------------------------------------------------- kształty zastępcze */
@@ -297,6 +351,15 @@
       ctx.fillStyle = waterPattern;
       ctx.fillRect(0, 0, W, H + tile);
       ctx.restore();
+
+      /* Kafelek jest jasny i płaski — przyciemnienie góry ratuje czytelność
+         licznika, a dołu daje głębię. Środek zostaje nietknięty.        */
+      var d = ctx.createLinearGradient(0, 0, 0, H);
+      d.addColorStop(0, "rgba(1,58,96,.24)");
+      d.addColorStop(0.32, "rgba(1,58,96,0)");
+      d.addColorStop(1, "rgba(1,58,96,.20)");
+      ctx.fillStyle = d;
+      ctx.fillRect(0, 0, W, H);
     } else {
       var g = ctx.createLinearGradient(0, 0, 0, H);
       g.addColorStop(0, "#29B6F6");
@@ -656,10 +719,10 @@
       ctx.translate(o.x, o.y);
       if (o.type === "buoy") {
         ctx.rotate(Math.sin(game.t * 2 + o.x) * 0.09);
-        sprite("obstacle_buoy", 40, 52, "center", fbBuoy);
+        sprite("obstacle_buoy");
       } else {
         ctx.scale(o.vx < 0 ? -1 : 1, 1);
-        sprite("obstacle_shark", 64, 46, "center", fbShark);
+        sprite("obstacle_shark");
       }
       ctx.restore();
     }
@@ -676,13 +739,13 @@
     ctx.save();
     ctx.translate(ski.x, SKI_Y);
     ctx.rotate(ski.roll * 0.5);
-    sprite("jetski", 92, 62, "center", fbJetski);
+    sprite("jetski");
 
     /* kapibara siedzi sztywno, tylko lekko kładzie się w skręt */
     ctx.save();
-    ctx.translate(0, -6);
+    ctx.translate(0, CAPY_DY);
     ctx.rotate(ski.roll * 0.35);
-    sprite("capybara", 58, 64, "bottom", fbCapybara);
+    sprite("capybara");
     ctx.restore();
 
     /* flaming obraca się wokół stawu na czubku głowy kapibary.
@@ -691,7 +754,7 @@
       ctx.save();
       ctx.translate(0, PIVOT_DY);
       ctx.rotate(game.bird.a);
-      sprite("flamingo", 48, 78, "bottom", fbFlamingo);
+      sprite("flamingo");
       ctx.restore();
     }
     ctx.restore();
@@ -700,7 +763,7 @@
       ctx.save();
       ctx.translate(game.wipe.x, game.wipe.y);
       ctx.rotate(game.wipe.rot);
-      sprite("flamingo", 48, 78, "bottom", fbFlamingo);
+      sprite("flamingo");
       ctx.restore();
     }
 
@@ -722,15 +785,15 @@
     var sway = Math.sin(game.t * 1.6) * 0.09;
     ctx.save();
     ctx.translate(W / 2, SKI_Y + 62);
-    sprite("jetski", 92, 62, "center", fbJetski);
+    sprite("jetski");
     ctx.save();
-    ctx.translate(0, -6);
-    sprite("capybara", 58, 64, "bottom", fbCapybara);
+    ctx.translate(0, CAPY_DY);
+    sprite("capybara");
     ctx.restore();
     ctx.save();
     ctx.translate(0, PIVOT_DY);
     ctx.rotate(sway);
-    sprite("flamingo", 48, 78, "bottom", fbFlamingo);
+    sprite("flamingo");
     ctx.restore();
     ctx.restore();
   }
@@ -765,7 +828,10 @@
     ["jetski", "capybara", "flamingo", "obstacle_buoy", "obstacle_shark",
      "water_tile", "totem_duo"],
     function () {
-      if (ART.totem_duo) el.splash.hidden = false;
+      if (ART.totem_duo) {
+        el.splash.hidden = false;
+        el.menu.classList.add("has-splash");   // totem jest w splashu, nie na canvasie
+      }
       el.bestM.textContent = best;
       resize();
       requestAnimationFrame(frame);

@@ -68,8 +68,10 @@ canvas{display:block;width:100%;height:100%}
 .screen.is-on{display:flex}
 .screen[hidden]{display:none}
 
-/* Menu: tekst wyżej, bo dolną trzecią zajmuje totem rysowany na canvasie. */
+/* Bez splash artu totem rysuje się na canvasie w dolnej trzeciej, więc tekst
+   idzie wyżej. Gdy totem_duo się wczyta, wraca zwykłe wyśrodkowanie.     */
 #screen-menu{justify-content:flex-start;padding-top:13%}
+#screen-menu.has-splash{justify-content:center;padding-top:2em}
 
 .splash{
   width:min(58%,15em);

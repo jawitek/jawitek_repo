@@ -69,31 +69,49 @@ klatkażu — próg 50° wypada tak samo na 30 i na 144 fps.
 
 ## Grafika
 
-Gra próbuje wczytać z `assets/` siedem plików SVG:
+W `assets/` leży siedem SVG z Claude Design (projekt `pogo-pogo-graphics`):
 
 `jetski` · `capybara` · `flamingo` · `obstacle_buoy` · `obstacle_shark` ·
 `water_tile` · `totem_duo`
 
-**Żadnego z nich jeszcze nie ma w repo.** Każdy element ma dlatego wektorowy
-kształt zastępczy rysowany w kodzie (funkcje `fb*` w `game.js`), więc gra jest
-w pełni grywalna już teraz. Wrzucenie pliku pod właściwą nazwą podmienia go
-automatycznie — bez zmian w kodzie.
+Każdy element ma **dodatkowo** wektorowy kształt zastępczy rysowany w kodzie
+(funkcje `fb*` w `game.js`). Gdyby plik zniknął albo się nie wczytał, gra nadal
+działa — po prostu z prostszą grafiką.
 
-O czym warto pamiętać przy eksporcie z Claude Design:
+### Skalowanie liczone z obrysu, nie z rozmiaru pliku
 
-- **Ustaw `width`/`height` w SVG.** Bez zadeklarowanego rozmiaru przeglądarka
-  raportuje 0 i plik zostanie potraktowany jak brakujący. Dotyczy to zwłaszcza
-  `water_tile`, który idzie przez `createPattern` — bez rozmiaru woda cicho
+Pliki mają kwadratowe płótno (256×256, bojka i rekin 128×128), ale postacie nie
+wypełniają go ani nie są w nim wyśrodkowane — kapibara zajmuje 68% szerokości,
+flaming ma rozłożone skrzydła, bojka ma pod sobą cień. Wrzucenie ich w sztywne
+prostokątne pudełka rozciągnęłoby postacie i przesunęło punkt obrotu flaminga
+w puste miejsce pod nogami.
+
+Dlatego `game.js` przy starcie **mierzy rzeczywisty obrys narysowanych pikseli**
+każdego sprite'a (`measureContent`) i dopiero według niego skaluje i zaczepia.
+W `BOX` podaje się wyłącznie docelową **szerokość treści** i punkt zaczepienia —
+wysokość wynika z proporcji obrysu. Dzięki temu podmiana grafiki na inaczej
+wykadrowaną niczego nie psuje.
+
+Pomiar wymaga odczytu pikseli, co przy otwarciu przez `file://` rzuca
+`SecurityError`. Wtedy kod przyjmuje, że treść wypełnia całe płótno — grafika
+będzie odrobinę mniejsza i przesunięta, ale gra działa. Przez HTTP (Pages,
+`python3 -m http.server`) pomiar jest dokładny.
+
+### Przy podmianie grafik
+
+- **Zostaw `width`/`height` w SVG.** Bez zadeklarowanego rozmiaru przeglądarka
+  raportuje 0 i plik zostanie potraktowany jak brakujący. Najbardziej boli przy
+  `water_tile`, który idzie przez `createPattern` — bez rozmiaru woda po cichu
   wróci do wersji proceduralnej.
-- **Punkty zaczepienia.** `capybara` i `flamingo` są rysowane „od dołu": dolna
-  krawędź pliku to miejsce styku. Flaming obraca się dokładnie wokół dolnej
-  krawędzi swojego pudełka — tam ma być staw, czyli czubek głowy kapibary.
-- **Docelowe pudełka** (px, przy scenie 360×640): jetski 92×62, capybara 58×64,
-  flamingo 48×78, bojka 40×52, rekin 64×46. Proporcje warto zachować.
+- **Flaming obraca się wokół dolnej krawędzi swojego obrysu**, czyli stóp. Tam
+  wypada staw na głowie kapibary. Nogi muszą sięgać dołu rysunku.
+- **Docelowe szerokości treści** (px, przy scenie 360×640): jetski 96,
+  capybara 56, flamingo 62, bojka 44, rekin 58. Stałe `CAPY_DY` i `PIVOT_DY`
+  ustawiają wysokość totemu.
 - **Rekin** jest odbijany w poziomie zależnie od kierunku płynięcia, więc
   powinien być narysowany jako płynący w prawo.
-- `totem_duo` trafia na ekran menu jako `<img>`. Dopóki go nie ma, menu rysuje
-  totem z tych samych kształtów zastępczych.
+- `totem_duo` trafia na ekran menu jako `<img>`; wtedy menu przełącza się na
+  wyśrodkowany układ. Bez niego menu rysuje totem na canvasie w dolnej części.
 
 ## Czego tu jeszcze nie ma
 
