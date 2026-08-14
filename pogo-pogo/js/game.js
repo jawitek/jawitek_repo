@@ -178,6 +178,28 @@
       BAKE[name] = { c: c, w: cw, h: ch };
     }
     bakeWater();
+    bakeFaces();
+  }
+
+  /* Twarze do Reaction Cam NIE idą przez dopasowanie do obrysu jak reszta
+     sprite'ów. Są skomponowane jako okrąg (r=62 w płótnie 128) i mają być
+     wpasowane w ramkę okienka — dociąganie do narysowanych pikseli
+     przeskalowałoby je względem kadru, który autor sam ustawił.        */
+  var FACE = {};
+
+  function bakeFaces() {
+    ["face_chill", "face_panic"].forEach(function (n) {
+      var img = ART[n];
+      if (!img) { FACE[n] = null; return; }
+      var size = 2 * CAM_R * (64 / 62) * 1.02;      // r=62 ma trafić w CAM_R
+      var px = Math.max(2, Math.round(size * scaleX));
+      var c = document.createElement("canvas");
+      c.width = c.height = px;
+      var g = c.getContext("2d");
+      g.imageSmoothingQuality = "high";
+      g.drawImage(img, 0, 0, px, px);
+      FACE[n] = { c: c, s: size };
+    });
   }
 
   function bakeWater() {
@@ -967,8 +989,33 @@
       ctx.stroke();
     }
 
-    /* Obie głowy razem zajmują całą średnicę, więc treść jedzie odrobinę
-       mniejsza — inaczej dziób i podbródek ucinają się o krawędź.      */
+    if (FACE.face_chill) {
+      /* Dostarczone twarze: spokojna zawsze pod spodem, panika nakładana
+         z przezroczystością, więc reakcja jest płynna, a nie przełącznikiem.
+         Kapibara jest w obu plikach tym samym kształtem, więc przenikanie
+         jej nie rusza — zmienia się wyłącznie flaming.                  */
+      ctx.save();
+      if (panic > 0.02) {
+        ctx.translate(rand(-1, 1) * 2.4 * panic, rand(-1, 1) * 2.4 * panic);
+      }
+      ctx.rotate(tilt * 0.18);
+
+      var fc = FACE.face_chill;
+      ctx.drawImage(fc.c, -fc.s / 2, -fc.s / 2, fc.s, fc.s);
+
+      var pa = wiped ? 1 : clamp(panic * 1.35, 0, 1);
+      if (pa > 0.01 && FACE.face_panic) {
+        var fp = FACE.face_panic;
+        ctx.globalAlpha = pa;
+        ctx.drawImage(fp.c, -fp.s / 2, -fp.s / 2, fp.s, fp.s);
+        ctx.globalAlpha = 1;
+      }
+      ctx.restore();
+    } else {
+
+    /* Zapas, gdyby plików twarzy zabrakło. Obie głowy razem zajmują całą
+       średnicę, więc treść jedzie mniejsza — inaczej dziób i podbródek
+       ucinają się o krawędź.                                           */
     ctx.save();
     ctx.scale(0.86, 0.86);
 
@@ -1093,6 +1140,7 @@
       ctx.restore();
     }
     ctx.restore();   // koniec zmniejszenia treści
+    }
 
     /* --- wipeout: najpierw uderzenie, potem zmoczenie ------------------ */
     if (wiped) {
@@ -1229,7 +1277,7 @@
 
   loadArt(
     ["jetski", "capybara", "flamingo", "obstacle_buoy", "obstacle_shark",
-     "water_tile", "totem_duo"],
+     "water_tile", "totem_duo", "face_chill", "face_panic"],
     function () {
       if (ART.totem_duo) {
         el.splash.hidden = false;
