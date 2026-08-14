@@ -2,8 +2,8 @@
    Pogo Pogo — MVP
    Kapibara siedzi sztywno na skuterze; flaming jest do niej doczepiony
    sprężystym stawem i to on jest właściwą grą. Skręt rozbuja flaminga siłą
-   bezwładności, sprężyna ściąga go z powrotem do pionu, a przekroczenie 50°
-   kończy przejazd.
+   bezwładności, sprężyna ściąga go z powrotem do pionu, a utrzymanie się poza
+   progiem wychylenia kończy przejazd.
 
    Grafika: pliki z assets/*.svg, jeśli istnieją. Jeśli nie — każdy element
    ma wektorowy fallback rysowany w kodzie, więc gra jest grywalna zawsze.
@@ -19,20 +19,31 @@
   var SKI_VX_MAX = 250;               // px/s
   var SKI_ACCEL  = 1500;              // px/s² przy wciśniętym kierunku
   var SKI_DRAG   = 5.5;               // wyhamowanie bez dotyku
-  var SKI_MARGIN = 30;
+  var SKI_MARGIN = 44;                // tyle, żeby skuter nie wystawał za ekran
 
   var CAPY_DY    = -18;               // gdzie siada kapibara względem środka skutera
   var PIVOT_DY   = -72;               // staw flaminga względem środka skutera
-  var TILT_LIMIT = 50 * Math.PI / 180;
   var SPRING     = 30;                // rad/s² na radian wychylenia
   var DAMP       = 2.6;               // tłumienie
   var COUPLE     = 0.012;             // ile bezwładności skutera trafia w ptaka
 
-  var FIXED      = 1 / 120;           // stały krok fizyki — próg 50° musi
-                                      // wypadać tak samo przy 30 i 144 fps
+  /* Próg wywrotki i ile wolno go przekraczać. Sam próg 50° ze specyfikacji
+     zabijał slalom co 0,45 s — czyli dokładnie tempo omijania przeszkód.
+     Gra karała to, czego sama wymagała. Przy 62° z tolerancją 0,15 s ginie
+     już tylko uporczywe szarpanie w rytm wahadła (patrz README).        */
+  var TILT_LIMIT = 62 * Math.PI / 180;
+  var TILT_GRACE = 0.15;
 
-  var SPEED_MIN  = 250, SPEED_MAX = 470;   // px/s przewijania wody
+  var FIXED      = 1 / 120;           // stały krok fizyki — próg musi wypadać
+                                      // tak samo przy 30 i 144 fps
+
+  var SPEED_MIN  = 190, SPEED_MAX = 550;   // px/s przewijania wody
+  var LEVEL_M    = 90;                // co tyle metrów kolejny próg trudności
+  var LEVELS     = 6;                 // tyle progów do maksimum (540 m)
   var PX_PER_M   = 18;
+
+  var WATER_TILE = 256;               // logiczny bok kafelka wody
+  var BUOY_SEP   = 128;               // najmniejszy rozstaw bojek w jednej fali
 
   var HIT_SKI = 26, HIT_BUOY = 18, HIT_SHARK = 20;
   var BEST_KEY = "pogo-pogo:best";
@@ -62,7 +73,10 @@
     ctx.imageSmoothingQuality = "high";
 
     stage.style.setProperty("--stage-h", rect.height + "px");
+
+    if (baked) bakeAll();   // bitmapy muszą pasować do nowej rozdzielczości
   }
+  var baked = false;
   window.addEventListener("resize", resize);
   window.addEventListener("orientationchange", resize);
 
@@ -133,22 +147,59 @@
     }
   }
 
-  /* Rysuje sprite tak, żeby jego treść miała szerokość BOX[name].w
-     i trafiła punktem zaczepienia dokładnie w (0,0).                    */
+  /* Przepalenie SVG na bitmapy w rozdzielczości ekranu. Przeglądarka
+     rasteryzuje SVG przy każdym drawImage, a totem jest rysowany z obrotem
+     w każdej klatce — na telefonie to realny koszt. Po przepaleniu rysowanie
+     jest zwykłym przerzutem pikseli 1:1. Powtarzane przy zmianie rozmiaru. */
+  var BAKE = {};
+
+  function bakeAll() {
+    for (var name in BOX) {
+      var cfg = BOX[name], img = ART[name];
+      if (!img) { BAKE[name] = null; continue; }
+
+      var f  = FIT[name] || { x0: 0, y0: 0, x1: 1, y1: 1 };
+      var fw = f.x1 - f.x0, fh = f.y1 - f.y0;
+      var cw = cfg.w;
+      var ch = cw / ((fw * img.naturalWidth) / (fh * img.naturalHeight));
+
+      var pw = Math.max(1, Math.round(cw * scaleX));
+      var ph = Math.max(1, Math.round(ch * scaleY));
+      var c  = document.createElement("canvas");
+      c.width = pw; c.height = ph;
+      var g = c.getContext("2d");
+      g.imageSmoothingQuality = "high";
+      g.drawImage(img, -f.x0 * (pw / fw), -f.y0 * (ph / fh), pw / fw, ph / fh);
+
+      BAKE[name] = { c: c, w: cw, h: ch };
+    }
+    bakeWater();
+  }
+
+  function bakeWater() {
+    waterPattern = false;
+    var img = ART.water_tile;
+    if (!img || !img.naturalWidth || !img.naturalHeight) return;
+
+    var side = Math.max(2, Math.round(WATER_TILE * scaleX));
+    var c = document.createElement("canvas");
+    c.width = side; c.height = side;
+    c.getContext("2d").drawImage(img, 0, 0, side, side);
+    try {
+      var p = ctx.createPattern(c, "repeat");
+      /* Kafelek jest w pikselach urządzenia, a malujemy w jednostkach
+         logicznych — skalujemy wzorzec z powrotem, żeby wyszło 1:1.    */
+      if (p.setTransform) p.setTransform(new DOMMatrix([1 / scaleX, 0, 0, 1 / scaleY, 0, 0]));
+      waterPattern = p;
+    } catch (e) { waterPattern = false; }
+  }
+
+  /* Rysuje sprite zaczepiony punktem BOX[name].anchor w (0,0). */
   function sprite(name) {
-    var cfg = BOX[name], img = ART[name];
-    if (!img) { cfg.fb(cfg.fbW, cfg.fbH); return; }
-
-    var f  = FIT[name] || { x0: 0, y0: 0, x1: 1, y1: 1 };
-    var fw = f.x1 - f.x0, fh = f.y1 - f.y0;
-    var cw = cfg.w;
-    var ch = cw / ((fw * img.naturalWidth) / (fh * img.naturalHeight));
-
-    var fullW = cw / fw, fullH = ch / fh;
-    ctx.drawImage(img,
-      -cw / 2 - f.x0 * fullW,
-      (cfg.anchor === "bottom" ? -ch : -ch / 2) - f.y0 * fullH,
-      fullW, fullH);
+    var b = BAKE[name];
+    if (!b) { var cfg = BOX[name]; cfg.fb(cfg.fbW, cfg.fbH); return; }
+    ctx.drawImage(b.c, -b.w / 2,
+      BOX[name].anchor === "bottom" ? -b.h : -b.h / 2, b.w, b.h);
   }
 
   /* -------------------------------------------------- kształty zastępcze */
@@ -334,18 +385,8 @@
   }
 
   function drawWater(scroll, t) {
-    if (waterPattern === null && ART.water_tile) {
-      /* SVG bez zadeklarowanego rozmiaru nie nadaje się na wzorzec —
-         wtedy zostajemy przy wodzie rysowanej proceduralnie.           */
-      try {
-        waterPattern = (ART.water_tile.naturalWidth && ART.water_tile.naturalHeight)
-          ? ctx.createPattern(ART.water_tile, "repeat")
-          : false;
-      } catch (e) { waterPattern = false; }
-    }
-
     if (waterPattern) {
-      var tile = ART.water_tile.naturalHeight;
+      var tile = WATER_TILE;
       ctx.save();
       ctx.translate(0, mod(scroll, tile) - tile);
       ctx.fillStyle = waterPattern;
@@ -488,10 +529,12 @@
     speed: SPEED_MIN,
     dist: 0,
     ski: { x: W / 2, vx: 0, ax: 0, roll: 0 },
-    bird: { a: 0, w: 0 },
+    bird: { a: 0, w: 0, over: 0 },
+    scrollV: 0,
     obstacles: [],
     spray: [],
     spawn: 0,
+    level: 0,
     shake: 0,
     wipe: null,
     lockout: 0
@@ -503,11 +546,13 @@
     game.speed = SPEED_MIN;
     game.dist = 0;
     game.ski.x = W / 2; game.ski.vx = 0; game.ski.ax = 0; game.ski.roll = 0;
-    game.bird.a = 0; game.bird.w = 0;
+    game.bird.a = 0; game.bird.w = 0; game.bird.over = 0;
     game.obstacles.length = 0;
     game.spray.length = 0;
     game.spawn = 1.1;
+    game.level = 0;
     game.shake = 0;
+    el.dist.classList.remove("bump");
     game.wipe = null;
 
     show(el.menu, false);
@@ -563,8 +608,22 @@
     });
   }
 
-  function spawnObstacle() {
-    if (Math.random() < clamp(0.12 + game.dist * 0.0004, 0, 0.45)) {
+  /* Trudność rośnie skokowo, nie płynnie: co LEVEL_M metrów wchodzi kolejny
+     próg i od razu widać, że zrobiło się szybciej. Steruje prędkością,
+     gęstością trasy i tym, ile przeszkód wchodzi naraz.                   */
+  function level() { return Math.min(LEVELS, Math.floor(game.dist / LEVEL_M)); }
+  function difficulty() { return level() / LEVELS; }
+
+  function spawnDelay() {
+    return rand(0.78, 1.32) * (1.05 - 0.74 * difficulty());
+  }
+
+  function spawnWave() {
+    var d = difficulty();
+
+    /* Rekin wchodzi z boku i przecina ekran, więc idzie sam — o „kilku
+       rekinach naraz" decyduje częstotliwość, nie liczebność fali.      */
+    if (Math.random() < 0.08 + 0.50 * d) {
       var fromLeft = Math.random() < 0.5;
       game.obstacles.push({
         type: "shark",
@@ -573,14 +632,27 @@
         vx: (fromLeft ? 1 : -1) * rand(45, 95),
         r: HIT_SHARK
       });
-    } else {
-      game.obstacles.push({
-        type: "buoy",
-        x: rand(SKI_MARGIN + 12, W - SKI_MARGIN - 12),
-        y: -60,
-        vx: 0,
-        r: HIT_BUOY
-      });
+      return;
+    }
+
+    /* Fala bojek: 1 na starcie, z czasem 2. Trzeciej celowo nie ma — przy
+       rozstawie BUOY_SEP trzy bojki mieszczą się w pasie tylko w jednym
+       układzie, więc byłaby to zawsze ta sama, sztywna ściana. Gęstość
+       bierze się z częstotliwości fal, nie z ich liczebności.           */
+    var n = 1 + (Math.random() < 0.50 * d ? 1 : 0);
+
+    var lo = SKI_MARGIN - 6, hi = W - SKI_MARGIN + 6;
+    var xs = [];
+    for (var tries = 0; tries < 40 && xs.length < n; tries++) {
+      var x = rand(lo, hi), ok = true;
+      for (var i = 0; i < xs.length; i++) {
+        if (Math.abs(xs[i] - x) < BUOY_SEP) { ok = false; break; }
+      }
+      if (ok) xs.push(x);
+    }
+
+    for (var k = 0; k < xs.length; k++) {
+      game.obstacles.push({ type: "buoy", x: xs[k], y: -60, vx: 0, r: HIT_BUOY });
     }
   }
 
@@ -593,12 +665,14 @@
 
     /* Menu i ekran końcowy: woda płynie dalej, żeby tło żyło. */
     if (game.mode === MENU || game.mode === OVER) {
-      game.scroll += SPEED_MIN * 0.5 * dt;
+      game.scrollV = SPEED_MIN * 0.5;
+      game.scroll += game.scrollV * dt;
       updateSpray(dt);
       return;
     }
 
     if (game.mode === WIPE) {
+      game.scrollV = game.speed;
       game.scroll += game.speed * dt;
       game.speed = Math.max(SPEED_MIN * 0.4, game.speed - 320 * dt);
       moveObstacles(dt);
@@ -616,7 +690,18 @@
 
     /* ------------------------------------------------------------- PLAY */
 
-    game.speed = Math.min(SPEED_MAX, SPEED_MIN + game.dist * 0.35);
+    game.speed = SPEED_MIN + (SPEED_MAX - SPEED_MIN) * difficulty();
+
+    /* Skok prędkości bez sygnału czyta się jak zacięcie — licznik metrów
+       pulsuje, żeby było wiadomo, że to gra przyspieszyła.              */
+    var lv = level();
+    if (lv !== game.level) {
+      game.level = lv;
+      el.dist.classList.remove("bump");
+      void el.dist.offsetWidth;          // wymuszenie restartu animacji
+      el.dist.classList.add("bump");
+    }
+    game.scrollV = game.speed;
     game.scroll += game.speed * dt;
     game.dist += game.speed * dt / PX_PER_M;
     el.dist.textContent = Math.floor(game.dist);
@@ -643,14 +728,18 @@
     b.w -= b.w * Math.min(1, DAMP * dt);
     b.a += b.w * dt;
 
-    if (Math.abs(b.a) > TILT_LIMIT) { wipeout("tilt"); return; }
+    /* Przekroczenie progu nie kończy przejazdu od razu — dopiero utrzymanie
+       się poza nim. Jeden pechowy wychył wybacza, uporczywe szarpanie nie. */
+    if (Math.abs(b.a) > TILT_LIMIT) {
+      b.over += dt;
+      if (b.over > TILT_GRACE) { wipeout("tilt"); return; }
+    } else {
+      b.over = 0;
+    }
 
     /* trasa */
     game.spawn -= dt;
-    if (game.spawn <= 0) {
-      spawnObstacle();
-      game.spawn = rand(0.62, 1.15) * clamp(1.05 - game.dist * 0.0006, 0.42, 1.05);
-    }
+    if (game.spawn <= 0) { spawnWave(); game.spawn = spawnDelay(); }
     moveObstacles(dt);
 
     /* kolizje — okrąg skutera kontra okrąg przeszkody */
@@ -690,7 +779,11 @@
 
   /* ----------------------------------------------------------- rysowanie */
 
-  function render() {
+  /* `a` to reszta akumulatora: ile czasu minęło od ostatniego kroku fizyki.
+     Bez niej świat przesuwa się skokami — przy 120 Hz co trzecia klatka nie
+     dostaje żadnego kroku, a co trzecia dostaje dwa, i to widać jako
+     szarpanie mimo równych czasów klatek.                                */
+  function render(a) {
     ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
 
     if (game.shake > 0) {
@@ -698,7 +791,7 @@
                     rand(-game.shake, game.shake) * 0.5);
     }
 
-    drawWater(game.scroll, game.t);
+    drawWater(game.scroll + game.scrollV * a, game.t + a);
 
     /* piana i kilwater pod obiektami */
     ctx.fillStyle = "rgba(255,255,255,.8)";
@@ -706,17 +799,17 @@
       var p = game.spray[i];
       ctx.globalAlpha = clamp(p.life * 2, 0, 1) * 0.85;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, p.r, 0, 6.2832);
+      ctx.arc(p.x + p.vx * a, p.y + (p.vy + game.speed * 0.35) * a, p.r, 0, 6.2832);
       ctx.fill();
     }
     ctx.globalAlpha = 1;
 
     /* przeszkody — sortowane po y, żeby bliższe zasłaniały dalsze */
-    var obs = game.obstacles.slice().sort(function (a, b) { return a.y - b.y; });
-    for (var k = 0; k < obs.length; k++) {
-      var o = obs[k];
+    game.obstacles.sort(function (p, q) { return p.y - q.y; });
+    for (var k = 0; k < game.obstacles.length; k++) {
+      var o = game.obstacles[k];
       ctx.save();
-      ctx.translate(o.x, o.y);
+      ctx.translate(o.x + o.vx * a, o.y + game.speed * a);
       if (o.type === "buoy") {
         ctx.rotate(Math.sin(game.t * 2 + o.x) * 0.09);
         sprite("obstacle_buoy");
@@ -729,15 +822,16 @@
 
     if (game.mode === MENU) { drawIdleTotem(); return; }
 
-    drawRider();
+    drawRider(a);
   }
 
   /* Skuter + kapibara + flaming. W trakcie WIPEOUT flaming leci osobno. */
-  function drawRider() {
+  function drawRider(a) {
     var ski = game.ski;
+    var tilt = game.bird.a + game.bird.w * a;
 
     ctx.save();
-    ctx.translate(ski.x, SKI_Y);
+    ctx.translate(ski.x + ski.vx * a, SKI_Y);
     ctx.rotate(ski.roll * 0.5);
     sprite("jetski");
 
@@ -753,7 +847,7 @@
     if (game.mode === PLAY) {
       ctx.save();
       ctx.translate(0, PIVOT_DY);
-      ctx.rotate(game.bird.a);
+      ctx.rotate(tilt);
       sprite("flamingo");
       ctx.restore();
     }
@@ -761,14 +855,14 @@
 
     if (game.mode === WIPE && game.wipe) {
       ctx.save();
-      ctx.translate(game.wipe.x, game.wipe.y);
-      ctx.rotate(game.wipe.rot);
+      ctx.translate(game.wipe.x + game.wipe.vx * a, game.wipe.y + game.wipe.vy * a);
+      ctx.rotate(game.wipe.rot + game.wipe.vrot * a);
       sprite("flamingo");
       ctx.restore();
     }
 
     /* ostrzeżenie: im bliżej progu, tym mocniejsza czerwona winieta */
-    var risk = clamp((Math.abs(game.bird.a) / TILT_LIMIT - 0.55) / 0.45, 0, 1);
+    var risk = clamp((Math.abs(tilt) / TILT_LIMIT - 0.55) / 0.45, 0, 1);
     if (risk > 0 && game.mode === PLAY) {
       var v = ctx.createRadialGradient(W / 2, H / 2, H * 0.28, W / 2, H / 2, H * 0.62);
       v.addColorStop(0, "rgba(229,57,53,0)");
@@ -814,7 +908,7 @@
     while (acc >= FIXED && steps < 40) { update(FIXED); acc -= FIXED; steps++; }
     if (steps === 40) acc = 0;
 
-    render();
+    render(acc);
     requestAnimationFrame(frame);
   }
 
@@ -833,7 +927,8 @@
         el.menu.classList.add("has-splash");   // totem jest w splashu, nie na canvasie
       }
       el.bestM.textContent = best;
-      resize();
+      baked = true;
+      resize();          // resize sam przepala bitmapy pod aktualną skalę
       requestAnimationFrame(frame);
     }
   );

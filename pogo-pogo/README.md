@@ -44,7 +44,8 @@ liczona jest siła wpychana w kąt flaminga:
 - `COUPLE` (0.012) — ile bezwładności skutera trafia w ptaka. Wyżej = ostrzej.
 - `SPRING` (30) — siła ściągająca do pionu. Wyżej = wybaczniej.
 - `DAMP` (2.6) — tłumienie. Niżej = dłuższe bujanie po skręcie.
-- `TILT_LIMIT` (50°) — próg wywrotki.
+- `TILT_LIMIT` (62°) — próg wywrotki.
+- `TILT_GRACE` (0,15 s) — jak długo wolno być poza progiem, zanim totem padnie.
 
 Wahadło ma okres ok. **1,15 s**, więc rezonans wypada przy zmianie kierunku co
 ~0,57 s — i to jest sedno trudności. Szczytowe wychylenia zmierzone symulacją
@@ -53,19 +54,99 @@ tej samej fizyki:
 | styl jazdy | szczyt | wynik |
 | --- | --- | --- |
 | pojedynczy skręt i trzymanie | 32° | bezpiecznie |
-| młócenie co 0,2 s | 26° | bezpiecznie (zbyt szybko, drgania się znoszą) |
+| wjazd w krawędź z pełnej prędkości | 32° | bezpiecznie |
+| młócenie co 0,2 s | 24° | bezpiecznie (zbyt szybko, drgania się znoszą) |
 | slalom co 0,3 s | 33° | bezpiecznie |
-| slalom co 0,8 s | 48° | na granicy, ekran już czerwony |
-| slalom co 0,45 s | 56° | **wywrotka** |
-| szarpanie w rezonans co 0,57 s | — | **wywrotka po ~1,5 s** |
+| slalom co 0,45 s | 56° | napięcie, ekran czerwony |
+| slalom co 0,8 s | 49° | napięcie |
+| szarpanie w rezonans co 0,57 s | 71° | **wywrotka** |
 
-Czyli: samo skręcanie nie zabija, zabija skręcanie *w rytm wahadła*. Karana jest
-panika, a nie manewrowanie. Gdy kąt przekroczy 55% progu, ekran zaczyna
-czerwienieć — to jedyne ostrzeżenie, jakie gracz dostaje.
+Czyli: samo skręcanie nie zabija, zabija skręcanie *w rytm wahadła*. Gdy kąt
+przekroczy 55% progu, ekran zaczyna czerwienieć — to jedyne ostrzeżenie, jakie
+gracz dostaje.
 
-Sprzężenie idzie przez impuls Δv (`ω += −COUPLE · Δvx`), więc nie zależy od
-kroku całkowania, a fizyka i tak chodzi stałym krokiem 1/120 s niezależnie od
-klatkażu — próg 50° wypada tak samo na 30 i na 144 fps.
+### Dlaczego próg to 62°, a nie 50° ze specyfikacji
+
+Pierwsza wersja trzymała się `SPEC.md` i przewracała totem przy 50° natychmiast.
+Playtest to obalił: slalom co 0,45 s daje szczyt 56°, a to jest dokładnie tempo,
+w jakim omija się bojki. Gra karała więc to, czego sama wymagała — po dwóch
+manewrach było po przejeździe.
+
+Dwie zmiany naprawiają to bez rozbrajania mechaniki:
+
+1. **Próg podniesiony do 62°**, powyżej szczytu normalnego slalomu.
+2. **Tolerancja 0,15 s** — przekroczenie progu nie kończy przejazdu od razu,
+   dopiero utrzymanie się poza nim. Jeden pechowy wychył wybacza; narastający
+   rezonans nie, bo tam kąt zostaje po złej stronie progu.
+
+Zmierzone: przy 62°/0,15 s ginie wyłącznie uporczywy rezonans. Slalom, wjazd
+w krawędź i spokojna jazda przeżywają.
+
+### Dojazd do krawędzi nie może zabijać
+
+Obcięcie pozycji do krawędzi zeruje prędkość, a `ax` jest liczone **po** tym
+obcięciu. Dzięki temu skuter dociśnięty do bandy ma `ax = 0` i nie wpycha
+niczego w ptaka. Gdyby liczyć `ax` przed obcięciem, sterowanie w bandę
+generowałoby impuls w każdym kroku i wjazd w krawędź stałby się wyrokiem
+(zmierzone: 50° zamiast 32°). Wygląda to na drobiazg, a decyduje o tym, czy
+krawędź jest ścianą, czy pułapką.
+
+## Płynność
+
+Sprzężenie wahadła idzie przez impuls Δv (`ω += −COUPLE · Δvx`), więc nie zależy
+od kroku całkowania, a fizyka i tak chodzi **stałym krokiem 1/120 s** — próg
+wypada tak samo na 30 i na 144 fps.
+
+Sam stały krok wprowadza jednak własny problem: liczba kroków na klatkę nie
+dzieli się równo przy żadnym odświeżaniu. Przy 120 Hz **38% klatek nie dostaje
+ani jednego kroku, a 38% dostaje dwa** — świat raz stoi, raz przeskakuje
+podwójnie, mimo idealnie równych czasów klatek. Właśnie to czuć jako szarpanie
+na dobrym telefonie.
+
+Dlatego `render(a)` dostaje resztę akumulatora i rysuje o nią do przodu:
+pozycje, kąt flaminga i przewijanie wody są ekstrapolowane o `a`. Zmierzone
+przesunięcie świata na klatkę przy 400 px/s:
+
+| ekran | bez interpolacji | z interpolacją |
+| --- | --- | --- |
+| 60 Hz | 3,33–10,00 px | 6,63–6,70 px |
+| 120 Hz | 0,00–6,67 px | 3,32–3,35 px |
+| 144 Hz | 0,00–3,33 px | 2,76–2,79 px |
+
+Drugie źródło kosztu to SVG: przeglądarka rasteryzuje go przy **każdym**
+`drawImage`, a totem jest rysowany z obrotem w każdej klatce. Sprite'y są więc
+raz przepalane na bitmapy w rozdzielczości ekranu (`bakeAll`, powtarzane przy
+zmianie rozmiaru okna), a w pętli rysowania trafia już tylko gotowa bitmapa 1:1.
+Kafelek wody idzie tą samą drogą — wzorzec powstaje z przepalonego płótna,
+a `setTransform` na wzorcu sprowadza go z powrotem do jednostek logicznych.
+
+## Krzywa trudności
+
+Trudność rośnie **skokowo, nie płynnie**: co `LEVEL_M` (90 m) wchodzi kolejny
+z `LEVELS` (6) progów. Płynna rampa była nieczytelna — gracz nie miał poczucia
+postępu, tylko powolne zaciskanie pętli.
+
+| próg | dystans | prędkość | odstęp fal | rekiny | czas do progu |
+| --- | --- | --- | --- | --- | --- |
+| 0 | 0 m | 190 px/s | 0,82–1,39 s | 8% | 0 s |
+| 1 | 90 m | 250 px/s | 0,72–1,22 s | 16% | 8,5 s |
+| 2 | 180 m | 310 px/s | 0,63–1,06 s | 25% | 15 s |
+| 3 | 270 m | 370 px/s | 0,53–0,90 s | 33% | 20 s |
+| 4 | 360 m | 430 px/s | 0,43–0,73 s | 41% | 25 s |
+| 5 | 450 m | 490 px/s | 0,34–0,57 s | 50% | 28 s |
+| 6 | 540 m | 550 px/s | 0,24–0,41 s | 58% | 32 s |
+
+Pełna trudność wypada po 32 s zamiast po 47 s — przejazdy są krótsze i gęstsze.
+
+Skok prędkości bez sygnału czyta się jak zacięcie, więc na każdym progu pulsuje
+licznik metrów (klasa `bump`). To jedyne, co odróżnia próg od błędu.
+
+Rekin wchodzi z boku i przecina ekran, więc zawsze pojawia się sam — o „kilku
+rekinach naraz" decyduje częstotliwość fal, nie ich liczebność. Bojki wchodzą
+po jednej lub dwie, z wymuszonym rozstawem `BUOY_SEP` (128 px), więc między
+parą zawsze zostaje luka szersza niż skuter. Trzeciej bojki celowo nie ma:
+przy tym rozstawie trzy mieszczą się w pasie tylko w jednym układzie, więc
+byłaby to zawsze ta sama sztywna ściana.
 
 ## Grafika
 
