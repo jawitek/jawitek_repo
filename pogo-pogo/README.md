@@ -135,6 +135,62 @@ zmianie rozmiaru okna), a w pętli rysowania trafia już tylko gotowa bitmapa 1:
 Kafelek wody idzie tą samą drogą — wzorzec powstaje z przepalonego płótna,
 a `setTransform` na wzorcu sprowadza go z powrotem do jednostek logicznych.
 
+## Woda, paralaksa i smuga
+
+Tło to kafelek `water_tile.svg`, przewijany o `speed · dt` co klatkę
+i przepalony na bitmapę w rozdzielczości ekranu. Proceduralne linie zostały
+wyłącznie jako **zapas**, gdy pliku brakuje.
+
+### Bezszwowość jest mierzona, nie zakładana
+
+Kafelek bywa podmieniany, a od tego, czy jest bezszwowy, zależy sposób
+rysowania. Zamiast zakładać, `isSeamless()` **mierzy** to przy przepalaniu:
+porównuje przeciwległe krawędzie, bo przy zwykłym powtarzaniu stykają się one
+ze sobą.
+
+- **Krawędzie pasują** → zwykłe kafelkowanie. Najtańsze i bez powtarzalności
+  wzoru.
+- **Nie pasują** → co druga kolumna i co drugi wiersz są odbijane. Stykają się
+  wtedy zawsze dwie identyczne krawędzie, więc szew nie ma jak powstać. Kosztem
+  jest lustrzana powtarzalność, na wodzie niezauważalna.
+- **Odczyt pikseli niemożliwy** (otwarcie przez `file://`) → lustro, bo nigdy
+  nie pokazuje szwu i jest bezpieczniejszym domyślnym.
+
+Historia jest tu pouczająca: pierwszy wgrany kafelek miał pionowy gradient na
+całą wysokość i plamy światła niezawinięte na krawędziach, przez co przy zwykłym
+`repeat` pojawiały się twarde pasy co 256 px. Kolejna wersja jest bezszwowa
+(zmierzone: pion 0,0, poziom 4,9 różnicy na krawędziach) i gra sama przeszła na
+tańsze rysowanie.
+
+### Druga warstwa: kreski pędu
+
+Białe półprzezroczyste kreski przy lewej i prawej krawędzi, przewijane
+`PARALLAX` (1,4×) szybciej niż woda. Przy krawędziach, bo środek zajmuje trasa,
+a szybszy ruch peryferiami czyta się jako prędkość, nie jako bałagan.
+
+### Smuga za skuterem
+
+Bąbelki wypuszczane parami spod siodełka, rozchodzące się na boki w trójkąt.
+Niosą je te same piksele co wodę (pełna prędkość przewijania), więc ślad
+zostaje w wodzie, zamiast ciągnąć się za ekranem.
+
+## Rekin patroluje
+
+Rekin (`shark_fin.svg`) nie przecina już ekranu po prostej — płynie w dół,
+falując na boki:
+
+```
+x = baseX + sin(y · SHARK_FREQ + phase) · amp        amp ∈ 30–50 px
+```
+
+Faza liczona jest z **przebytej drogi, nie z czasu**. Dzięki temu spowolnienie
+i skok zmieniają tempo pokonywania toru, ale nie jego kształt — rekin, którego
+gracz zdążył odczytać, zachowuje się tak samo po włączeniu zegara.
+
+Płetwa jest odbijana w stronę płynięcia i przechylana o `SHARK_TILT` (6°)
+proporcjonalnie do prędkości bocznej, więc kąt natarcia rośnie na środku
+wymachu i zeruje się w punktach zwrotnych.
+
 ## Obszar kolizji i czas na reakcję
 
 Skuter ma **elipsę**, nie koło: `HIT_W` 20 px w poziomie, `HIT_H` 26 px w pionie.
@@ -175,6 +231,54 @@ Konsekwencja dla gracza jest prosta i o to chodziło: **w powietrzu nie rusza si
 sterowania.** Wchodząc w skok z dowolnym wychyleniem, sprężyna zdąży ściągnąć
 ptaka do pionu w 1,2 s (tłumienie zbija amplitudę do ~21% na okres). Kto skręca
 w locie, ląduje na ryju.
+
+## Przedmioty, drugie życie i near miss
+
+Dwa sloty w interfejsie, na wysokości postaci nad strefami kciuków. Puste są
+wygaszone, pełne świecą. Łapią dotyk (reszta HUD ma `pointer-events: none`)
+i nie uruchamiają sterowania, bo obsługa dotyku sceny pomija cele wewnątrz
+`<button>`.
+
+**Zasada unikalności:** dany przedmiot nie pojawi się na rzece, dopóki gracz go
+trzyma albo jest aktywny. Na wodzie nigdy nie leżą więc dwa zegary naraz.
+
+### Zegar (lewy slot, `Q` lub dotknięcie)
+
+3 s na `SLOW_FACTOR` (30%) prędkości, przy łagodniejszym wahadle
+(`SLOW_COUPLE` 0,45× bezwładności, `SLOW_DAMP` 1,7× tłumienia). Po zakończeniu
+tempo jest **resetowane do bazowego** i rozpędza się od nowa z `SPEED_RECOVER`
+(110 px/s²). To druga połowa nagrody: nie tylko trzy sekundy spokoju, ale
+i oddech po nich — powrót do 600 px/s zajmuje potem ok. 3,7 s.
+
+### Serce (prawy slot, biernie)
+
+Jedno dodatkowe życie. Pochłania **każdą** śmiertelną przyczynę — bojkę,
+rekina, przewrócony totem i twarde lądowanie — bo wszystkie idą przez jedną
+funkcję `fatal()`. Zamiast końca przejazdu:
+
+- serce pęka (różowe cząstki),
+- flaming wylatuje za burtę, kręcąc się,
+- gra toczy się dalej **samą kapibarą**: bez wahadła sterowanie jest stabilne,
+  ale nie ma już żadnej ochrony,
+- kolejne zebrane serce **odradza flaminga** zamiast trafić do slotu.
+
+Bez ptaka Reaction Cam wraca do twarzy rysowanych w kodzie, bo `face_chill.svg`
+i `face_panic.svg` mają flaminga wkomponowanego na stałe. Osobny `face_alone.svg`
+domknąłby to ładniej.
+
+### Near miss
+
+Minięcie bojki albo rekina bliżej niż `NEAR_MISS` (15 px prześwitu między
+obrysami) daje `+10 m` i komiksowy dymek. Rozliczane dokładnie w chwili
+mijania — gdy przeszkoda przecina wysokość skutera — a nie w każdej klatce, więc
+jedno minięcie liczy się raz.
+
+### Podgląd stanu do testów
+
+Zbieranie przedmiotów jest zbyt rzadkie, by trafić w nie losowo w teście, a
+pochłonięcia śmierci przez serce nie widać w DOM. `game.js` wystawia więc
+`window.pogoDebug()` — **wyłącznie** gdy adres zawiera `?debug`. Mechaniki są
+sprawdzane na wymuszonych buildach (np. każda fala to przedmiot).
 
 ## Reaction Cam
 
