@@ -1,28 +1,47 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
-  
-  <rect x="66" y="214" width="124" height="20" rx="10" fill="#7a4520" stroke="#1a1a1a" stroke-width="6"></rect>
+  <!-- Baza / Poduszka siodełka (dopasowana do skutera) -->
+  <rect x="24" y="210" width="208" height="34" rx="17" fill="#006D77" stroke="#1A1A1A" stroke-width="7" stroke-linejoin="round"/>
 
-  
-  <rect x="58" y="132" width="140" height="98" rx="48" fill="#A0522D" stroke="#1a1a1a" stroke-width="6"></rect>
+  <!-- Grupa Kapibary -->
+  <!-- Ucho lewe (w tle) -->
+  <path d="M72 74 C62 74 60 88 70 94 Z" fill="#6A3B14" stroke="#1A1A1A" stroke-width="6"/>
 
-  
-  <rect x="44" y="188" width="30" height="46" rx="14" fill="#8B5A2B" stroke="#1a1a1a" stroke-width="6"></rect>
-  <rect x="182" y="188" width="30" height="46" rx="14" fill="#8B5A2B" stroke="#1a1a1a" stroke-width="6"></rect>
+  <!-- Główna bryła ciała i głowy (Zwarty, stabilny tułów 3/4) -->
+  <path d="M 85 64 
+           C 115 64, 155 64, 175 68 
+           C 195 72, 212 88, 212 110 
+           C 212 125, 204 135, 196 142 
+           C 208 165, 208 195, 202 215 
+           L 44 215 
+           C 36 190, 36 145, 54 110 
+           C 64 90, 72 64, 85 64 Z" 
+        fill="#A65B24" stroke="#1A1A1A" stroke-width="8" stroke-linejoin="round"/>
 
-  
-  <path d="M80 60 L176 60 C190 60 196 80 194 100 C192 122 182 140 160 148 L96 148 C74 140 64 122 62 100 C60 80 66 60 80 60 Z" fill="#A0522D" stroke="#1a1a1a" stroke-width="6" stroke-linejoin="round"></path>
+  <!-- Płaski czubek głowy (punkt podparcia pod stopy flaminga) -->
+  <ellipse cx="130" cy="72" rx="38" ry="12" fill="#BA6F35" stroke="#8F4818" stroke-width="3"/>
 
-  
-  <circle cx="80" cy="66" r="15" fill="#8B5A2B" stroke="#1a1a1a" stroke-width="5"></circle>
-  <circle cx="176" cy="66" r="15" fill="#8B5A2B" stroke="#1a1a1a" stroke-width="5"></circle>
+  <!-- Brzuch / Udo (Zaokrąglenie sylwetki) -->
+  <path d="M 160 215 C 175 195, 175 165, 155 150 C 145 142, 140 148, 142 165 C 145 190, 155 210, 160 215 Z" fill="#8F4818" opacity="0.3"/>
+  <path d="M 155 170 C 170 178, 175 198, 168 215" fill="none" stroke="#1A1A1A" stroke-width="7" stroke-linecap="round"/>
 
-  
-  <path d="M164 88 L196 84 L200 108 L168 112 Z" fill="#ff6fb0" stroke="#1a1a1a" stroke-width="5" stroke-linejoin="round"></path>
-  <line x1="200" y1="94" x2="212" y2="90" stroke="#1a1a1a" stroke-width="5" stroke-linecap="round"></line>
+  <!-- Łapka boczna -->
+  <path d="M 172 170 C 185 175, 192 188, 186 200 C 182 208, 175 212, 168 212" fill="#8F4818" stroke="#1A1A1A" stroke-width="6" stroke-linecap="round"/>
 
-  
-  <circle cx="184" cy="126" r="4" fill="#1a1a1a"></circle>
+  <!-- Ucho prawe (bliżej gracza) -->
+  <path d="M 124 80 C 120 70, 134 68, 142 76 C 146 82, 138 90, 128 88 Z" fill="#8F4818" stroke="#1A1A1A" stroke-width="6"/>
 
-  
-  <rect x="92" y="58" width="72" height="10" rx="5" fill="#8B5A2B" stroke="#1a1a1a" stroke-width="4"></rect>
+  <!-- Profil nosa/pyszczka -->
+  <path d="M 206 102 C 212 108, 212 116, 204 122" fill="none" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Różowe okulary przeciwsłoneczne (Widok profilowy/retro) -->
+  <!-- Zausznik okularów -->
+  <path d="M 132 86 L 178 78 L 198 82" fill="none" stroke="#FF4D8D" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 132 86 L 178 78 L 198 82" fill="none" stroke="#1A1A1A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Oprawka boczna -->
+  <polygon points="174,74 206,78 202,104 170,96" fill="#FF4D8D" stroke="#1A1A1A" stroke-width="6" stroke-linejoin="round"/>
+  <!-- Szkło z odbiciem światła -->
+  <polygon points="178,78 200,82 198,100 174,93" fill="#3A0CA3"/>
+  <polygon points="182,80 192,82 186,96 178,93" fill="#4CC9F0" opacity="0.8"/>
+  <line x1="184" y1="82" x2="194" y2="84" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
 </svg>
