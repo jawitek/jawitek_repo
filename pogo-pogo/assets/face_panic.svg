@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <defs>
+    <clipPath id="framePanic">
+      <circle cx="64" cy="64" r="62"></circle>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#framePanic)">
+    
+    <g stroke="#1a1a1a" stroke-width="4" stroke-linecap="round">
+      <line x1="10" y1="10" x2="24" y2="20"></line>
+      <line x1="4" y1="30" x2="18" y2="34"></line>
+      <line x1="118" y1="8" x2="104" y2="18"></line>
+    </g>
+    
+    <path d="M100 16 C104 22 104 28 100 30 C96 28 96 22 100 16 Z" fill="#eafcff" stroke="#1a1a1a" stroke-width="3"></path>
+    <path d="M50 8 C54 14 54 20 50 22 C46 20 46 14 50 8 Z" fill="#eafcff" stroke="#1a1a1a" stroke-width="3"></path>
+
+    
+    <circle cx="86" cy="34" r="32" fill="#ff5fa8" stroke="#1a1a1a" stroke-width="6"></circle>
+    <circle cx="76" cy="28" r="15" fill="#ffffff" stroke="#1a1a1a" stroke-width="5"></circle>
+    <circle cx="96" cy="30" r="14" fill="#ffffff" stroke="#1a1a1a" stroke-width="5"></circle>
+    <circle cx="77" cy="30" r="4" fill="#1a1a1a"></circle>
+    <circle cx="98" cy="32" r="4" fill="#1a1a1a"></circle>
+    <path d="M100 44 C114 42 126 48 130 58 C120 64 106 62 98 54 Z" fill="#ff9a3d" stroke="#1a1a1a" stroke-width="5" stroke-linejoin="round"></path>
+    <ellipse cx="108" cy="52" rx="10" ry="6" fill="#7a2a12"></ellipse>
+
+    
+    <path d="M18 58 L110 58 C120 58 124 74 122 92 C120 112 106 132 64 132 C22 132 8 112 6 92 C4 74 8 58 18 58 Z" fill="#A0522D" stroke="#1a1a1a" stroke-width="7" stroke-linejoin="round"></path>
+    <circle cx="20" cy="64" r="14" fill="#8B5A2B" stroke="#1a1a1a" stroke-width="6"></circle>
+    <circle cx="108" cy="64" r="14" fill="#8B5A2B" stroke="#1a1a1a" stroke-width="6"></circle>
+    <rect x="40" y="52" width="48" height="10" rx="5" fill="#8B5A2B" stroke="#1a1a1a" stroke-width="5"></rect>
+
+    
+    <path d="M22 78 L58 76 L58 92 C58 100 48 104 40 100 C30 96 22 88 22 78 Z" fill="#ff6fb0" stroke="#1a1a1a" stroke-width="6" stroke-linejoin="round"></path>
+    <path d="M70 76 L106 78 C106 88 98 96 88 100 C80 104 70 100 70 92 Z" fill="#ff6fb0" stroke="#1a1a1a" stroke-width="6" stroke-linejoin="round"></path>
+    <line x1="58" y1="80" x2="70" y2="80" stroke="#1a1a1a" stroke-width="6" stroke-linecap="round"></line>
+
+    <ellipse cx="64" cy="116" rx="18" ry="10" fill="#8B5A2B" stroke="#1a1a1a" stroke-width="6"></ellipse>
+    <circle cx="58" cy="114" r="2.5" fill="#1a1a1a"></circle>
+    <circle cx="70" cy="114" r="2.5" fill="#1a1a1a"></circle>
+  </g>
+</svg>
