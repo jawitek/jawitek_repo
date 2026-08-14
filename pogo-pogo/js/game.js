@@ -84,12 +84,21 @@
   var NEAR_MISS   = 15;               // px prześwitu liczone jako „o włos"
   var NEAR_BONUS  = 10;               // metrów za near miss
   var NEAR_TEXTS  = ["LUCKY!", "CLOSE ONE!", "STILL CHILL", "SWEATY!"];
+
+  /* Rekin patroluje sinusoidą zamiast przecinać ekran po prostej — gracz musi
+     przewidzieć tor płetwy, a nie tylko zauważyć przeszkodę.            */
+  var SHARK_FREQ = 0.03;              // ile sinusa na piksel drogi
+  var SHARK_AMP  = [30, 50];          // wychylenie w bok
+  var SHARK_TILT = 6 * Math.PI / 180; // kąt natarcia płetwy
+
+  var PARALLAX   = 1.4;               // o ile szybciej lecą kreski pędu
+  var WAKE_LIFE  = 0.75;              // jak długo żyje bąbelek smugi
   var BEST_KEY = "pogo-pogo:best";
 
   /* Wersja zasobów. Przeglądarki trzymały stary game.js i stare sprite'y po
      wdrożeniu — gracz widział poprzednią wersję gry mimo udanej publikacji.
      PODBIJ TĘ LICZBĘ (i te w index.html) przy każdym wdrożeniu.          */
-  var VER = "4";
+  var VER = "5";
 
   /* ------------------------------------------------------------ narzędzia */
 
@@ -140,6 +149,7 @@
     flamingo:       { w: 62, anchor: "bottom", fbW: 48, fbH: 78, fb: fbFlamingo },
     obstacle_buoy:  { w: 44, anchor: "center", fbW: 40, fbH: 52, fb: fbBuoy },
     obstacle_shark: { w: 58, anchor: "center", fbW: 64, fbH: 46, fb: fbShark },
+    shark_fin:      { w: 58, anchor: "center", fbW: 64, fbH: 46, fb: fbShark },
     ramp:           { w: 82, anchor: "center", fbW: 82, fbH: 52, fb: fbRamp },
     item_slowmo:    { w: 40, anchor: "center", fbW: 40, fbH: 40, fb: fbSlowmo },
     item_heart:     { w: 40, anchor: "center", fbW: 40, fbH: 40, fb: fbHeart }
@@ -245,21 +255,45 @@
   }
 
   function bakeWater() {
-    waterPattern = false;
+    waterCanvas = null;
     var img = ART.water_tile;
     if (!img || !img.naturalWidth || !img.naturalHeight) return;
 
     var side = Math.max(2, Math.round(WATER_TILE * scaleX));
     var c = document.createElement("canvas");
     c.width = side; c.height = side;
-    c.getContext("2d").drawImage(img, 0, 0, side, side);
-    try {
-      var p = ctx.createPattern(c, "repeat");
-      /* Kafelek jest w pikselach urządzenia, a malujemy w jednostkach
-         logicznych — skalujemy wzorzec z powrotem, żeby wyszło 1:1.    */
-      if (p.setTransform) p.setTransform(new DOMMatrix([1 / scaleX, 0, 0, 1 / scaleY, 0, 0]));
-      waterPattern = p;
-    } catch (e) { waterPattern = false; }
+    var g = c.getContext("2d");
+    g.imageSmoothingQuality = "high";
+    g.drawImage(img, 0, 0, side, side);
+    waterCanvas = c;
+  }
+
+  /* Kafelkowanie LUSTRZANE, nie zwykłe powtarzanie.
+
+     Dostarczony kafelek nie jest bezszwowy: ma pionowy gradient na całą
+     wysokość i plamy światła, które nie zawijają się na krawędziach. Przy
+     zwykłym `repeat` widać przez to twarde pasy co 256 px i pionowy szew.
+     Odbijanie co drugiej kolumny i co drugiego wiersza sprawia, że stykają
+     się zawsze dwie identyczne krawędzie — szwy znikają dla DOWOLNEGO
+     kafelka, także takiego, który ktoś wgra później. Kosztem jest lustrzana
+     powtarzalność wzoru, na wodzie niezauważalna.                      */
+  function drawWaterTiles(scroll) {
+    var t = WATER_TILE;
+    var off = mod(scroll, t * 2);        // okres wzoru to dwa kafelki
+    var rows = Math.ceil((H + off) / t) + 1;
+    var cols = Math.ceil(W / t) + 1;
+
+    for (var i = -1; i < rows; i++) {
+      var y = i * t - off;
+      var flipY = mod(i, 2) === 1;
+      for (var j = 0; j < cols; j++) {
+        ctx.save();
+        ctx.translate(j * t + t / 2, y + t / 2);
+        ctx.scale(mod(j, 2) === 1 ? -1 : 1, flipY ? -1 : 1);
+        ctx.drawImage(waterCanvas, -t / 2, -t / 2, t, t);
+        ctx.restore();
+      }
+    }
   }
 
   /* Rysuje sprite zaczepiony punktem BOX[name].anchor w (0,0). */
@@ -522,20 +556,31 @@
 
   /* ---------------------------------------------------------------- woda */
 
-  var waterPattern = null;
+  var waterCanvas = null;
+
+  /* Warstwa 2 paralaksy: kreski pędu przy krawędziach, przewijane PARALLAX
+     razy szybciej niż woda. Krawędzie, bo środek jest zajęty przez trasę,
+     a szybszy ruch peryferiami czyta się jako prędkość, nie jako bałagan. */
+  var lines = [];
+  for (var li = 0; li < 26; li++) {
+    var leftSide = li % 2 === 0;
+    lines.push({
+      x: leftSide ? rand(6, 54) : rand(W - 54, W - 6),
+      y: rand(0, H),
+      len: rand(16, 46),
+      w: rand(1.5, 3),
+      a: rand(0.10, 0.30)
+    });
+  }
+
   var foam = [];
   for (var i = 0; i < 46; i++) {
     foam.push({ x: rand(0, W), y: rand(0, H), r: rand(1, 3.2), s: rand(0.55, 1.25) });
   }
 
   function drawWater(scroll, t) {
-    if (waterPattern) {
-      var tile = WATER_TILE;
-      ctx.save();
-      ctx.translate(0, mod(scroll, tile) - tile);
-      ctx.fillStyle = waterPattern;
-      ctx.fillRect(0, 0, W, H + tile);
-      ctx.restore();
+    if (waterCanvas) {
+      drawWaterTiles(scroll);
 
       /* Kafelek jest jasny i płaski — przyciemnienie góry ratuje czytelność
          licznika, a dołu daje głębię. Środek zostaje nietknięty.        */
@@ -573,6 +618,19 @@
       ctx.beginPath();
       ctx.arc(f.x, mod(f.y - scroll * f.s, H + 20) - 10, f.r, 0, 6.2832);
       ctx.fill();
+    }
+
+    /* kreski pędu — druga warstwa, szybsza od wody */
+    ctx.lineCap = "round";
+    for (var q = 0; q < lines.length; q++) {
+      var ln = lines[q];
+      var ly = mod(ln.y - scroll * PARALLAX, H + 80) - 40;
+      ctx.strokeStyle = "rgba(255,255,255," + ln.a.toFixed(2) + ")";
+      ctx.lineWidth = ln.w;
+      ctx.beginPath();
+      ctx.moveTo(ln.x, ly);
+      ctx.lineTo(ln.x, ly + ln.len);
+      ctx.stroke();
     }
   }
 
@@ -710,6 +768,7 @@
     spray: [],
     spawn: 0,
     items: [],
+    wake: [],
     pops: [],
     slots: { slowmo: false, heart: false },
     slowT: 0,
@@ -737,6 +796,7 @@
     game.spray.length = 0;
     game.spawn = 1.1;
     game.items.length = 0;
+    game.wake.length = 0;
     game.pops.length = 0;
     game.slots.slowmo = false;
     game.slots.heart = false;
@@ -885,12 +945,14 @@
     /* Rekin przecina ekran w poprzek, więc idzie sam. Na wyższych progach
        tnie szybciej — wolny rekin przelatywał bokiem i nic nie robił.   */
     if (Math.random() < 0.10 + 0.28 * d) {
-      var fromLeft = Math.random() < 0.5;
+      var sr = 0.35 * Math.min(SKI_VX_MAX * gapTime,
+                               0.5 * SKI_ACCEL * gapTime * gapTime);
+      var base = clamp(game.safeX + rand(-sr, sr), LANE_LO, LANE_HI);
       game.obstacles.push({
         type: "shark",
-        x: fromLeft ? -50 : W + 50,
-        y: -60,
-        vx: (fromLeft ? 1 : -1) * rand(60, 90 + 110 * d),
+        baseX: base, x: base, y: -60, vx: 0,
+        phase: rand(0, 6.2832),
+        amp: rand(SHARK_AMP[0], SHARK_AMP[1]),
         r: HIT_SHARK
       });
       return;
@@ -1177,10 +1239,30 @@
       }
     }
 
-    /* kilwater — częstotliwość liczona z czasu, nie z liczby kroków */
-    if (Math.random() < 45 * dt) {
-      splash(ski.x + rand(-14, 14), SKI_Y + 18, 0.5);
+    /* Smuga: bąbelki wypuszczane parami spod siodełka, rozchodzące się na
+       boki. Niosą je te same piksele co wodę (pełna prędkość przewijania),
+       więc trójkąt zostaje w wodzie, a nie ciągnie się za ekranem.      */
+    game.wakeAcc = (game.wakeAcc || 0) + dt;
+    while (game.wakeAcc > 0.022) {
+      game.wakeAcc -= 0.022;
+      for (var wsd = -1; wsd <= 1; wsd += 2) {
+        game.wake.push({
+          x: ski.x + wsd * 7, y: SKI_Y + 20,
+          vx: wsd * rand(26, 46) + ski.vx * 0.25,
+          r: rand(1.8, 3.6),
+          life: WAKE_LIFE
+        });
+      }
     }
+    for (var wi = game.wake.length - 1; wi >= 0; wi--) {
+      var wp = game.wake[wi];
+      wp.life -= dt;
+      if (wp.life <= 0) { game.wake.splice(wi, 1); continue; }
+      wp.x += wp.vx * dt;
+      wp.y += game.speed * dt;
+      if (wp.y > H + 20) game.wake.splice(wi, 1);
+    }
+
     updateSpray(dt);
   }
 
@@ -1188,7 +1270,18 @@
     for (var i = game.obstacles.length - 1; i >= 0; i--) {
       var o = game.obstacles[i];
       o.y += game.speed * dt;
-      o.x += o.vx * dt;
+
+      if (o.type === "shark") {
+        /* Patrol sinusoidalny wokół toru, po którym rekin wszedł. Faza
+           liczona z przebytej drogi, nie z czasu — dzięki temu spowolnienie
+           i skok nie zmieniają kształtu toru, tylko tempo jego pokonywania. */
+        var ph = o.y * SHARK_FREQ + o.phase;
+        o.x = clamp(o.baseX + Math.sin(ph) * o.amp, 12, W - 12);
+        o.lean = Math.cos(ph);          // >0 płynie w prawo, <0 w lewo
+      } else {
+        o.x += o.vx * dt;
+      }
+
       if (o.y > H + 90 || o.x < -110 || o.x > W + 110) game.obstacles.splice(i, 1);
     }
   }
@@ -1220,6 +1313,19 @@
 
     drawWater(game.scroll + game.scrollV * a, game.t + a);
 
+    /* smuga za skuterem — pod wszystkim, bo leży na wodzie */
+    for (var wj = 0; wj < game.wake.length; wj++) {
+      var w2 = game.wake[wj];
+      var wl = w2.life / WAKE_LIFE;
+      ctx.globalAlpha = wl * 0.65;
+      ctx.fillStyle = "#FFFFFF";
+      ctx.beginPath();
+      ctx.arc(w2.x + w2.vx * a, w2.y + game.speed * a, w2.r * (0.4 + 0.6 * wl),
+              0, 6.2832);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
     /* piana i kilwater pod obiektami */
     ctx.fillStyle = "rgba(255,255,255,.8)";
     for (var i = 0; i < game.spray.length; i++) {
@@ -1245,8 +1351,14 @@
         ctx.rotate(Math.sin(game.t * 1.6 + o.x) * 0.05);
         sprite("ramp");
       } else {
-        ctx.scale(o.vx < 0 ? -1 : 1, 1);
-        sprite("obstacle_shark");
+        /* Kąt natarcia proporcjonalny do prędkości bocznej — płetwa tnie falę
+           w stronę, w którą płynie.                                        */
+        /* Płetwa jest odbijana w stronę płynięcia, a potem przechylana
+           w tej samej, odbitej ramce — stąd kąt zawsze dodatni.        */
+        var lean = o.lean || 0;
+        ctx.scale(lean < 0 ? -1 : 1, 1);
+        ctx.rotate(SHARK_TILT * Math.abs(lean));
+        sprite(ART.shark_fin ? "shark_fin" : "obstacle_shark");
       }
       ctx.restore();
     }
@@ -1753,7 +1865,7 @@
   loadArt(
     ["jetski", "capybara", "flamingo", "obstacle_buoy", "obstacle_shark",
      "water_tile", "totem_duo", "face_chill", "face_panic", "ramp",
-     "item_slowmo", "item_heart"],
+     "item_slowmo", "item_heart", "shark_fin"],
     function () {
       if (ART.totem_duo) {
         el.splash.hidden = false;

@@ -135,6 +135,57 @@ zmianie rozmiaru okna), a w pętli rysowania trafia już tylko gotowa bitmapa 1:
 Kafelek wody idzie tą samą drogą — wzorzec powstaje z przepalonego płótna,
 a `setTransform` na wzorcu sprowadza go z powrotem do jednostek logicznych.
 
+## Woda, paralaksa i smuga
+
+Tło to kafelek `water_tile.svg`, przewijany o `speed · dt` co klatkę
+i przepalony na bitmapę w rozdzielczości ekranu. Proceduralne linie zostały
+wyłącznie jako **zapas**, gdy pliku brakuje.
+
+### Kafelkowanie jest lustrzane, nie zwykłe
+
+Dostarczony kafelek nie jest bezszwowy: ma pionowy gradient na całą wysokość
+i plamy światła, które nie zawijają się na krawędziach. Przy zwykłym `repeat`
+widać przez to **twarde pasy co 256 px i pionowy szew** — gradient zaczyna się
+od nowa w każdym rzędzie.
+
+Dlatego co druga kolumna i co drugi wiersz są odbijane. Stykają się wtedy
+zawsze dwie identyczne krawędzie, więc szwy znikają dla **dowolnego** kafelka,
+także takiego, który ktoś wgra później. Gradient zamienia się w płynną falę
+jasność-ciemność o okresie 512 px, co na wodzie czyta się jak głębia. Kosztem
+jest lustrzana powtarzalność wzoru — niezauważalna przy tej teksturze.
+
+Bezszwowy kafelek (gradient zapętlony w pionie, plamy zawinięte na krawędziach)
+wyglądałby jeszcze lepiej i pozwoliłby wrócić do zwykłego powtarzania.
+
+### Druga warstwa: kreski pędu
+
+Białe półprzezroczyste kreski przy lewej i prawej krawędzi, przewijane
+`PARALLAX` (1,4×) szybciej niż woda. Przy krawędziach, bo środek zajmuje trasa,
+a szybszy ruch peryferiami czyta się jako prędkość, nie jako bałagan.
+
+### Smuga za skuterem
+
+Bąbelki wypuszczane parami spod siodełka, rozchodzące się na boki w trójkąt.
+Niosą je te same piksele co wodę (pełna prędkość przewijania), więc ślad
+zostaje w wodzie, zamiast ciągnąć się za ekranem.
+
+## Rekin patroluje
+
+Rekin (`shark_fin.svg`) nie przecina już ekranu po prostej — płynie w dół,
+falując na boki:
+
+```
+x = baseX + sin(y · SHARK_FREQ + phase) · amp        amp ∈ 30–50 px
+```
+
+Faza liczona jest z **przebytej drogi, nie z czasu**. Dzięki temu spowolnienie
+i skok zmieniają tempo pokonywania toru, ale nie jego kształt — rekin, którego
+gracz zdążył odczytać, zachowuje się tak samo po włączeniu zegara.
+
+Płetwa jest odbijana w stronę płynięcia i przechylana o `SHARK_TILT` (6°)
+proporcjonalnie do prędkości bocznej, więc kąt natarcia rośnie na środku
+wymachu i zeruje się w punktach zwrotnych.
+
 ## Obszar kolizji i czas na reakcję
 
 Skuter ma **elipsę**, nie koło: `HIT_W` 20 px w poziomie, `HIT_H` 26 px w pionie.
