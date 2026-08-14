@@ -1,58 +1,62 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
-  <defs>
-    <linearGradient id="hullGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#2fe0c9"></stop>
-      <stop offset="100%" stop-color="#0e9488"></stop>
-    </linearGradient>
-  </defs>
+  <!-- Dynamiczne pióra / krople potu w panice -->
+  <circle cx="50" cy="80" r="4" fill="#FF4D8D" stroke="#1A1A1A" stroke-width="2"/>
+  <circle cx="40" cy="100" r="3" fill="#FF4D8D"/>
+  <circle cx="210" cy="70" r="4" fill="#FF4D8D" stroke="#1A1A1A" stroke-width="2"/>
+  <path d="M195 45 Q205 35 210 45 Q205 55 195 45 Z" fill="#4CC9F0" stroke="#1A1A1A" stroke-width="2"/> <!-- Kropla potu -->
 
+  <!-- Nogi (Cienkie pomarańczowe szczudła opierające się o głowę kapibary) -->
+  <line x1="120" y1="185" x2="116" y2="246" stroke="#1A1A1A" stroke-width="8" stroke-linecap="round"/>
+  <line x1="120" y1="185" x2="116" y2="246" stroke="#FB8500" stroke-width="5" stroke-linecap="round"/>
   
-  <g stroke="#1a1a1a" stroke-width="5" stroke-linejoin="round" stroke-linecap="round">
-    <path d="M22 208 C4 220 -2 238 10 248 C18 240 26 240 32 246 C34 234 46 226 58 226 C48 214 34 206 22 208 Z" fill="#eafcff"></path>
-    <path d="M234 208 C252 220 258 238 246 248 C238 240 230 240 224 246 C222 234 210 226 198 226 C208 214 222 206 234 208 Z" fill="#eafcff"></path>
-    <path d="M80 222 C68 234 68 246 80 250 C84 242 92 240 100 244 C100 232 108 226 118 226 C110 216 90 212 80 222 Z" fill="#c7f3f5"></path>
-    <path d="M176 222 C188 234 188 246 176 250 C172 242 164 240 156 244 C156 232 148 226 138 226 C146 216 166 212 176 222 Z" fill="#c7f3f5"></path>
-  </g>
+  <line x1="136" y1="185" x2="140" y2="246" stroke="#1A1A1A" stroke-width="8" stroke-linecap="round"/>
+  <line x1="136" y1="185" x2="140" y2="246" stroke="#FB8500" stroke-width="5" stroke-linecap="round"/>
 
-  
-  <path d="M44 178 C40 192 46 204 60 210 L128 216 L196 210 C210 204 216 192 212 178 C186 196 128 200 128 200 C128 200 70 196 44 178 Z" fill="#0b6f66" stroke="#1a1a1a" stroke-width="6" stroke-linejoin="round"></path>
+  <!-- Stopy (Pivot point na dole kadru) -->
+  <path d="M106 250 L116 244 L126 250" fill="none" stroke="#1A1A1A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M130 250 L140 244 L150 250" fill="none" stroke="#1A1A1A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
 
-  
-  <path d="M44 178 C32 172 24 176 20 186 C26 194 36 198 46 196 Z" fill="#0e9488" stroke="#1a1a1a" stroke-width="5" stroke-linejoin="round"></path>
-  <path d="M212 178 C224 172 232 176 236 186 C230 194 220 198 210 196 Z" fill="#0e9488" stroke="#1a1a1a" stroke-width="5" stroke-linejoin="round"></path>
+  <!-- Skrzydło Lewe (Rozpostarte w totalnej panice) -->
+  <path d="M 115 150 
+           C 80 130, 40 100, 30 75 
+           C 45 85, 60 90, 75 105 
+           C 65 115, 85 130, 110 145 Z" 
+        fill="#FF4D8D" stroke="#1A1A1A" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M 45 85 C 55 70, 70 65, 85 80" fill="none" stroke="#1A1A1A" stroke-width="5"/>
 
-  
-  <path d="M50 120 C40 140 38 162 44 178 C70 196 186 196 212 178 C218 162 216 140 206 120 C196 100 160 88 128 88 C96 88 60 100 50 120 Z" fill="url(#hullGrad)" stroke="#1a1a1a" stroke-width="6" stroke-linejoin="round"></path>
+  <!-- Skrzydło Prawe (Wzniesione w górę) -->
+  <path d="M 140 150 
+           C 175 125, 215 90, 225 65 
+           C 210 78, 195 85, 180 100 
+           C 190 110, 170 128, 145 145 Z" 
+        fill="#FF4D8D" stroke="#1A1A1A" stroke-width="7" stroke-linejoin="round"/>
+  <path d="M 210 78 C 200 62, 185 60, 170 75" fill="none" stroke="#1A1A1A" stroke-width="5"/>
 
-  
-  <path d="M96 96 C82 118 74 148 72 176 L94 180 C96 150 104 120 116 96 Z" fill="#e6ff2b" stroke="#1a1a1a" stroke-width="4" stroke-linejoin="round"></path>
-  <path d="M160 96 C174 118 182 148 184 176 L162 180 C160 150 152 120 140 96 Z" fill="#e6ff2b" stroke="#1a1a1a" stroke-width="4" stroke-linejoin="round"></path>
+  <!-- Tułów (Jajowaty, puszysty różowy kuper) -->
+  <ellipse cx="128" cy="160" rx="26" ry="24" fill="#FF758F" stroke="#1A1A1A" stroke-width="7"/>
 
-  
-  <ellipse cx="66" cy="182" rx="7" ry="5" fill="#ff5a7a" stroke="#1a1a1a" stroke-width="3"></ellipse>
-  <ellipse cx="190" cy="182" rx="7" ry="5" fill="#ff5a7a" stroke="#1a1a1a" stroke-width="3"></ellipse>
+  <!-- Długa wygięta szyja w kształcie S -->
+  <path d="M 132 145 
+           C 138 120, 160 105, 150 75 
+           C 146 65, 138 60, 135 52" 
+        fill="none" stroke="#1A1A1A" stroke-width="15" stroke-linecap="round"/>
+  <path d="M 132 145 
+           C 138 120, 160 105, 150 75 
+           C 146 65, 138 60, 135 52" 
+        fill="none" stroke="#FF758F" stroke-width="9" stroke-linecap="round"/>
 
-  
-  <path d="M104 174 C104 164 152 164 152 174" fill="none" stroke="#1a1a1a" stroke-width="6" stroke-linecap="round"></path>
+  <!-- Głowa Flaminga -->
+  <circle cx="132" cy="46" r="16" fill="#FF758F" stroke="#1A1A1A" stroke-width="6"/>
 
-  
-  <path d="M78 100 C74 82 96 66 128 66 C160 66 182 82 178 100 C158 112 98 112 78 100 Z" fill="#1fbfae" stroke="#1a1a1a" stroke-width="6" stroke-linejoin="round"></path>
+  <!-- Wybałuszone kreskówkowe oko -->
+  <circle cx="140" cy="42" r="10" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="4"/>
+  <circle cx="143" cy="42" r="4" fill="#1A1A1A"/>
+  <circle cx="145" cy="40" r="1.5" fill="#FFFFFF"/>
 
-  
-  <rect x="80" y="60" width="96" height="30" rx="14" ry="14" fill="#0b3a52" stroke="#1a1a1a" stroke-width="6"></rect>
-  <rect x="88" y="66" width="80" height="8" rx="4" fill="#144d6b" opacity="0.8"></rect>
-  <ellipse cx="128" cy="60" rx="42" ry="7" fill="#123f58" stroke="#1a1a1a" stroke-width="4"></ellipse>
-
-  
-  <path d="M104 60 C102 44 112 32 128 32 C144 32 154 44 152 60 C140 66 116 66 104 60 Z" fill="#2fe0c9" stroke="#1a1a1a" stroke-width="6" stroke-linejoin="round"></path>
-
-  
-  <path d="M104 40 C88 36 74 34 62 38 C58 46 60 52 66 56 C78 48 92 44 106 46 Z" fill="#0e9488" stroke="#1a1a1a" stroke-width="5" stroke-linejoin="round"></path>
-  <path d="M152 40 C168 36 182 34 194 38 C198 46 196 52 190 56 C178 48 164 44 150 46 Z" fill="#0e9488" stroke="#1a1a1a" stroke-width="5" stroke-linejoin="round"></path>
-  <rect x="42" y="34" width="26" height="14" rx="7" fill="#e6ff2b" stroke="#1a1a1a" stroke-width="5"></rect>
-  <rect x="188" y="34" width="26" height="14" rx="7" fill="#e6ff2b" stroke="#1a1a1a" stroke-width="5"></rect>
-
-  
-  <path d="M58 132 C86 144 170 144 198 132" fill="none" stroke="#0b6f66" stroke-width="4" stroke-linecap="round" opacity="0.7"></path>
-  <path d="M52 160 C86 174 170 174 204 160" fill="none" stroke="#0b6f66" stroke-width="4" stroke-linecap="round" opacity="0.6"></path>
+  <!-- Dziób otwarty w krzyku (zagięty w dół z czarną końcówką) -->
+  <!-- Górna szczęka -->
+  <path d="M 144 48 Q 165 48 175 62 Q 160 62 144 56 Z" fill="#FB8500" stroke="#1A1A1A" stroke-width="5" stroke-linejoin="round"/>
+  <path d="M 165 54 Q 175 62 170 62 Q 160 62 165 54 Z" fill="#1A1A1A"/>
+  <!-- Dolna szczęka (otwarta gardziel) -->
+  <path d="M 142 56 Q 155 64 162 70 Q 148 68 138 60 Z" fill="#D90429" stroke="#1A1A1A" stroke-width="4" stroke-linejoin="round"/>
 </svg>
