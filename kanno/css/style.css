@@ -158,13 +158,27 @@ h2 {
   gap: 8px;
   padding-left: 20px;
   border-left: 1px solid rgba(29, 29, 27, 0.14);
+}
+
+.lang button,
+.lang a {
+  background: none;
+  border: 0;
+  padding: 4px 2px;
+  font-family: inherit;
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
   color: var(--muted-4);
+  cursor: pointer;
+  transition: color 0.18s ease;
 }
 
-.lang .on { color: var(--ink); }
+.lang button:hover,
+.lang a:hover { color: var(--ink); }
+
+.lang button.on,
+.lang a.on { color: var(--ink); }
 
 .burger {
   display: none;
@@ -462,6 +476,10 @@ h2 {
   text-transform: uppercase;
   color: var(--muted-3);
 }
+
+/* In Japanese the style name already carries the kanji, so the sub-label
+   is emptied by the dictionary — collapse it rather than leave a gap. */
+.card-jp:empty { display: none; }
 
 .card-blurb {
   font-size: 15px;

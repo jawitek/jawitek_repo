@@ -17,9 +17,10 @@ the old root address keep working.
 ├── index.html      redirect to kanno/
 ├── kanno/          Kanno Noodle — B2B site for the ramen noodle production
 │   ├── index.html
-│   ├── privacy.html     GDPR privacy policy
+│   ├── privacy.html             GDPR privacy policy, EN
+│   ├── polityka-prywatnosci.html  the same policy, PL (the original)
 │   ├── instagram.html   Instagram post grid mockup
-│   ├── css/ js/ assets/
+│   ├── css/ js/ assets/  js/i18n.js holds all copy in EN / PL / JA
 │   └── brand/           logo master files (SVG / PDF / PNG)
 ├── nazaspe3/       Na Zaspę 3 — office space to let, Gdańsk Nowy Port
 │   ├── index.html
@@ -58,8 +59,9 @@ The Kanno logo master files were kept out of that removal and live in
 
 ## Known gaps — Kanno
 
-- **Languages.** The header shows EN / PL / JA as designed, but only English
-  copy exists; the PL and JA chips are inert until translations are supplied.
+- **Japanese privacy policy.** The site itself switches fully between EN / PL
+  / JA, but the policy exists in Polish and English only — the JA footer link
+  serves the English page.
 - **Contact form.** No backend. Submitting composes a pre-filled message to
   hello@kanno.pl in the visitor's mail client. Wiring it to a form service
   (Formspree, Netlify Forms) would make it a true form.

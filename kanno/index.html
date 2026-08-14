@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <title>Kanno Noodle — The art of Japanese noodles, made in Europe</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Japanese ramen noodles produced in central Poland by the Kanno family joint venture. Five styles, with or without egg, IFS Food certified, frozen with 12 months shelf life.">
-  <meta property="og:title" content="Kanno Noodle — The art of Japanese noodles, made in Europe">
-  <meta property="og:description" content="Seventy years of Kanno family craft, Japanese recipes and know-how, produced in central Poland for ramen kitchens and retail across Europe.">
+  <meta name="description" data-i18n-content="meta.description" content="Japanese ramen noodles produced in central Poland by the Kanno family joint venture. Five styles, with or without egg, IFS Food certified, frozen with 12 months shelf life.">
+  <meta property="og:title" data-i18n-content="meta.title" content="Kanno Noodle — The art of Japanese noodles, made in Europe">
+  <meta property="og:description" data-i18n-content="meta.ogDescription" content="Seventy years of Kanno family craft, Japanese recipes and know-how, produced in central Poland for ramen kitchens and retail across Europe.">
   <meta property="og:type" content="website">
   <meta property="og:image" content="assets/hero.jpg">
   <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
@@ -20,23 +20,23 @@
 <!-- ===== Header ===== -->
 <header class="site-header">
   <div class="header-inner">
-    <a href="#top" class="brand"><img src="assets/logo.svg" alt="Kanno Noodle"></a>
+    <a href="#top" class="brand"><img src="assets/logo.svg" alt="Kanno Noodle" data-i18n-alt="alt.logo"></a>
 
     <nav class="nav" id="nav" aria-label="Main">
-      <a href="#about">About</a>
-      <a href="#products">Noodles</a>
-      <a href="#production">Production</a>
-      <a href="#quality">Quality</a>
-      <a href="#contact">Contact</a>
+      <a href="#about" data-i18n="nav.about">About</a>
+      <a href="#products" data-i18n="nav.products">Noodles</a>
+      <a href="#production" data-i18n="nav.production">Production</a>
+      <a href="#quality" data-i18n="nav.quality">Quality</a>
+      <a href="#contact" data-i18n="nav.contact">Contact</a>
     </nav>
 
-    <div class="lang" aria-label="Language">
-      <span class="on">EN</span>
-      <span>PL</span>
-      <span>JA</span>
+    <div class="lang" id="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="EN" class="on">EN</button>
+      <button type="button" data-lang="PL">PL</button>
+      <button type="button" data-lang="JA">JA</button>
     </div>
 
-    <a href="#contact" class="btn btn-red header-cta">Request a quote</a>
+    <a href="#contact" class="btn btn-red header-cta" data-i18n="nav.cta">Request a quote</a>
 
     <button class="burger" id="burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="nav">
       <span></span><span></span><span></span>
@@ -52,13 +52,13 @@
     <div class="hero-shade"></div>
     <div class="hero-inner">
       <div class="eyebrow eyebrow-orange" data-reveal>
-        <span class="rule"></span>Tokyo 1949 · Made in Poland
+        <span class="rule"></span><span data-i18n="hero.eyebrow">Tokyo 1949 · Made in Poland</span>
       </div>
-      <h1 data-reveal>The art of Japanese noodles, made in&nbsp;Europe</h1>
-      <p class="hero-lead" data-reveal>Seventy years of Kanno family craft, Japanese recipes and know-how, produced in central Poland at the heart of Europe's logistics network — supplying ramen kitchens and retail with frozen noodles of consistent, chef-grade texture.</p>
+      <h1 data-reveal data-i18n="hero.title">The art of Japanese noodles, made in&nbsp;Europe</h1>
+      <p class="hero-lead" data-reveal data-i18n="hero.lead">Seventy years of Kanno family craft, Japanese recipes and know-how, produced in central Poland at the heart of Europe's logistics network — supplying ramen kitchens and retail with frozen noodles of consistent, chef-grade texture.</p>
       <div class="hero-actions" data-reveal>
-        <a href="#contact" class="btn btn-red btn-lg">Talk to our sales team</a>
-        <a href="#products" class="btn btn-outline btn-lg">See the noodle range</a>
+        <a href="#contact" class="btn btn-red btn-lg" data-i18n="hero.cta1">Talk to our sales team</a>
+        <a href="#products" class="btn btn-outline btn-lg" data-i18n="hero.cta2">See the noodle range</a>
       </div>
     </div>
   </section>
@@ -67,20 +67,20 @@
   <section class="stats">
     <div class="stats-inner">
       <div class="stat">
-        <div class="stat-value">1949</div>
-        <div class="stat-label">Kanno family since</div>
+        <div class="stat-value" data-i18n="stats.v1">1949</div>
+        <div class="stat-label" data-i18n="stats.l1">Kanno family since</div>
       </div>
       <div class="stat">
-        <div class="stat-value">500+ t</div>
-        <div class="stat-label">Annual capacity</div>
+        <div class="stat-value" data-i18n="stats.v2">500+ t</div>
+        <div class="stat-label" data-i18n="stats.l2">Annual capacity</div>
       </div>
       <div class="stat">
-        <div class="stat-value">3.5 M</div>
-        <div class="stat-label">Portions per year</div>
+        <div class="stat-value" data-i18n="stats.v3">3.5 M</div>
+        <div class="stat-label" data-i18n="stats.l3">Portions per year</div>
       </div>
       <div class="stat stat-cert">
-        <img src="assets/ifs-food.png" alt="IFS Food certified">
-        <div class="stat-label">Certified<br>food safety</div>
+        <img src="assets/ifs-food.png" alt="IFS Food certified" data-i18n-alt="alt.ifs">
+        <div class="stat-label" data-i18n-html="stats.l4">Certified<br>food safety</div>
       </div>
     </div>
   </section>
@@ -89,20 +89,20 @@
   <section id="about" class="about section-pad">
     <div class="about-grid">
       <div data-reveal>
-        <div class="eyebrow eyebrow-red">About us</div>
-        <h2>A Tokyo legacy with a Polish address</h2>
-        <p class="body-text">For over 70 years the Kanno family has perfected noodle-making in the heart of Tokyo. Since 1949 their precision has supplied thousands of restaurants across Japan, Asia, North America and Australia — grounded in craftsmanship and a clear mission: safe, high-quality products that carry noodle culture forward.</p>
-        <p class="body-text">The joint venture between Mr. Yoshio Kanno and a Polish family business opened a new chapter. An independent production site was established in Poland, built on Kanno's recipes, standards and the support of their food technologists — the authenticity of Japanese noodles, built on tradition and mutual trust.</p>
+        <div class="eyebrow eyebrow-red" data-i18n="about.eyebrow">About us</div>
+        <h2 data-i18n="about.title">A Tokyo legacy with a Polish address</h2>
+        <p class="body-text" data-i18n="about.body1">For over 70 years the Kanno family has perfected noodle-making in the heart of Tokyo. Since 1949 their precision has supplied thousands of restaurants across Japan, Asia, North America and Australia — grounded in craftsmanship and a clear mission: safe, high-quality products that carry noodle culture forward.</p>
+        <p class="body-text" data-i18n="about.body2">The joint venture between Mr. Yoshio Kanno and a Polish family business opened a new chapter. An independent production site was established in Poland, built on Kanno's recipes, standards and the support of their food technologists — the authenticity of Japanese noodles, built on tradition and mutual trust.</p>
         <div class="about-flags">
-          <img src="assets/japan-poland.png" alt="Japan and Poland">
-          <div>Japanese recipes and technology. European production, service and supply.</div>
+          <img src="assets/japan-poland.png" alt="Japan and Poland" data-i18n-alt="alt.flags">
+          <div data-i18n="about.flags">Japanese recipes and technology. European production, service and supply.</div>
         </div>
       </div>
       <div class="about-media" data-reveal>
-        <img class="about-hero-img" src="assets/noodles-board.jpg" alt="Fresh noodles on a wooden board" loading="lazy">
+        <img class="about-hero-img" src="assets/noodles-board.jpg" alt="Fresh noodles on a wooden board" data-i18n-alt="alt.board" loading="lazy">
         <div class="about-media-pair">
-          <img src="assets/wheat-flour.jpg" alt="Selected wheat flour" loading="lazy">
-          <img src="assets/ramen-shop-night.png" alt="Ramen shop at night" loading="lazy">
+          <img src="assets/wheat-flour.jpg" alt="Selected wheat flour" data-i18n-alt="alt.flour" loading="lazy">
+          <img src="assets/ramen-shop-night.png" alt="Ramen shop at night" data-i18n-alt="alt.shop" loading="lazy">
         </div>
       </div>
     </div>
@@ -113,14 +113,14 @@
     <div class="products-inner">
       <div class="products-head">
         <div data-reveal>
-          <div class="eyebrow eyebrow-red">Noodle portfolio</div>
-          <h2>Five styles, with or without egg</h2>
-          <p class="body-text">Every style follows a traditional Japanese recipe and the same production standard. Formats, portion weights and packaging are adapted to each partner.</p>
+          <div class="eyebrow eyebrow-red" data-i18n="products.eyebrow">Noodle portfolio</div>
+          <h2 data-i18n="products.title">Five styles, with or without egg</h2>
+          <p class="body-text" data-i18n="products.lead">Every style follows a traditional Japanese recipe and the same production standard. Formats, portion weights and packaging are adapted to each partner.</p>
         </div>
         <div class="filters" id="filters" role="group" aria-label="Egg variant" data-reveal>
-          <button type="button" class="chip on" data-filter="all">Both variants</button>
-          <button type="button" class="chip" data-filter="egg">With egg</button>
-          <button type="button" class="chip" data-filter="noegg">Without egg</button>
+          <button type="button" class="chip on" data-filter="all" data-i18n="products.filterAll">Both variants</button>
+          <button type="button" class="chip" data-filter="egg" data-i18n="products.filterEgg">With egg</button>
+          <button type="button" class="chip" data-filter="noegg" data-i18n="products.filterNoEgg">Without egg</button>
         </div>
       </div>
 
@@ -128,114 +128,114 @@
 
         <article class="card" data-reveal>
           <div class="card-media">
-            <img src="assets/prod-sapporo.png" alt="Sapporo style noodles" loading="lazy">
+            <img src="assets/prod-sapporo.png" alt="Sapporo style noodles" data-i18n-alt="alt.sapporo" loading="lazy">
             <span class="badge">With or without egg</span>
           </div>
           <div class="card-body">
             <div class="card-title">
-              <h3>Sapporo style</h3>
-              <div class="card-jp">札幌</div>
+              <h3 data-i18n="products.sapporoName">Sapporo style</h3>
+              <div class="card-jp" data-i18n="products.sapporoJp">札幌</div>
             </div>
-            <p class="card-blurb">Springy medium-thick curls that hold body in rich miso and shoyu broths.</p>
+            <p class="card-blurb" data-i18n="products.sapporoBlurb">Springy medium-thick curls that hold body in rich miso and shoyu broths.</p>
             <dl class="spec">
-              <div><dt>Portion</dt><dd>130 g</dd></div>
-              <div><dt>Allergens</dt><dd class="allergens">Gluten (egg optional)</dd></div>
-              <div><dt>Shelf life</dt><dd>12 months at −18 °C</dd></div>
+              <div><dt data-i18n="products.specPortion">Portion</dt><dd>130 g</dd></div>
+              <div><dt data-i18n="products.specAllergens">Allergens</dt><dd class="allergens">Gluten (egg optional)</dd></div>
+              <div><dt data-i18n="products.specShelf">Shelf life</dt><dd data-i18n="products.shelfValue">12 months at −18 °C</dd></div>
             </dl>
           </div>
         </article>
 
         <article class="card" data-reveal>
           <div class="card-media">
-            <img src="assets/prod-temomi.png" alt="Temomi style noodles" loading="lazy">
+            <img src="assets/prod-temomi.png" alt="Temomi style noodles" data-i18n-alt="alt.temomi" loading="lazy">
             <span class="badge">With or without egg</span>
           </div>
           <div class="card-body">
             <div class="card-title">
-              <h3>Temomi style</h3>
-              <div class="card-jp">手揉み</div>
+              <h3 data-i18n="products.temomiName">Temomi style</h3>
+              <div class="card-jp" data-i18n="products.temomiJp">手揉み</div>
             </div>
-            <p class="card-blurb">Hand-crimped irregular strands with a chewy bite that grips thicker broths.</p>
+            <p class="card-blurb" data-i18n="products.temomiBlurb">Hand-crimped irregular strands with a chewy bite that grips thicker broths.</p>
             <dl class="spec">
-              <div><dt>Portion</dt><dd>155 g</dd></div>
-              <div><dt>Allergens</dt><dd class="allergens">Gluten (egg optional)</dd></div>
-              <div><dt>Shelf life</dt><dd>12 months at −18 °C</dd></div>
+              <div><dt data-i18n="products.specPortion">Portion</dt><dd>155 g</dd></div>
+              <div><dt data-i18n="products.specAllergens">Allergens</dt><dd class="allergens">Gluten (egg optional)</dd></div>
+              <div><dt data-i18n="products.specShelf">Shelf life</dt><dd data-i18n="products.shelfValue">12 months at −18 °C</dd></div>
             </dl>
           </div>
         </article>
 
         <article class="card" data-reveal>
           <div class="card-media">
-            <img src="assets/prod-tokyo-straight.png" alt="Tokyo straight noodles" loading="lazy">
+            <img src="assets/prod-tokyo-straight.png" alt="Tokyo straight noodles" data-i18n-alt="alt.straight" loading="lazy">
             <span class="badge">With or without egg</span>
           </div>
           <div class="card-body">
             <div class="card-title">
-              <h3>Tokyo straight</h3>
-              <div class="card-jp">東京 ストレート</div>
+              <h3 data-i18n="products.straightName">Tokyo straight</h3>
+              <div class="card-jp" data-i18n="products.straightJp">東京 ストレート</div>
             </div>
-            <p class="card-blurb">Clean straight strands, the classic pairing for clear shoyu and shio ramen.</p>
+            <p class="card-blurb" data-i18n="products.straightBlurb">Clean straight strands, the classic pairing for clear shoyu and shio ramen.</p>
             <dl class="spec">
-              <div><dt>Portion</dt><dd>140 g</dd></div>
-              <div><dt>Allergens</dt><dd class="allergens">Gluten (egg optional)</dd></div>
-              <div><dt>Shelf life</dt><dd>12 months at −18 °C</dd></div>
+              <div><dt data-i18n="products.specPortion">Portion</dt><dd>140 g</dd></div>
+              <div><dt data-i18n="products.specAllergens">Allergens</dt><dd class="allergens">Gluten (egg optional)</dd></div>
+              <div><dt data-i18n="products.specShelf">Shelf life</dt><dd data-i18n="products.shelfValue">12 months at −18 °C</dd></div>
             </dl>
           </div>
         </article>
 
         <article class="card" data-reveal>
           <div class="card-media">
-            <img src="assets/prod-tokyo-wavy.png" alt="Tokyo wavy noodles" loading="lazy">
+            <img src="assets/prod-tokyo-wavy.png" alt="Tokyo wavy noodles" data-i18n-alt="alt.wavy" loading="lazy">
             <span class="badge">With or without egg</span>
           </div>
           <div class="card-body">
             <div class="card-title">
-              <h3>Tokyo wavy</h3>
-              <div class="card-jp">東京 ちぢれ</div>
+              <h3 data-i18n="products.wavyName">Tokyo wavy</h3>
+              <div class="card-jp" data-i18n="products.wavyJp">東京 ちぢれ</div>
             </div>
-            <p class="card-blurb">Wavy cut that carries broth along the strand from first bite to last.</p>
+            <p class="card-blurb" data-i18n="products.wavyBlurb">Wavy cut that carries broth along the strand from first bite to last.</p>
             <dl class="spec">
-              <div><dt>Portion</dt><dd>140 g</dd></div>
-              <div><dt>Allergens</dt><dd class="allergens">Gluten (egg optional)</dd></div>
-              <div><dt>Shelf life</dt><dd>12 months at −18 °C</dd></div>
+              <div><dt data-i18n="products.specPortion">Portion</dt><dd>140 g</dd></div>
+              <div><dt data-i18n="products.specAllergens">Allergens</dt><dd class="allergens">Gluten (egg optional)</dd></div>
+              <div><dt data-i18n="products.specShelf">Shelf life</dt><dd data-i18n="products.shelfValue">12 months at −18 °C</dd></div>
             </dl>
           </div>
         </article>
 
         <article class="card" data-reveal>
           <div class="card-media">
-            <img src="assets/prod-tonkotsu.png" alt="Tonkotsu style noodles" loading="lazy">
+            <img src="assets/prod-tonkotsu.png" alt="Tonkotsu style noodles" data-i18n-alt="alt.tonkotsu" loading="lazy">
             <span class="badge">With or without egg</span>
           </div>
           <div class="card-body">
             <div class="card-title">
-              <h3>Tonkotsu style</h3>
-              <div class="card-jp">豚骨</div>
+              <h3 data-i18n="products.tonkotsuName">Tonkotsu style</h3>
+              <div class="card-jp" data-i18n="products.tonkotsuJp">豚骨</div>
             </div>
-            <p class="card-blurb">Thin, firm and low-hydration — built for short cooking in pork-bone broth.</p>
+            <p class="card-blurb" data-i18n="products.tonkotsuBlurb">Thin, firm and low-hydration — built for short cooking in pork-bone broth.</p>
             <dl class="spec">
-              <div><dt>Portion</dt><dd>130 g</dd></div>
-              <div><dt>Allergens</dt><dd class="allergens">Gluten (egg optional)</dd></div>
-              <div><dt>Shelf life</dt><dd>12 months at −18 °C</dd></div>
+              <div><dt data-i18n="products.specPortion">Portion</dt><dd>130 g</dd></div>
+              <div><dt data-i18n="products.specAllergens">Allergens</dt><dd class="allergens">Gluten (egg optional)</dd></div>
+              <div><dt data-i18n="products.specShelf">Shelf life</dt><dd data-i18n="products.shelfValue">12 months at −18 °C</dd></div>
             </dl>
           </div>
         </article>
 
         <article class="card card-custom" data-reveal>
           <div class="card-media">
-            <img src="assets/prod-custom.png" alt="Custom recipe noodles" loading="lazy">
-            <span class="badge badge-dark">Made to brief</span>
+            <img src="assets/prod-custom.png" alt="Custom recipe noodles" data-i18n-alt="alt.custom" loading="lazy">
+            <span class="badge badge-dark" data-i18n="products.badgeCustom">Made to brief</span>
           </div>
           <div class="card-body">
             <div class="card-title">
-              <h3>Custom recipe</h3>
-              <div class="card-jp">オーダーメイド</div>
+              <h3 data-i18n="products.customName">Custom recipe</h3>
+              <div class="card-jp" data-i18n="products.customJp">オーダーメイド</div>
             </div>
-            <p class="card-blurb">Developed with your kitchen or category team: hydration, cut, colour and format.</p>
+            <p class="card-blurb" data-i18n="products.customBlurb">Developed with your kitchen or category team: hydration, cut, colour and format.</p>
             <dl class="spec">
-              <div><dt>Portion</dt><dd>130–155 g</dd></div>
-              <div><dt>Allergens</dt><dd>On specification</dd></div>
-              <div><dt>Shelf life</dt><dd>12 months at −18 °C</dd></div>
+              <div><dt data-i18n="products.specPortion">Portion</dt><dd>130–155 g</dd></div>
+              <div><dt data-i18n="products.specAllergens">Allergens</dt><dd data-i18n="products.allergensCustom">On specification</dd></div>
+              <div><dt data-i18n="products.specShelf">Shelf life</dt><dd data-i18n="products.shelfValue">12 months at −18 °C</dd></div>
             </dl>
           </div>
         </article>
@@ -243,8 +243,8 @@
       </div>
 
       <div class="products-note" data-reveal>
-        <span>Portion weights available in 130 g, 140 g and 155 g. Alternative recipes are developed with partners on request.</span>
-        <a href="#contact">Ask about a custom recipe →</a>
+        <span data-i18n="products.note">Portion weights available in 130 g, 140 g and 155 g. Alternative recipes are developed with partners on request.</span>
+        <a href="#contact" data-i18n="products.noteLink">Ask about a custom recipe →</a>
       </div>
     </div>
   </section>
@@ -254,31 +254,31 @@
     <div class="production-inner">
       <div class="production-head">
         <div data-reveal>
-          <div class="eyebrow eyebrow-orange">Our production</div>
-          <h2>Consistency, batch after batch</h2>
+          <div class="eyebrow eyebrow-orange" data-i18n="production.eyebrow">Our production</div>
+          <h2 data-i18n="production.title">Consistency, batch after batch</h2>
         </div>
-        <p class="production-lead" data-reveal>Every batch is produced under controlled conditions and overseen by experienced food technologists, with defined standards for texture, weight and hydration. Selected ingredients and proven Japanese recipes keep each delivery identical to the last.</p>
+        <p class="production-lead" data-reveal data-i18n="production.lead">Every batch is produced under controlled conditions and overseen by experienced food technologists, with defined standards for texture, weight and hydration. Selected ingredients and proven Japanese recipes keep each delivery identical to the last.</p>
       </div>
 
       <div class="packing">
         <div class="packing-item" data-reveal>
-          <h3>Servings packing</h3>
-          <p>Standard film bag holds 5 portions — the best balance of production efficiency, freezing performance and handling. Configurations from 3 to 7 portions are available.</p>
+          <h3 data-i18n="production.pack1Title">Servings packing</h3>
+          <p data-i18n="production.pack1Body">Standard film bag holds 5 portions — the best balance of production efficiency, freezing performance and handling. Configurations from 3 to 7 portions are available.</p>
         </div>
         <div class="packing-item" data-reveal>
-          <h3>Carton</h3>
-          <p>10 film packs per carton, 600 × 400 × 80 mm, labelled with full product information and ventilated to support efficient freezing.</p>
+          <h3 data-i18n="production.pack2Title">Carton</h3>
+          <p data-i18n="production.pack2Body">10 film packs per carton, 600 × 400 × 80 mm, labelled with full product information and ventilated to support efficient freezing.</p>
         </div>
         <div class="packing-item" data-reveal>
-          <h3>Pallet</h3>
-          <p>Up to 80 cartons, 4 per layer over 20 layers, wrapped and labelled for secure, traceable transport.</p>
+          <h3 data-i18n="production.pack3Title">Pallet</h3>
+          <p data-i18n="production.pack3Body">Up to 80 cartons, 4 per layer over 20 layers, wrapped and labelled for secure, traceable transport.</p>
         </div>
       </div>
 
       <div class="packing-media">
-        <img class="contain" src="assets/pack-film.png" alt="Film pack of five portions" loading="lazy" data-reveal>
-        <img src="assets/pack-carton.png" alt="Carton with labelled packs" loading="lazy" data-reveal>
-        <img class="contain" src="assets/pack-pallet.png" alt="Wrapped pallet" loading="lazy" data-reveal>
+        <img class="contain" src="assets/pack-film.png" alt="Film pack of five portions" data-i18n-alt="alt.packFilm" loading="lazy" data-reveal>
+        <img src="assets/pack-carton.png" alt="Carton with labelled packs" data-i18n-alt="alt.packCarton" loading="lazy" data-reveal>
+        <img class="contain" src="assets/pack-pallet.png" alt="Wrapped pallet" data-i18n-alt="alt.packPallet" loading="lazy" data-reveal>
       </div>
     </div>
   </section>
@@ -287,32 +287,32 @@
   <section id="quality" class="quality section-pad">
     <div class="quality-grid">
       <div data-reveal>
-        <div class="eyebrow eyebrow-red">Quality &amp; site</div>
-        <h2>Clean production in the centre of Europe</h2>
-        <p class="body-text">Our noodles are made in a modern facility with clearly defined clean zones and strict process control, backed by IFS certification. Every product is stored in optimised conditions that preserve freshness, texture and full flavour.</p>
-        <p class="body-text">The site sits in central Poland, close to major transport routes — fast, cost-effective distribution to domestic and international markets from one of Europe's strategic logistics hubs.</p>
+        <div class="eyebrow eyebrow-red" data-i18n="quality.eyebrow">Quality &amp; site</div>
+        <h2 data-i18n="quality.title">Clean production in the centre of Europe</h2>
+        <p class="body-text" data-i18n="quality.body1">Our noodles are made in a modern facility with clearly defined clean zones and strict process control, backed by IFS certification. Every product is stored in optimised conditions that preserve freshness, texture and full flavour.</p>
+        <p class="body-text" data-i18n="quality.body2">The site sits in central Poland, close to major transport routes — fast, cost-effective distribution to domestic and international markets from one of Europe's strategic logistics hubs.</p>
         <div class="quality-stats">
           <div class="qs qs-red">
-            <div class="qs-value">IFS Food</div>
-            <div class="qs-label">Certified standard</div>
+            <div class="qs-value" data-i18n="quality.s1v">IFS Food</div>
+            <div class="qs-label" data-i18n="quality.s1l">Certified standard</div>
           </div>
           <div class="qs qs-orange">
-            <div class="qs-value">Clean zones</div>
-            <div class="qs-label">Strict process control</div>
+            <div class="qs-value" data-i18n="quality.s2v">Clean zones</div>
+            <div class="qs-label" data-i18n="quality.s2l">Strict process control</div>
           </div>
           <div class="qs qs-ink">
-            <div class="qs-value">−18 °C</div>
-            <div class="qs-label">Cold chain, 12 months</div>
+            <div class="qs-value" data-i18n="quality.s3v">−18 °C</div>
+            <div class="qs-label" data-i18n="quality.s3l">Cold chain, 12 months</div>
           </div>
         </div>
       </div>
       <div class="quality-media" data-reveal>
-        <img class="quality-photo" src="assets/kanno-noodles.png" alt="Kanno noodles" loading="lazy">
+        <img class="quality-photo" src="assets/kanno-noodles.png" alt="Kanno noodles" data-i18n-alt="alt.noodles" loading="lazy">
         <div class="map-card">
-          <img src="assets/map-europe.png" alt="Central Poland on the map of Europe" loading="lazy">
+          <img src="assets/map-europe.png" alt="Central Poland on the map of Europe" data-i18n-alt="alt.map" loading="lazy">
           <div>
-            <div class="map-title">Central Poland</div>
-            <div class="map-text">Two days by road to most of the EU, with direct access to Poland's motorway network.</div>
+            <div class="map-title" data-i18n="quality.mapTitle">Central Poland</div>
+            <div class="map-text" data-i18n="quality.mapBody">Two days by road to most of the EU, with direct access to Poland's motorway network.</div>
           </div>
         </div>
       </div>
@@ -323,41 +323,41 @@
   <section id="contact" class="contact">
     <div class="contact-inner">
       <div class="contact-info" data-reveal>
-        <div class="eyebrow eyebrow-orange">Contact us</div>
-        <h2>Let's talk volumes, formats and timing</h2>
-        <p class="contact-lead">Tell us what you serve or sell and we will come back with a specification, portion format and lead time.</p>
+        <div class="eyebrow eyebrow-orange" data-i18n="contact.eyebrow">Contact us</div>
+        <h2 data-i18n="contact.title">Let's talk volumes, formats and timing</h2>
+        <p class="contact-lead" data-i18n="contact.lead">Tell us what you serve or sell and we will come back with a specification, portion format and lead time.</p>
         <div class="contact-details">
           <a class="contact-mail" href="mailto:hello@kanno.pl">hello@kanno.pl</a>
-          <div class="contact-addr">Kanno Noodle Sp. z o.o.<br>al. Niepodległości 112<br>02-577 Warsaw, Poland</div>
+          <div class="contact-addr" data-i18n-html="contact.address">Kanno Noodle Sp. z o.o.<br>al. Niepodległości 112<br>02-577 Warsaw, Poland</div>
         </div>
-        <img class="contact-logo" src="assets/logo-white.svg" alt="Kanno Noodle">
+        <img class="contact-logo" src="assets/logo-white.svg" alt="Kanno Noodle" data-i18n-alt="alt.logo">
       </div>
 
       <form class="contact-form" id="contact-form" data-reveal novalidate>
         <div class="field-row">
-          <label>First name*
-            <input name="firstName" required placeholder="Aiko">
+          <label><span data-i18n="contact.firstName">First name*</span>
+            <input name="firstName" required placeholder="Aiko" data-i18n-placeholder="contact.firstNamePh">
           </label>
-          <label>Last name
-            <input name="lastName" placeholder="Kowalska">
+          <label><span data-i18n="contact.lastName">Last name</span>
+            <input name="lastName" placeholder="Kowalska" data-i18n-placeholder="contact.lastNamePh">
           </label>
         </div>
-        <label>Company e-mail*
-          <input name="email" type="email" required placeholder="you@company.com">
+        <label><span data-i18n="contact.email">Company e-mail*</span>
+          <input name="email" type="email" required placeholder="you@company.com" data-i18n-placeholder="contact.emailPh">
         </label>
-        <label>I am contacting as
+        <label><span data-i18n="contact.role">I am contacting as</span>
           <select name="role">
-            <option>Restaurant or chain</option>
-            <option>Retail / grocery</option>
-            <option>Distributor or importer</option>
-            <option>Private label</option>
-            <option>Other</option>
+            <option data-i18n="contact.role1">Restaurant or chain</option>
+            <option data-i18n="contact.role2">Retail / grocery</option>
+            <option data-i18n="contact.role3">Distributor or importer</option>
+            <option data-i18n="contact.role4">Private label</option>
+            <option data-i18n="contact.role5">Other</option>
           </select>
         </label>
-        <label>Your message
-          <textarea name="message" rows="4" placeholder="Styles, portion weight, monthly volume, delivery market"></textarea>
+        <label><span data-i18n="contact.message">Your message</span>
+          <textarea name="message" rows="4" placeholder="Styles, portion weight, monthly volume, delivery market" data-i18n-placeholder="contact.messagePh"></textarea>
         </label>
-        <button type="submit" class="btn btn-red btn-submit" id="submit-btn">Send inquiry</button>
+        <button type="submit" class="btn btn-red btn-submit" id="submit-btn" data-i18n="contact.submit">Send inquiry</button>
         <p class="form-note" id="form-note" role="status" hidden></p>
       </form>
     </div>
@@ -368,16 +368,17 @@
 <!-- ===== Footer ===== -->
 <footer class="site-footer">
   <div class="footer-inner">
-    <span>© 2026 Kanno Noodle Sp. z o.o.</span>
-    <span class="footer-tag">The art of Asian noodles</span>
+    <span data-i18n="footer.copy">© 2026 Kanno Noodle Sp. z o.o.</span>
+    <span class="footer-tag" data-i18n="footer.tag">The art of Asian noodles</span>
     <div class="footer-links">
-      <a href="privacy.html">Privacy policy</a>
-      <a href="https://www.instagram.com/kannoseimenjo/" target="_blank" rel="noopener">Instagram</a>
-      <a href="#top">Back to top</a>
+      <a href="privacy.html" id="privacy-link" data-i18n="footer.privacy">Privacy policy</a>
+      <a href="https://www.instagram.com/kannoseimenjo/" target="_blank" rel="noopener" data-i18n="footer.instagram">Instagram</a>
+      <a href="#top" data-i18n="footer.top">Back to top</a>
     </div>
   </div>
 </footer>
 
+<script src="js/i18n.js"></script>
 <script src="js/main.js"></script>
 </body>
 </html>
