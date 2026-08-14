@@ -533,7 +533,7 @@
     speed: SPEED_MIN,
     dist: 0,
     ski: { x: W / 2, vx: 0, ax: 0, roll: 0 },
-    bird: { a: 0, w: 0, over: 0 },
+    bird: { a: 0, w: 0, over: 0, panic: 0 },
     scrollV: 0,
     obstacles: [],
     spray: [],
@@ -552,7 +552,7 @@
     game.speed = SPEED_MIN;
     game.dist = 0;
     game.ski.x = W / 2; game.ski.vx = 0; game.ski.ax = 0; game.ski.roll = 0;
-    game.bird.a = 0; game.bird.w = 0; game.bird.over = 0;
+    game.bird.a = 0; game.bird.w = 0; game.bird.over = 0; game.bird.panic = 0;
     game.obstacles.length = 0;
     game.spray.length = 0;
     game.spawn = 1.1;
@@ -750,6 +750,12 @@
     b.w -= b.w * Math.min(1, DAMP * dt);
     b.a += b.w * dt;
 
+    /* Panika dla Reaction Cam. Sam odczyt chwilowy migotałby: `ax` jest
+       niezerowe tylko przez 0,17 s rozpędu, więc mina wracałaby do spokoju
+       w środku skrętu. Szybki atak, wolne opadanie.                      */
+    var pt = panicTarget();
+    b.panic += (pt - b.panic) * Math.min(1, (pt > b.panic ? 18 : 3.5) * dt);
+
     /* Przekroczenie progu nie kończy przejazdu od razu — dopiero utrzymanie
        się poza nim. Jeden pechowy wychył wybacza, uporczywe szarpanie nie. */
     if (Math.abs(b.a) > TILT_LIMIT) {
@@ -849,6 +855,11 @@
     if (game.mode === MENU) { drawIdleTotem(); return; }
 
     drawRider(a);
+
+    /* Reaction Cam to interfejs, a nie świat — wraca do bazowej macierzy,
+       żeby nie drgała razem z ekranem przy wywrotce.                    */
+    ctx.setTransform(scaleX, 0, 0, scaleY, 0, 0);
+    drawCam(a);
   }
 
   /* Skuter + kapibara + flaming. W trakcie WIPEOUT flaming leci osobno. */
@@ -896,6 +907,278 @@
       ctx.fillStyle = v;
       ctx.fillRect(0, 0, W, H);
     }
+  }
+
+  /* ------------------------------------------------------------ REACTION CAM
+     Okrągły podgląd twarzy w lewym górnym rogu. Rysowany w kodzie, a nie
+     z podmienianych SVG, bo mimika musi reagować w czasie rzeczywistym na
+     kąt wahadła — gotowe sprite'y mają zamrożone twarze.
+     Cała treść jest funkcją dwóch liczb: `tilt` i `panic`.               */
+
+  var CAM_X = 56, CAM_Y = 60, CAM_R = 38;
+  var PANIC_FROM = 15 * Math.PI / 180;   // od tego kąta flaming zaczyna panikować
+
+  /* Do czego panika DĄŻY: wychylenie albo gwałtowność skrętu. Szarpnięcie
+     kierownicą przeraża ptaka, zanim jeszcze zdąży się przechylić.       */
+  function panicTarget() {
+    var byTilt  = clamp((Math.abs(game.bird.a) - PANIC_FROM) / (TILT_LIMIT - PANIC_FROM), 0, 1);
+    var bySteer = clamp(Math.abs(game.ski.ax) / SKI_ACCEL, 0, 1) * 0.7;
+    return Math.max(byTilt, bySteer);
+  }
+
+  /* Ramka przechodzi ze złotej w koralową płynnie — próg skokowy migotał
+     w okolicy wartości granicznej.                                      */
+  function ringColor(p) {
+    return "rgb(" + Math.round(255 + 0 * p) + "," +
+                    Math.round(201 + (112 - 201) * p) + "," +
+                    Math.round(77 + (67 - 77) * p) + ")";
+  }
+
+  function drawCam(a) {
+    if (game.mode === MENU) return;
+
+    var tilt  = game.bird.a + game.bird.w * a;
+    var panic = game.bird.panic;
+    var wiped = (game.mode === WIPE || game.mode === OVER);
+    var wt    = wiped && game.wipe ? clamp((game.wipe.t + a) / 0.45, 0, 1) : 0;
+
+    ctx.save();
+    ctx.translate(CAM_X, CAM_Y);
+
+    /* ---------------------------------------------------- wnętrze okienka */
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(0, 0, CAM_R, 0, 6.2832);
+    ctx.clip();
+
+    var g = ctx.createLinearGradient(0, -CAM_R, 0, CAM_R);
+    g.addColorStop(0, "#3CB4E0");
+    g.addColorStop(1, "#0A6FA8");
+    ctx.fillStyle = g;
+    ctx.fillRect(-CAM_R, -CAM_R, CAM_R * 2, CAM_R * 2);
+
+    ctx.strokeStyle = "rgba(255,255,255,.22)";   // woda w tle płynie
+    ctx.lineWidth = 2;
+    for (var i = 0; i < 3; i++) {
+      var wy = mod(i * 26 - (game.scroll + game.scrollV * a) * 0.3, 78) - 39;
+      ctx.beginPath();
+      ctx.moveTo(-CAM_R, wy);
+      ctx.lineTo(CAM_R, wy);
+      ctx.stroke();
+    }
+
+    /* Obie głowy razem zajmują całą średnicę, więc treść jedzie odrobinę
+       mniejsza — inaczej dziób i podbródek ucinają się o krawędź.      */
+    ctx.save();
+    ctx.scale(0.86, 0.86);
+
+    /* --- kapibara: niewzruszona bez względu na wszystko ---------------- */
+    ctx.save();
+    ctx.translate(0, 17);
+    ctx.lineJoin = "round";
+
+    ctx.fillStyle = "#8B5E33";
+    ctx.beginPath();
+    ctx.ellipse(-21, -15, 7, 6, 0, 0, 6.2832);
+    ctx.ellipse(21, -15, 7, 6, 0, 0, 6.2832);
+    ctx.fill();
+
+    ctx.fillStyle = "#A9764A";
+    ctx.beginPath();
+    ctx.ellipse(0, 0, 26, 22, 0, 0, 6.2832);
+    ctx.fill();
+    ctx.strokeStyle = "#3A2716";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.fillStyle = "#FF6F9C";                    // różowe okulary
+    ctx.beginPath();
+    ctx.ellipse(-11, -4, 10, 7, 0, 0, 6.2832);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.ellipse(11, -4, 10, 7, 0, 0, 6.2832);
+    ctx.fill();
+    ctx.strokeStyle = "#3A2716";
+    ctx.lineWidth = 2.5;
+    ctx.beginPath();
+    ctx.ellipse(-11, -4, 10, 7, 0, 0, 6.2832);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.ellipse(11, -4, 10, 7, 0, 0, 6.2832);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-2, -4); ctx.lineTo(2, -4);
+    ctx.stroke();
+
+    ctx.fillStyle = "rgba(255,255,255,.6)";       // odblask w szkłach
+    ctx.beginPath();
+    ctx.ellipse(-14, -7, 3.4, 2, -0.5, 0, 6.2832);
+    ctx.ellipse(8, -7, 3.4, 2, -0.5, 0, 6.2832);
+    ctx.fill();
+
+    ctx.fillStyle = "#8B5E33";                    // pysk
+    ctx.beginPath();
+    ctx.ellipse(0, 11, 9, 6, 0, 0, 6.2832);
+    ctx.fill();
+    ctx.fillStyle = "#3A2716";
+    ctx.beginPath();
+    ctx.ellipse(0, 8, 3.6, 2.4, 0, 0, 6.2832);
+    ctx.fill();
+    ctx.restore();
+
+    /* --- flaming: cała ekspresja siedzi tutaj -------------------------- */
+    if (game.mode === PLAY) {
+      ctx.save();
+      ctx.translate(0, 6);
+      ctx.rotate(tilt * 1.5);                     // wychylenie wzmocnione
+      if (panic > 0.02) {                          // drżenie głowy
+        ctx.translate(rand(-1, 1) * 2.4 * panic, rand(-1, 1) * 2.4 * panic);
+      }
+      ctx.translate(0, -34);
+      ctx.lineJoin = "round";
+
+      ctx.strokeStyle = "#FF6F9C";                // szyja
+      ctx.lineWidth = 9;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(0, 32);
+      ctx.quadraticCurveTo(7, 15, 2, 5);
+      ctx.stroke();
+
+      ctx.fillStyle = "#FF83A9";                  // głowa
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 13, 11, 0, 0, 6.2832);
+      ctx.fill();
+      ctx.strokeStyle = "#7A2540";
+      ctx.lineWidth = 2.5;
+      ctx.stroke();
+
+      var er = 3.8 + 3.4 * panic;                 // oczy rosną w panice
+      ctx.fillStyle = "#FFF";
+      ctx.beginPath();
+      ctx.ellipse(-4, -2, er, er * 0.95, 0, 0, 6.2832);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.ellipse(6, -2, er, er * 0.95, 0, 0, 6.2832);
+      ctx.fill();
+      ctx.strokeStyle = "#7A2540";
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.ellipse(-4, -2, er, er * 0.95, 0, 0, 6.2832);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.ellipse(6, -2, er, er * 0.95, 0, 0, 6.2832);
+      ctx.stroke();
+
+      var pr = 2.2 - 0.8 * panic;                 // źrenice się kurczą
+      ctx.fillStyle = "#151515";
+      ctx.beginPath();
+      ctx.arc(-4, -2, pr, 0, 6.2832);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(6, -2, pr, 0, 6.2832);
+      ctx.fill();
+
+      var open = 5 + 11 * panic;                  // dziób się otwiera
+      ctx.fillStyle = "#FFC94D";
+      ctx.strokeStyle = "#7A2540";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(9, 2);
+      ctx.lineTo(26, -1 - open * 0.35);
+      ctx.lineTo(26, -1 + open * 0.65);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.restore();
+    }
+    ctx.restore();   // koniec zmniejszenia treści
+
+    /* --- wipeout: najpierw uderzenie, potem zmoczenie ------------------ */
+    if (wiped) {
+      /* faza 1: rozbryzg w obiektyw, pierwsze ~0,15 s */
+      if (wt < 0.34) {
+        var f = 1 - wt / 0.34;
+        ctx.fillStyle = "rgba(255,255,255," + (f * 0.75).toFixed(3) + ")";
+        ctx.beginPath();
+        ctx.arc(0, 6, CAM_R * (0.3 + 1.1 * (1 - f)), 0, 6.2832);
+        ctx.fill();
+
+        ctx.strokeStyle = "rgba(255,255,255," + (f * 0.9).toFixed(3) + ")";
+        ctx.lineWidth = 3;
+        ctx.lineCap = "round";
+        for (var sp = 0; sp < 8; sp++) {
+          var ang = sp * 0.7854 + 0.3;
+          var r0 = CAM_R * (0.25 + 0.7 * (1 - f));
+          ctx.beginPath();
+          ctx.moveTo(Math.cos(ang) * r0, 6 + Math.sin(ang) * r0);
+          ctx.lineTo(Math.cos(ang) * (r0 + 9), 6 + Math.sin(ang) * (r0 + 9));
+          ctx.stroke();
+        }
+      }
+
+      /* faza 2: woda podchodzi — na tyle przezroczysta, żeby zmoczoną
+         kapibarę było widać pod powierzchnią.                          */
+      var lv = CAM_R - 2 * CAM_R * wt;
+      ctx.fillStyle = "rgba(41,182,246,.62)";
+      ctx.beginPath();
+      ctx.moveTo(-CAM_R, lv);
+      for (var x = -CAM_R; x <= CAM_R; x += 7) {
+        ctx.lineTo(x, lv + Math.sin(x * 0.4 + (game.t + a) * 11) * 3.2);
+      }
+      ctx.lineTo(CAM_R, CAM_R);
+      ctx.lineTo(-CAM_R, CAM_R);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.strokeStyle = "rgba(255,255,255,.7)";   // lustro wody
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (var x2 = -CAM_R; x2 <= CAM_R; x2 += 7) {
+        var yy = lv + Math.sin(x2 * 0.4 + (game.t + a) * 11) * 3.2;
+        if (x2 === -CAM_R) ctx.moveTo(x2, yy); else ctx.lineTo(x2, yy);
+      }
+      ctx.stroke();
+
+      ctx.fillStyle = "rgba(255,255,255,.85)";    // bąbelki
+      for (var bb = 0; bb < 7; bb++) {
+        var bx = -26 + bb * 9;
+        var by = lv + 10 + mod(bb * 13 - (game.t + a) * 40, 42);
+        ctx.beginPath();
+        ctx.arc(bx, by, 1.6 + (bb % 3), 0, 6.2832);
+        ctx.fill();
+      }
+    }
+
+    ctx.restore();   // koniec obcięcia do koła
+
+    /* ------------------------------------------------------------ ramka */
+    ctx.beginPath();
+    ctx.arc(0, 0, CAM_R + 1, 0, 6.2832);
+    ctx.lineWidth = 7;
+    ctx.strokeStyle = "#08324A";
+    ctx.stroke();
+
+    var ring = ringColor(wiped ? 1 : panic);
+    ctx.shadowColor = ring;
+    ctx.shadowBlur = 8 + 8 * (wiped ? 1 : panic);
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = ring;
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    /* czerwona kropka „na żywo" — puls 1 Hz */
+    if (!wiped && Math.sin((game.t + a) * 6.2832) > -0.3) {
+      ctx.fillStyle = "#FF3B30";
+      ctx.beginPath();
+      ctx.arc(CAM_R * 0.72, -CAM_R * 0.72, 4, 0, 6.2832);
+      ctx.fill();
+      ctx.lineWidth = 1.6;
+      ctx.strokeStyle = "#08324A";
+      ctx.stroke();
+    }
+
+    ctx.restore();
   }
 
   /* Na menu totem stoi spokojnie i tylko się kołysze. */

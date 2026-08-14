@@ -120,6 +120,31 @@ zmianie rozmiaru okna), a w pętli rysowania trafia już tylko gotowa bitmapa 1:
 Kafelek wody idzie tą samą drogą — wzorzec powstaje z przepalonego płótna,
 a `setTransform` na wzorcu sprowadza go z powrotem do jednostek logicznych.
 
+## Reaction Cam
+
+Okrągły podgląd twarzy w lewym górnym rogu, z neonową obwódką. Cała treść jest
+funkcją dwóch liczb: kąta wahadła i `panic` (0–1).
+
+| stan | warunek | co widać |
+| --- | --- | --- |
+| spokój | kąt < 15° | flaming czujny, dziób zamknięty, ramka złota |
+| panika | kąt ≥ 15° **albo** gwałtowny skręt | głowa drży, oczy rosną, źrenice się kurczą, dziób się otwiera, ramka przechodzi w koral |
+| wipeout | koniec przejazdu | rozbryzg w obiektyw, potem woda podchodzi do góry, bąbelki |
+
+Kapibara jest we wszystkich stanach identyczna — to jest cały żart.
+
+**Rysowane w kodzie, nie ze sprite'ów.** Mimika musi reagować w czasie
+rzeczywistym, a pliki SVG mają zamrożone twarze. Przy okazji kapibara dostaje
+tu różowe okulary, których w `capybara.svg` nie ma.
+
+**Panika jest stanem fizyki, nie odczytem chwili.** Pierwsza wersja liczyła ją
+wprost z `ski.ax`, ale `ax` jest niezerowe tylko przez 0,17 s rozpędu — mina
+wracała do spokoju w środku skrętu i migotała. Teraz `bird.panic` dąży do
+wartości docelowej z szybkim atakiem (18/s) i wolnym opadaniem (3,5/s).
+
+Okienko rysuje się po przywróceniu bazowej macierzy, więc nie drga razem
+z ekranem przy wywrotce — to interfejs, nie część świata.
+
 ## Krzywa trudności
 
 Trudność rośnie **skokowo i bez sufitu**: co `LEVEL_M` (80 m) wchodzi kolejny
