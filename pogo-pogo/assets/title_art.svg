@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 320" width="300" height="320">
+  <defs>
+    <!-- Efekt cienia pod skuterem na wodzie -->
+    <radialGradient id="waterShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#0077B6" stop-opacity="0.9"/>
+      <stop offset="80%" stop-color="#0096C7" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#0096C7" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- 1. CIEŃ I WODA POD SKUTEREM -->
+  <ellipse cx="150" cy="285" rx="90" ry="24" fill="url(#waterShadow)"/>
+
+  <!-- Rozbryzgi wody i piana na boki (V-shape wave splash) -->
+  <path d="M 40 290 Q 70 260 100 280 Q 80 300 40 290 Z" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M 260 290 Q 230 260 200 280 Q 220 300 260 290 Z" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M 70 270 Q 55 245 45 255 Q 50 275 70 270 Z" fill="#ADE8F8" stroke="#1A1A1A" stroke-width="3"/>
+  <path d="M 230 270 Q 245 245 255 255 Q 250 275 230 270 Z" fill="#ADE8F8" stroke="#1A1A1A" stroke-width="3"/>
+  
+  <!-- Kropelki wody w locie -->
+  <circle cx="35" cy="245" r="4" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="2"/>
+  <circle cx="265" cy="245" r="4" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="2"/>
+  <circle cx="50" cy="230" r="2.5" fill="#ADE8F8"/>
+  <circle cx="250" cy="230" r="2.5" fill="#ADE8F8"/>
+
+  <!-- 2. SKUTER WODNY (Widok od przodu) -->
+  <!-- Dolny kadłub (Dziób przecinający wodę) -->
+  <path d="M 150 295 L 95 255 L 205 255 Z" fill="#0077B6" stroke="#1A1A1A" stroke-width="7" stroke-linejoin="round"/>
+  
+  <!-- Przednia maska skutera (Turkus + żółte pasy) -->
+  <path d="M 150 290 L 80 235 L 105 210 L 195 210 L 220 235 Z" fill="#00B4D8" stroke="#1A1A1A" stroke-width="7" stroke-linejoin="round"/>
+  <!-- Żółty pas wyścigowy na masce -->
+  <polygon points="140,210 160,210 156,285 144,285" fill="#CCFF00" stroke="#1A1A1A" stroke-width="3"/>
+  <!-- Reflektor przedni -->
+  <polygon points="135,225 165,225 158,245 142,245" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="3"/>
+
+  <!-- Boczne odbojniki skutera -->
+  <rect x="65" y="235" width="22" height="12" rx="6" fill="#FF006E" stroke="#1A1A1A" stroke-width="4"/>
+  <rect x="213" y="235" width="22" height="12" rx="6" fill="#FF006E" stroke="#1A1A1A" stroke-width="4"/>
+
+  <!-- Kierownica -->
+  <path d="M 90 205 L 135 212 L 165 212 L 210 205" fill="none" stroke="#1A1A1A" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 90 205 L 135 212 L 165 212 L 210 205" fill="none" stroke="#0077B6" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Rączki kierownicy (Gripy) -->
+  <rect x="80" y="200" width="16" height="10" rx="3" fill="#CCFF00" stroke="#1A1A1A" stroke-width="3.5"/>
+  <rect x="204" y="200" width="16" height="10" rx="3" fill="#CCFF00" stroke="#1A1A1A" stroke-width="3.5"/>
+
+  <!-- 3. KAPIBARA (Stoicki sternik - widok od przodu) -->
+  <!-- Łapki kapibary trzymające kierownicę -->
+  <circle cx="95" cy="205" r="10" fill="#753C10" stroke="#1A1A1A" stroke-width="4"/>
+  <circle cx="205" cy="205" r="10" fill="#753C10" stroke="#1A1A1A" stroke-width="4"/>
+
+  <!-- Uszy kapibary -->
+  <circle cx="104" cy="140" r="11" fill="#753C10" stroke="#1A1A1A" stroke-width="4.5"/>
+  <circle cx="196" cy="140" r="11" fill="#753C10" stroke="#1A1A1A" stroke-width="4.5"/>
+
+  <!-- Ciało i Głowa Kapibary (Potężna, stabilna bryła) -->
+  <path d="M 110 135 
+           C 110 115, 190 115, 190 135 
+           C 208 150, 212 185, 205 215 
+           L 95 215 
+           C 88 185, 92 150, 110 135 Z" 
+        fill="#A65B24" stroke="#1A1A1A" stroke-width="7" stroke-linejoin="round"/>
+
+  <!-- Pyszczek i nos kapibary -->
+  <ellipse cx="150" cy="180" rx="26" ry="17" fill="#753C10"/>
+  <circle cx="140" cy="180" r="3.5" fill="#1A1A1A"/>
+  <circle cx="160" cy="180" r="3.5" fill="#1A1A1A"/>
+  <path d="M 150 188 L 150 196" stroke="#1A1A1A" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- Różowe okulary przeciwsłoneczne (Zauszniki i duże szkła) -->
+  <!-- Mostek okularów -->
+  <rect x="142" y="148" width="16" height="5" fill="#FF4D8D" stroke="#1A1A1A" stroke-width="2.5"/>
+  <!-- Lewe szkło -->
+  <rect x="105" y="140" width="38" height="24" rx="6" fill="#FF4D8D" stroke="#1A1A1A" stroke-width="4.5"/>
+  <rect x="110" y="144" width="28" height="16" rx="3" fill="#2B0938"/>
+  <line x1="114" y1="147" x2="126" y2="157" stroke="#4CC9F0" stroke-width="3" stroke-linecap="round"/>
+  <!-- Prawe szkło -->
+  <rect x="157" y="140" width="38" height="24" rx="6" fill="#FF4D8D" stroke="#1A1A1A" stroke-width="4.5"/>
+  <rect x="162" y="144" width="28" height="16" rx="3" fill="#2B0938"/>
+  <line x1="166" y1="147" x2="178" y2="157" stroke="#4CC9F0" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- 4. FLAMING (Spanikowane wahadło na głowie kapibary) -->
+  <!-- Linie paniki wokół głowy ptaka -->
+  <path d="M 105 40 L 115 50 M 195 40 L 185 50 M 150 15 L 150 28" stroke="#FFBE0B" stroke-width="3.5" stroke-linecap="round"/>
+  <path d="M 185 32 Q 195 22 198 32 Q 192 42 185 32 Z" fill="#4CC9F0" stroke="#1A1A1A" stroke-width="2"/> <!-- Kropla potu -->
+
+  <!-- Nogi i stopy chwytające głowę kapibary -->
+  <line x1="142" y1="92" x2="128" y2="128" stroke="#1A1A1A" stroke-width="7" stroke-linecap="round"/>
+  <line x1="142" y1="92" x2="128" y2="128" stroke="#FB8500" stroke-width="4.5" stroke-linecap="round"/>
+  
+  <line x1="158" y1="92" x2="172" y2="128" stroke="#1A1A1A" stroke-width="7" stroke-linecap="round"/>
+  <line x1="158" y1="92" x2="172" y2="128" stroke="#FB8500" stroke-width="4.5" stroke-linecap="round"/>
+
+  <!-- Pazury zaciśnięte na skroniach kapibary -->
+  <path d="M 118 132 Q 128 124 136 134" fill="none" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round"/>
+  <path d="M 182 132 Q 172 124 164 134" fill="none" stroke="#1A1A1A" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- Skrzydła w pełnej histerii -->
+  <!-- Lewe skrzydło -->
+  <path d="M 135 85 C 100 65, 55 45, 45 25 C 65 35, 80 45, 100 60 C 90 70, 110 80, 130 85 Z" 
+        fill="#FF4D8D" stroke="#1A1A1A" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M 60 38 C 75 25, 95 25, 110 40" fill="none" stroke="#1A1A1A" stroke-width="4"/>
+
+  <!-- Prawe skrzydło -->
+  <path d="M 165 85 C 200 65, 245 45, 255 25 C 235 35, 220 45, 200 60 C 210 70, 190 80, 170 85 Z" 
+        fill="#FF4D8D" stroke="#1A1A1A" stroke-width="6" stroke-linejoin="round"/>
+  <path d="M 240 38 C 225 25, 205 25, 190 40" fill="none" stroke="#1A1A1A" stroke-width="4"/>
+
+  <!-- Tułów flaminga -->
+  <ellipse cx="150" cy="85" rx="20" ry="18" fill="#FF758F" stroke="#1A1A1A" stroke-width="6"/>
+
+  <!-- Powykręcana w panice szyja -->
+  <path d="M 150 75 Q 135 52 152 40" fill="none" stroke="#1A1A1A" stroke-width="12" stroke-linecap="round"/>
+  <path d="M 150 75 Q 135 52 152 40" fill="none" stroke="#FF758F" stroke-width="7" stroke-linecap="round"/>
+
+  <!-- Głowa flaminga -->
+  <circle cx="154" cy="38" r="15" fill="#FF758F" stroke="#1A1A1A" stroke-width="4.5"/>
+
+  <!-- Wybałuszone oczy -->
+  <circle cx="146" cy="32" r="7.5" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="2.5"/>
+  <circle cx="146" cy="32" r="2" fill="#1A1A1A"/>
+  
+  <circle cx="160" cy="32" r="8.5" fill="#FFFFFF" stroke="#1A1A1A" stroke-width="2.5"/>
+  <circle cx="160" cy="32" r="2.5" fill="#1A1A1A"/>
+
+  <!-- Otwarty dziób wrzeszczący w niebogłosy (Krzyk!) -->
+  <path d="M 164 36 Q 186 32 192 42 Q 176 45 166 40 Z" fill="#FB8500" stroke="#1A1A1A" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M 182 36 Q 192 42 186 44 Q 178 44 182 36 Z" fill="#1A1A1A"/>
+  <!-- Otwarta paszcza -->
+  <path d="M 162 40 Q 182 48 176 56 Q 158 50 162 40 Z" fill="#D90429" stroke="#1A1A1A" stroke-width="3" stroke-linejoin="round"/>
+</svg>
