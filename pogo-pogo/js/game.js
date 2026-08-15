@@ -111,7 +111,7 @@
   /* Wersja zasobów. Przeglądarki trzymały stary game.js i stare sprite'y po
      wdrożeniu — gracz widział poprzednią wersję gry mimo udanej publikacji.
      PODBIJ TĘ LICZBĘ (i te w index.html) przy każdym wdrożeniu.          */
-  var VER = "10";
+  var VER = "11";
 
   /* ------------------------------------------------------------ narzędzia */
 
@@ -1529,6 +1529,7 @@
 
   var CAM_X = 56, CAM_Y = 60, CAM_R = 38;
   var PANIC_FROM = 15 * Math.PI / 180;   // od tego kąta flaming zaczyna panikować
+  var ALONE_ZOOM = 1.16;                 // patrz drawCam: chowa własną ramkę pliku
 
   /* Do czego panika DĄŻY: wychylenie albo gwałtowność skrętu. Szarpnięcie
      kierownicą przeraża ptaka, zanim jeszcze zdąży się przechylić.       */
@@ -1584,8 +1585,11 @@
          kod rysuje ją samodzielnie (gałąź zapasowa niżej), bo face_chill
          i face_panic mają ptaka wkomponowanego na stałe.                */
       ctx.save();
-      var fa2 = FACE.face_alone;
-      ctx.drawImage(fa2.c, -fa2.s / 2, -fa2.s / 2, fa2.s, fa2.s);
+      /* Ten plik ma własną obwódkę, której face_chill i face_panic nie mają.
+         Rysujemy go odrobinę większy, żeby jego ramka wypadła poza obcięcie
+         i została jedna obwódka — ta rysowana przez okienko.            */
+      var fa2 = FACE.face_alone, z = fa2.s * ALONE_ZOOM;
+      ctx.drawImage(fa2.c, -z / 2, -z / 2, z, z);
       ctx.restore();
     } else if (FACE.face_chill && game.hasBird) {
       /* Dostarczone twarze: spokojna zawsze pod spodem, panika nakładana
