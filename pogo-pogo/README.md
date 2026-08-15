@@ -364,6 +364,30 @@ bywają wczytane, zanim `game.js` zdąży podpiąć nasłuch `load` — zdarzeni
 wtedy nie przychodzi i grafika zostaje ukryta. Dlatego `optionalImage()`
 sprawdza też `img.complete` od razu. Ten sam błąd czaił się w ikonach slotów.
 
+## Dźwięk
+
+Wszystko **syntezowane w Web Audio** — zero plików, zero pobierania, działa
+offline i nie rusza zasady „bez zależności". Dziewięć zdarzeń: start, próg
+trudności, odbicie od skoczni, wodowanie, minięcie o włos, zegar, tarcza,
+utrata flaminga, wipeout.
+
+Dwie rzeczy, bez których to by nie działało:
+
+- **Kontekst audio powstaje dopiero przy pierwszym geście.** Przeglądarki
+  blokują dźwięk do interakcji, a próba wcześniej kończy się ciszą **bez
+  żadnego błędu** — najgorszy rodzaj awarii, bo niczego nie widać. Test
+  sprawdza więc jedno i drugie: że przed gestem kontekstu nie ma, i że po
+  nim faktycznie ruszają źródła dźwięku.
+- **Wyciszenie z pamięcią.** Przycisk w prawym górnym rogu, poza `.hud`, żeby
+  działał też w menu i po wipeoucie. Stan trafia do `localStorage`, bo gra na
+  telefonie w miejscu publicznym bez wyciszenia jest nie do przyjęcia.
+
+Ton buduje `tone()` (oscylator z obwiednią, z opcjonalnym zjazdem
+częstotliwości) i `noise()` (bufor szumu przez filtr pasmowy) — plusk, rozbryzg
+i świst minięcia to ten drugi.
+
+Muzyki w tle nie ma i wymagałaby plików, czyli pierwszej zależności w projekcie.
+
 ## Reaction Cam
 
 Okrągły podgląd twarzy w lewym górnym rogu, z neonową obwódką. Cała treść jest
