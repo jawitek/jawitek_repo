@@ -314,8 +314,12 @@ funkcję `fatal()`. Zamiast końca przejazdu:
 
 Bez ptaka okienko pokazuje `face_alone.svg` — samą kapibarę. `face_chill.svg`
 i `face_panic.svg` mają flaminga wkomponowanego na stałe, więc nie nadają się
-do tego stanu. Dopóki pliku brakuje, kapibarę rysuje kod (gałąź zapasowa
+do tego stanu. Gdyby pliku zabrakło, kapibarę rysuje kod (gałąź zapasowa
 w `drawCam`).
+
+Ten jeden plik ma **własną obwódkę**, której dwa pozostałe nie mają, więc jest
+rysowany `ALONE_ZOOM` (1,16×) większy — jego ramka wypada wtedy poza obcięcie
+i zostaje jedna obwódka, ta rysowana przez okienko.
 
 ### Near miss
 
