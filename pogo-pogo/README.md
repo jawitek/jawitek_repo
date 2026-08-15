@@ -315,7 +315,13 @@ funkcję `fatal()`. Zamiast końca przejazdu:
 - flaming wylatuje za burtę, kręcąc się,
 - gra toczy się dalej **samą kapibarą**: bez wahadła sterowanie jest stabilne,
   ale nie ma już żadnej ochrony,
-- kolejne zebrane serce **odradza flaminga** zamiast trafić do slotu.
+- kolejne zebrane serce **odradza flaminga i od razu uzbraja tarczę**.
+
+Ten ostatni punkt był błędem przez dwa wydania: gałąź odradzania ustawiała
+`hasBird`, ale pomijała slot, więc serce zebrane po stracie wskrzeszało ptaka
+i znikało bez śladu. Gracz zbierał drugie serce i ginął przy następnym
+zderzeniu. Serce **zawsze** ląduje w slocie; wskrzeszenie jest efektem
+dodatkowym, nie zamiast ochrony.
 
 Bez ptaka okienko pokazuje `face_alone.svg` — samą kapibarę. `face_chill.svg`
 i `face_panic.svg` mają flaminga wkomponowanego na stałe, więc nie nadają się
