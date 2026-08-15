@@ -120,7 +120,7 @@
   /* Wersja zasobów. Przeglądarki trzymały stary game.js i stare sprite'y po
      wdrożeniu — gracz widział poprzednią wersję gry mimo udanej publikacji.
      PODBIJ TĘ LICZBĘ (i te w index.html) przy każdym wdrożeniu.          */
-  var VER = "14";
+  var VER = "15";
 
   /* ------------------------------------------------------------ narzędzia */
 
@@ -773,7 +773,8 @@
     slotS:  document.getElementById("slot-slowmo"),
     slotH:  document.getElementById("slot-heart"),
     slotArc: document.getElementById("slot-arc"),
-    splash: document.getElementById("splash")
+    splash: document.getElementById("splash"),
+    sticker: document.getElementById("over-sticker")
   };
 
   function show(node, on) {
@@ -787,15 +788,43 @@
 
   el.retry.addEventListener("click", function (e) { e.stopPropagation(); startRun(); });
 
+  /* Grafiki ekranów są opcjonalne: pokazują się dopiero, gdy plik faktycznie
+     się wczyta. Splash ma dodatkowo zapas — jeśli nie ma jeszcze title_art,
+     zostaje dotychczasowe totem_duo zamiast pustego miejsca.            */
+  function optionalImage(img, onShow) {
+    if (!img) return;
+    var show = function () {
+      if (!img.naturalWidth) return;
+      img.hidden = false;
+      if (onShow) onShow();
+    };
+    var fallback = function () {
+      var alt = img.getAttribute("data-fallback");
+      if (alt) { img.removeAttribute("data-fallback"); img.src = alt; }
+    };
+    img.addEventListener("load", show);
+    img.addEventListener("error", fallback);
+
+    /* Obrazek stoi w HTML PRZED skryptem, więc bywa wczytany, zanim ten kod
+       się wykona — zdarzenie `load` już wtedy nie przyjdzie i grafika
+       zostawała ukryta. Stan sprawdzamy więc też od razu.                */
+    if (img.complete) { if (img.naturalWidth) show(); else fallback(); }
+  }
+
+  optionalImage(el.splash, function () { el.menu.classList.add("has-splash"); });
+  optionalImage(el.sticker);
+
   /* Ikony przedmiotów: dopóki plików nie ma, w slotach zostaje znak
      zastępczy. Gdy się pojawią, podmieniają się same.                  */
   Array.prototype.forEach.call(document.querySelectorAll(".slot-ico"), function (img) {
-    img.addEventListener("load", function () {
+    var swap = function () {
       if (!img.naturalWidth) return;
       img.hidden = false;
       var g = img.parentNode.querySelector(".slot-glyph");
       if (g) g.hidden = true;
-    });
+    };
+    img.addEventListener("load", swap);
+    if (img.complete) swap();      // patrz optionalImage: load mógł już minąć
   });
 
   /* Sloty pokazują wyłącznie to, co gracz FAKTYCZNIE ma. Puste są ukryte —
@@ -1960,10 +1989,6 @@
      "water_tile", "totem_duo", "face_chill", "face_panic", "ramp",
      "item_slowmo", "item_heart", "shark_fin", "face_alone"],
     function () {
-      if (ART.totem_duo) {
-        el.splash.hidden = false;
-        el.menu.classList.add("has-splash");   // totem jest w splashu, nie na canvasie
-      }
       el.bestM.textContent = best;
       baked = true;
       resize();          // resize sam przepala bitmapy pod aktualną skalę
