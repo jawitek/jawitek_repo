@@ -120,7 +120,89 @@
   /* Wersja zasobów. Przeglądarki trzymały stary game.js i stare sprite'y po
      wdrożeniu — gracz widział poprzednią wersję gry mimo udanej publikacji.
      PODBIJ TĘ LICZBĘ (i te w index.html) przy każdym wdrożeniu.          */
-  var VER = "15";
+  var VER = "16";
+
+  /* -------------------------------------------------------------- dźwięk
+     Wszystko syntezowane w Web Audio — zero plików, zero pobierania, działa
+     offline. Przeglądarki blokują dźwięk do pierwszego gestu użytkownika,
+     więc kontekst powstaje dopiero przy pierwszym dotknięciu; wcześniejsze
+     próby byłyby ciche bez żadnego błędu.                                */
+
+  var MUTE_KEY = "pogo-pogo:mute";
+  var audio = { ctx: null, out: null, muted: false };
+  try { audio.muted = localStorage.getItem(MUTE_KEY) === "1"; } catch (e) {}
+
+  function audioWake() {
+    if (audio.muted) return null;
+    if (!audio.ctx) {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      try {
+        audio.ctx = new AC();
+        audio.out = audio.ctx.createGain();
+        audio.out.gain.value = 0.32;
+        audio.out.connect(audio.ctx.destination);
+      } catch (e) { return null; }
+    }
+    if (audio.ctx.state === "suspended") audio.ctx.resume();
+    return audio.ctx;
+  }
+
+  /* Pojedynczy ton z obwiednią. f2 daje zjazd albo wzlot częstotliwości. */
+  function tone(f, f2, dur, type, gain, delay) {
+    var c = audio.ctx; if (!c) return;
+    var t = c.currentTime + (delay || 0);
+    var o = c.createOscillator(), g = c.createGain();
+    o.type = type || "square";
+    o.frequency.setValueAtTime(f, t);
+    if (f2 && f2 !== f) o.frequency.exponentialRampToValueAtTime(Math.max(1, f2), t + dur);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(gain || 0.25, t + Math.min(0.02, dur * 0.3));
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(audio.out);
+    o.start(t); o.stop(t + dur + 0.02);
+  }
+
+  /* Szum — plusk, rozbryzg, świst minięcia. */
+  function noise(dur, gain, from, to, delay) {
+    var c = audio.ctx; if (!c) return;
+    var t = c.currentTime + (delay || 0);
+    var n = Math.floor(c.sampleRate * dur);
+    var buf = c.createBuffer(1, n, c.sampleRate), d = buf.getChannelData(0);
+    for (var i = 0; i < n; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / n);
+    var src = c.createBufferSource(); src.buffer = buf;
+    var f = c.createBiquadFilter(); f.type = "bandpass";
+    f.frequency.setValueAtTime(from, t);
+    if (to) f.frequency.exponentialRampToValueAtTime(to, t + dur);
+    f.Q.value = 0.9;
+    var g = c.createGain(); g.gain.value = gain;
+    src.connect(f); f.connect(g); g.connect(audio.out);
+    src.start(t); src.stop(t + dur);
+  }
+
+  var SOUNDS = {
+    ui:     function () { tone(420, 640, 0.10, "square", 0.18); },
+    tier:   function () { tone(660, 660, 0.07, "square", 0.16);
+                          tone(990, 990, 0.09, "square", 0.16, 0.08); },
+    jump:   function () { tone(200, 720, 0.20, "square", 0.24);
+                          noise(0.18, 0.20, 500, 2200); },
+    land:   function () { noise(0.26, 0.28, 1800, 380);
+                          tone(520, 780, 0.12, "triangle", 0.20, 0.04); },
+    near:   function () { noise(0.16, 0.13, 900, 2600); },
+    clock:  function () { tone(880, 240, 0.42, "triangle", 0.22); },
+    shield: function () { tone(520, 780, 0.09, "triangle", 0.22);
+                          tone(880, 1180, 0.14, "triangle", 0.20, 0.08); },
+    lose:   function () { tone(320, 70, 0.34, "sawtooth", 0.24);
+                          noise(0.28, 0.22, 1400, 300); },
+    crash:  function () { noise(0.34, 0.30, 1200, 220);
+                          tone(180, 55, 0.36, "sawtooth", 0.26); }
+  };
+
+  function snd(name) {
+    if (audio.muted || !SOUNDS[name]) return;
+    if (!audioWake()) return;
+    try { SOUNDS[name](); } catch (e) {}
+  }
 
   /* ------------------------------------------------------------ narzędzia */
 
@@ -774,7 +856,8 @@
     slotH:  document.getElementById("slot-heart"),
     slotArc: document.getElementById("slot-arc"),
     splash: document.getElementById("splash"),
-    sticker: document.getElementById("over-sticker")
+    sticker: document.getElementById("over-sticker"),
+    mute:   document.getElementById("mute")
   };
 
   function show(node, on) {
@@ -787,6 +870,20 @@
   function saveBest() { try { localStorage.setItem(BEST_KEY, String(best)); } catch (e) {} }
 
   el.retry.addEventListener("click", function (e) { e.stopPropagation(); startRun(); });
+
+  function refreshMute() {
+    el.mute.textContent = audio.muted ? "\uD83D\uDD07" : "\uD83D\uDD0A";
+    el.mute.classList.toggle("is-off", audio.muted);
+    el.mute.setAttribute("aria-pressed", audio.muted ? "true" : "false");
+  }
+  el.mute.addEventListener("click", function (e) {
+    e.stopPropagation();
+    audio.muted = !audio.muted;
+    try { localStorage.setItem(MUTE_KEY, audio.muted ? "1" : "0"); } catch (err) {}
+    refreshMute();
+    if (!audio.muted) snd("ui");        // potwierdzenie, że dźwięk wrócił
+  });
+  refreshMute();
 
   /* Grafiki ekranów są opcjonalne: pokazują się dopiero, gdy plik faktycznie
      się wczyta. Splash ma dodatkowo zapas — jeśli nie ma jeszcze title_art,
@@ -900,6 +997,7 @@
     game.wipe = null;
 
     refreshSlots();
+    snd("ui");
     show(el.menu, false);
     show(el.over, false);
     el.hud.hidden = false;
@@ -924,6 +1022,7 @@
   }
 
   function loseBird() {
+    snd("lose");
     game.hasBird = false;
     game.bird.a = 0; game.bird.w = 0; game.bird.over = 0; game.bird.panic = 0;
     game.landGrace = Math.max(game.landGrace, 0.8);   // chwila na otrząśnięcie się
@@ -948,6 +1047,7 @@
   }
 
   function wipeout(cause) {
+    snd("crash");
     game.mode = WIPE;
     game.shake = 14;
     game.wipe = {
@@ -1176,6 +1276,7 @@
     var lv = level();
     if (lv !== game.level) {
       game.level = lv;
+      snd("tier");
       el.dist.classList.remove("bump");
       void el.dist.offsetWidth;          // wymuszenie restartu animacji
       el.dist.classList.add("bump");
@@ -1240,6 +1341,7 @@
       if (game.hasBird && Math.abs(b.a) > LAND_LIMIT) { fatal("land"); return; }
       game.dist += JUMP_BONUS;
       game.landGrace = LAND_GRACE;
+      snd("land");
       toast("PERFECT LANDING!  +" + JUMP_BONUS + " m");
       for (var sp = 0; sp < 34; sp++) splash(ski.x + rand(-26, 26), SKI_Y + 12, 1.6);
     }
@@ -1286,6 +1388,7 @@
           if (rx * rx + ry * ry < 1) {
             o.used = true;
             game.jumpT = JUMP_TIME;
+            snd("jump");
             for (var t0 = 0; t0 < 16; t0++) splash(ski.x + rand(-20, 20), SKI_Y + 10, 1.2);
           }
         }
@@ -1306,6 +1409,7 @@
         var gap = Math.abs(o.x - ski.x) - (o.r + HIT_W);
         if (gap >= 0 && gap < NEAR_MISS) {
           game.dist += NEAR_BONUS;
+          snd("near");
           pop(o.x, SKI_Y - 24, NEAR_TEXTS[Math.floor(Math.random() * NEAR_TEXTS.length)], 1);
         }
       }
@@ -1322,6 +1426,7 @@
         game.items.splice(k2, 1);
         if (it.kind === "item_slowmo") {
           game.slowT = SLOW_TIME;          // odpala się samo po najechaniu
+          snd("clock");
           pop(ski.x, SKI_Y - 96, "SLOW-MO!", 1.15);
         } else {
           /* Serce ZAWSZE ląduje w slocie jako tarcza. Jeśli flaminga nie ma,
@@ -1336,6 +1441,7 @@
             pop(ski.x, SKI_Y - 96, "TARCZA", 0.9);
           }
           game.slots.heart = true;
+          snd("shield");
         }
         refreshSlots();
         for (var s2 = 0; s2 < 12; s2++) splash(it.x, it.y, 0.9);
