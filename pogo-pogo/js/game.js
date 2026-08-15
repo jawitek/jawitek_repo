@@ -120,7 +120,7 @@
   /* Wersja zasobów. Przeglądarki trzymały stary game.js i stare sprite'y po
      wdrożeniu — gracz widział poprzednią wersję gry mimo udanej publikacji.
      PODBIJ TĘ LICZBĘ (i te w index.html) przy każdym wdrożeniu.          */
-  var VER = "13";
+  var VER = "14";
 
   /* ------------------------------------------------------------ narzędzia */
 
@@ -1294,13 +1294,19 @@
         if (it.kind === "item_slowmo") {
           game.slowT = SLOW_TIME;          // odpala się samo po najechaniu
           pop(ski.x, SKI_Y - 96, "SLOW-MO!", 1.15);
-        } else if (!game.hasBird) {
-          game.hasBird = true;                 // serce odradza flaminga
-          game.bird.a = 0; game.bird.w = 0; game.bird.panic = 0;
-          pop(ski.x, SKI_Y - 118, "FLAMING WRACA!", 1.1);
         } else {
+          /* Serce ZAWSZE ląduje w slocie jako tarcza. Jeśli flaminga nie ma,
+             przy okazji go odradza — ale nie zamiast ochrony. Wcześniej
+             gałąź odradzania pomijała slot, więc serce zebrane po stracie
+             wskrzeszało ptaka i znikało, zostawiając gracza bez tarczy.  */
+          if (!game.hasBird) {
+            game.hasBird = true;
+            game.bird.a = 0; game.bird.w = 0; game.bird.panic = 0;
+            pop(ski.x, SKI_Y - 118, "FLAMING WRACA!", 1.1);
+          } else {
+            pop(ski.x, SKI_Y - 96, "TARCZA", 0.9);
+          }
           game.slots.heart = true;
-          pop(ski.x, SKI_Y - 96, "TARCZA", 0.9);
         }
         refreshSlots();
         for (var s2 = 0; s2 < 12; s2++) splash(it.x, it.y, 0.9);
