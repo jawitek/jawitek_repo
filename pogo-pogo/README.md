@@ -394,15 +394,18 @@ dalsze co `LEVEL_M` (80 m).
 | 0 | 0 m | 248 px/s | 0,75–1,11 s | 1 |
 | 1 | 60 m | 306 px/s | 0,65–0,97 s | 1–2 |
 | 3 | 220 m | 422 px/s | 0,49–0,73 s | 1–2 |
-| 6 | 460 m | 596 px/s | 0,32–0,48 s | 1–3 |
-| 7+ | 540 m | 600 px/s (sufit) | 0,28–0,42 s | 1–3 |
-| 12 | 940 m | 600 px/s | 0,16–0,24 s | 1–3 |
-| 16+ | 1260 m | 600 px/s | 0,14–0,21 s (podłoga) | 1–3 |
+| 4 | 300 m | 480 px/s | 0,43–0,64 s | 1–2 |
+| 5+ | 380 m | 538 px/s (sufit) | 0,38–0,57 s | 1–3 |
+| 12 | 940 m | 538 px/s | 0,16–0,24 s | 1–3 |
+| 16+ | 1260 m | 538 px/s | 0,14–0,21 s (podłoga) | 1–3 |
 
-Prędkość ma sufit 600 px/s, bo powyżej niego czas dojazdu przeszkody spada
-poniżej czasu potrzebnego na przejechanie pasa — to już nie jest trudność,
-tylko loteria. Powyżej ósmego progu rośnie już wyłącznie gęstość i to ona
-kończy przejazd.
+Sufit prędkości to **538 px/s** — o jeden próg niżej, niż pozwalałby wzór.
+Powód jest policzalny: przy 596 px/s przeszkoda przelatuje ekran w 0,96 s,
+a przejechanie całego pasa zajmuje ~1,10 s. Unik na pełną szerokość był więc
+fizycznie niewykonalny i playtest to potwierdził („nie do utrzymania").
+Przy 538 px/s wychodzi 1,07 s i margines wraca.
+
+Powyżej sufitu rośnie już wyłącznie gęstość trasy i to ona kończy przejazd.
 
 Skok prędkości bez sygnału czyta się jak zacięcie, więc na każdym progu pulsuje
 licznik metrów (klasa `bump`). To jedyne, co odróżnia próg od błędu.

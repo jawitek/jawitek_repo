@@ -47,7 +47,12 @@
 
   var SPEED_MIN  = 248;               // px/s na starcie — dawny próg z 50 m
   var SPEED_STEP = 58;                // przyrost na próg
-  var SPEED_CAP  = 600;               // wyżej czas reakcji spada poniżej uczciwego
+  /* Sufit o jeden próg niżej, niż pozwalałby wzór. 596 px/s okazało się nie do
+     utrzymania w grze: przeszkoda przelatywała ekran w 0,96 s, a przejechanie
+     całego pasa zajmuje 1,1 s — więc reakcja bywała fizycznie niemożliwa.
+     Przy 538 px/s jest to 1,07 s i wraca margines. Wyżej rośnie już tylko
+     gęstość trasy.                                                       */
+  var SPEED_CAP  = 538;
   /* Gra zaczyna się od razu na dawnym progu z 50 m, a kolejny wchodzi na 60 m
      zamiast na 115 m. Rozbieg był za długi — pierwsze kilkanaście sekund nie
      stawiało żadnego oporu. Dalsze progi zostają co LEVEL_M.            */
@@ -115,7 +120,7 @@
   /* Wersja zasobów. Przeglądarki trzymały stary game.js i stare sprite'y po
      wdrożeniu — gracz widział poprzednią wersję gry mimo udanej publikacji.
      PODBIJ TĘ LICZBĘ (i te w index.html) przy każdym wdrożeniu.          */
-  var VER = "12";
+  var VER = "13";
 
   /* ------------------------------------------------------------ narzędzia */
 
