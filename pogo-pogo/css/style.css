@@ -74,12 +74,42 @@ canvas{display:block;width:100%;height:100%}
 #screen-menu.has-splash{justify-content:center;padding-top:2em}
 
 .splash{
-  width:min(58%,15em);
+  width:min(80%,280px);
   height:auto;
   margin-bottom:.4em;
   filter:drop-shadow(0 .3em .6em rgba(2,40,62,.5));
+  animation:float 4.2s ease-in-out infinite;
 }
 .splash[hidden]{display:none}
+
+/* Leniwe kołysanie — grafika ma żyć, ale nie odciągać uwagi od „TAP TO START". */
+@keyframes float{
+  0%,100%{transform:translateY(0) rotate(-1deg)}
+  50%{transform:translateY(-3.5%) rotate(1deg)}
+}
+
+/* Naklejka z kraksą. Animacja startuje sama, bo ekran przechodzi
+   z display:none na flex — przeglądarka odtwarza wtedy animację od nowa. */
+.over-sticker{
+  width:min(72%,240px);
+  height:auto;
+  margin:.2em 0 .8em;
+  filter:drop-shadow(0 .25em .5em rgba(2,40,62,.45));
+  animation:stickerPop .52s cubic-bezier(.2,1.4,.4,1) both;
+}
+.over-sticker[hidden]{display:none}
+
+@keyframes stickerPop{
+  0%{transform:scale(.3) rotate(-9deg);opacity:0}
+  60%{transform:scale(1.09) rotate(2deg);opacity:1}
+  80%{transform:scale(.97) rotate(-1deg)}
+  100%{transform:scale(1) rotate(0);opacity:1}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .splash{animation:none}
+  .over-sticker{animation:none}
+}
 
 .logo{
   display:flex;
@@ -168,17 +198,18 @@ canvas{display:block;width:100%;height:100%}
 .score-line.dim{color:rgba(255,255,255,.7)}
 
 .btn{
-  margin-top:1.4em;
+  margin-top:1.2em;
   font:inherit;
-  font-size:1em;
+  font-size:1.12em;
   font-weight:900;
-  letter-spacing:.12em;
+  letter-spacing:.13em;
   color:var(--ink);
-  background:var(--gold);
+  background:linear-gradient(180deg,#FFD873 0%,var(--gold) 100%);
   border:0;
-  border-bottom:.22em solid #C79427;
-  border-radius:.7em;
-  padding:.7em 2.2em;
+  border-bottom:.26em solid #C79427;
+  border-radius:.8em;
+  padding:.8em 2.6em;
+  box-shadow:0 .35em 1em rgba(2,40,62,.45);
   cursor:pointer;
 }
 .btn:active{transform:translateY(.1em);border-bottom-width:.12em}

@@ -346,6 +346,24 @@ pochłonięcia śmierci przez serce nie widać w DOM. `game.js` wystawia więc
 `window.pogoDebug()` — **wyłącznie** gdy adres zawiera `?debug`. Mechaniki są
 sprawdzane na wymuszonych buildach (np. każda fala to przedmiot).
 
+## Grafiki ekranów
+
+Menu i ekran końca mają po jednym opcjonalnym obrazku, wstawianym wprost
+w HTML — nie przechodzą przez `loadArt`, bo nie są rysowane na canvasie.
+
+- **Menu:** `title_art.svg` (szerokość do 280 px), z leniwym kołysaniem.
+  Ma `data-fallback` na `totem_duo.svg`, więc dopóki pliku nie ma, zostaje
+  dotychczasowa grafika zamiast pustego miejsca.
+- **Ekran końca:** `gameover_sticker.svg` (do 240 px) między komunikatem
+  a wynikiem, z animacją wskakiwania. Animacja startuje sama, bo ekran
+  przechodzi z `display:none` na `flex` — przeglądarka odtwarza ją wtedy
+  od nowa, bez pomocy z JS.
+
+**Pułapka warta zapamiętania:** obrazki stoją w HTML *przed* skryptem, więc
+bywają wczytane, zanim `game.js` zdąży podpiąć nasłuch `load` — zdarzenie już
+wtedy nie przychodzi i grafika zostaje ukryta. Dlatego `optionalImage()`
+sprawdza też `img.complete` od razu. Ten sam błąd czaił się w ikonach slotów.
+
 ## Reaction Cam
 
 Okrągły podgląd twarzy w lewym górnym rogu, z neonową obwódką. Cała treść jest
