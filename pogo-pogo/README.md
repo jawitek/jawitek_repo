@@ -268,6 +268,11 @@ i nie uruchamiają sterowania, bo obsługa dotyku sceny pomija cele wewnątrz
 **Zasada unikalności:** dany przedmiot nie pojawi się na rzece, dopóki gracz go
 trzyma albo jest aktywny. Na wodzie nigdy nie leżą więc dwa zegary naraz.
 
+Każdy przedmiot ma **własną** szansę na falę (`ITEM_CLOCK` 5%, `ITEM_HEART` 9%),
+a nie wspólną pulę. Przy wspólnej puli zegar dostawał całe 13% fal, gdy gracz
+trzymał już serce — jego częstotliwość zależała więc od zawartości drugiego
+slotu, co nie miało sensu.
+
 ### Zegar — odpala się sam po najechaniu
 
 3 s na `SLOW_FACTOR` (30%) prędkości, przy łagodniejszym wahadle
@@ -379,18 +384,20 @@ Trudność rośnie **skokowo i bez sufitu**. Pierwsza wersja zatrzymywała wszys
 na szóstym progu i po ~540 m gra robiła się płaska — dało się jechać 4 000 m
 i poddać z nudów.
 
-Pierwsze dwa progi są bliżej startu (`LEVEL_1` 50 m, `LEVEL_2` 115 m), bo
-początek za długo nie robił nic ciekawego. Dalej co `LEVEL_M` (80 m).
+Gra **zaczyna się od razu** na 248 px/s — poziomie, który wcześniej wchodził
+dopiero na 50 m. Rozbieg od 190 px/s był za długi: pierwsze kilkanaście sekund
+nie stawiało żadnego oporu. Kolejny próg wchodzi na 60 m zamiast na 115 m,
+dalsze co `LEVEL_M` (80 m).
 
 | próg | dystans | prędkość | odstęp fal | bojki w fali |
 | --- | --- | --- | --- | --- |
-| 0 | 0 m | 190 px/s | 0,86–1,28 s | 1 |
-| 1 | 50 m | 248 px/s | 0,75–1,11 s | 1 |
-| 2 | 115 m | 306 px/s | 0,65–0,97 s | 1–2 |
-| 4 | 275 m | 422 px/s | 0,49–0,73 s | 1–2 |
-| 8 | 595 m | 600 px/s (sufit) | 0,28–0,42 s | 1–3 |
-| 12 | 915 m | 600 px/s | 0,16–0,24 s | 1–3 |
-| 16+ | 1235 m | 600 px/s | 0,14–0,21 s (podłoga) | 1–3 |
+| 0 | 0 m | 248 px/s | 0,75–1,11 s | 1 |
+| 1 | 60 m | 306 px/s | 0,65–0,97 s | 1–2 |
+| 3 | 220 m | 422 px/s | 0,49–0,73 s | 1–2 |
+| 6 | 460 m | 596 px/s | 0,32–0,48 s | 1–3 |
+| 7+ | 540 m | 600 px/s (sufit) | 0,28–0,42 s | 1–3 |
+| 12 | 940 m | 600 px/s | 0,16–0,24 s | 1–3 |
+| 16+ | 1260 m | 600 px/s | 0,14–0,21 s (podłoga) | 1–3 |
 
 Prędkość ma sufit 600 px/s, bo powyżej niego czas dojazdu przeszkody spada
 poniżej czasu potrzebnego na przejechanie pasa — to już nie jest trudność,

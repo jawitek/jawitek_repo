@@ -45,11 +45,13 @@
   var FIXED      = 1 / 120;           // stały krok fizyki — próg musi wypadać
                                       // tak samo przy 30 i 144 fps
 
-  var SPEED_MIN  = 190;               // px/s przewijania wody na starcie
+  var SPEED_MIN  = 248;               // px/s na starcie — dawny próg z 50 m
   var SPEED_STEP = 58;                // przyrost na próg
   var SPEED_CAP  = 600;               // wyżej czas reakcji spada poniżej uczciwego
-  var LEVEL_1    = 50;                // pierwszy próg — blisko startu
-  var LEVEL_2    = 115;               // drugi próg
+  /* Gra zaczyna się od razu na dawnym progu z 50 m, a kolejny wchodzi na 60 m
+     zamiast na 115 m. Rozbieg był za długi — pierwsze kilkanaście sekund nie
+     stawiało żadnego oporu. Dalsze progi zostają co LEVEL_M.            */
+  var LEVEL_1    = 60;                // pierwszy próg ponad prędkość startową
   var LEVEL_M    = 80;                // dalej co tyle metrów
   var PX_PER_M   = 18;
 
@@ -90,6 +92,8 @@
   var NEAR_MISS   = 15;               // px prześwitu liczone jako „o włos"
   var NEAR_BONUS  = 10;               // metrów za near miss
   var NEAR_TEXTS  = ["LUCKY!", "CLOSE ONE!", "STILL CHILL", "SWEATY!"];
+  var ITEM_CLOCK  = 0.05;             // szansa na zegar w fali
+  var ITEM_HEART  = 0.09;             // szansa na serce w fali
 
   /* Rekin patroluje sinusoidą zamiast przecinać ekran po prostej — gracz musi
      przewidzieć tor płetwy, a nie tylko zauważyć przeszkodę.            */
@@ -111,7 +115,7 @@
   /* Wersja zasobów. Przeglądarki trzymały stary game.js i stare sprite'y po
      wdrożeniu — gracz widział poprzednią wersję gry mimo udanej publikacji.
      PODBIJ TĘ LICZBĘ (i te w index.html) przy każdym wdrożeniu.          */
-  var VER = "11";
+  var VER = "12";
 
   /* ------------------------------------------------------------ narzędzia */
 
@@ -976,8 +980,7 @@
   function level() {
     var d = game.dist;
     if (d < LEVEL_1) return 0;
-    if (d < LEVEL_2) return 1;
-    return 2 + Math.floor((d - LEVEL_2) / LEVEL_M);
+    return 1 + Math.floor((d - LEVEL_1) / LEVEL_M);
   }
 
   function spawnDelay() {
@@ -1013,14 +1016,17 @@
     /* Przedmiot idzie sam, w zasięgu korytarza. Zasada unikalności: dany
        przedmiot nie pojawia się, dopóki gracz go trzyma albo jest aktywny —
        więc na rzece nigdy nie leżą dwa zegary naraz.                    */
-    var want = [];
-    if (game.slowT <= 0) want.push("item_slowmo");
-    if (!game.slots.heart) want.push("item_heart");
-    if (want.length && Math.random() < 0.13) {
+    /* Osobne szanse zamiast losowania z jednej puli. Wcześniej, gdy gracz
+       trzymał serce, zegar dostawał całe 13% fal — teraz jego częstotliwość
+       nie zależy od tego, co gracz ma w drugim slocie.                  */
+    var kind = null;
+    if (game.slowT <= 0 && Math.random() < ITEM_CLOCK) kind = "item_slowmo";
+    else if (!game.slots.heart && Math.random() < ITEM_HEART) kind = "item_heart";
+    if (kind) {
       var ir = 0.35 * Math.min(SKI_VX_MAX * gapTime,
                                0.5 * SKI_ACCEL * gapTime * gapTime);
       game.items.push({
-        kind: want[Math.floor(Math.random() * want.length)],
+        kind: kind,
         x: clamp(game.safeX + rand(-ir, ir), LANE_LO, LANE_HI),
         y: -60
       });
