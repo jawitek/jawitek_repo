@@ -755,7 +755,20 @@ h2 {
 .btn-submit { justify-self: start; padding: 16px 28px; font-size: 15px; }
 .btn-submit:hover { background: var(--orange); }
 
-.form-note { margin: 0; font-size: 15px; color: var(--orange); }
+.form-note { margin: 0; font-size: 15px; line-height: 1.5; color: var(--orange); }
+.form-note-error { color: #ff6b6b; }
+
+/* Honeypot — hidden from people, filled in only by bots. */
+.botcheck {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.btn-submit:disabled { opacity: 0.65; cursor: default; }
 
 /* ==========================================================================
    Footer
