@@ -62,9 +62,12 @@ The Kanno logo master files were kept out of that removal and live in
 - **Japanese privacy policy.** The site itself switches fully between EN / PL
   / JA, but the policy exists in Polish and English only — the JA footer link
   serves the English page.
-- **Contact form.** No backend. Submitting composes a pre-filled message to
-  hello@kanno.pl in the visitor's mail client. Wiring it to a form service
-  (Formspree, Netlify Forms) would make it a true form.
+- **Contact form — needs an access key.** The Web3Forms integration is
+  written and tested; it is dormant until a key is pasted into
+  `FORM_ACCESS_KEY` at the top of `kanno/js/main.js`. Get one at
+  web3forms.com, then add every recipient address on that key in the
+  Web3Forms dashboard. Until the key is set the form falls back to opening
+  the visitor's mail client, so no inquiry is silently dropped.
 - **Product photo mapping.** The design bundle shipped six unnamed product
   images, matched to the five noodle styles by appearance. Worth checking
   against the real product line; easy to swap in `kanno/index.html`.

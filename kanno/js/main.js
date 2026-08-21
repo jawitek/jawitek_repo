@@ -7,6 +7,24 @@
   var DEFAULT_LANG = 'EN';
   var lang = DEFAULT_LANG;
 
+  /* ---------- Contact form delivery ----------------------------------------
+     GitHub Pages serves static files only, so the form is posted to Web3Forms,
+     which relays it to the inbox(es) configured on that account.
+
+     To switch the form on:
+       1. Get an access key at https://web3forms.com (free tier, no account
+          needed beyond confirming the address).
+       2. Paste it below.
+       3. Add the second recipient in the Web3Forms dashboard — the free tier
+          allows more than one address on a key.
+
+     While the key is empty the form falls back to opening the visitor's mail
+     client, so nothing breaks and no inquiry is silently dropped. */
+
+  var FORM_ENDPOINT = 'https://api.web3forms.com/submit';
+  var FORM_ACCESS_KEY = '';
+  var FALLBACK_MAIL = 'hello@kanno.pl';
+
   function dict() { return I18N[lang] || I18N[DEFAULT_LANG] || {}; }
 
   function resolve(path) {
@@ -135,9 +153,84 @@
     els.forEach(function (el) { io.observe(el); });
   }
 
-  /* ---------- Contact form ----------
-     No backend yet: hand the inquiry to the visitor's mail client and
-     confirm in place, so nothing is silently dropped. */
+  /* ---------- Contact form ---------- */
+
+  function showNote(text, isError) {
+    var note = document.getElementById('form-note');
+    if (!note) return;
+    note.textContent = text;
+    note.classList.toggle('form-note-error', !!isError);
+    note.hidden = false;
+  }
+
+  function fieldValues(form, t) {
+    var data = new FormData(form);
+    return {
+      name: [data.get('firstName'), data.get('lastName')].filter(Boolean).join(' '),
+      email: data.get('email') || '',
+      role: data.get('role') || '',
+      message: data.get('message') || '',
+      botcheck: data.get('botcheck'),
+      t: t
+    };
+  }
+
+  // No access key configured: hand the inquiry to the visitor's mail client
+  // rather than pretending it was sent.
+  function submitByMail(v) {
+    var t = v.t;
+    var body = [
+      t.mailName + ': ' + v.name,
+      t.mailEmail + ': ' + v.email,
+      t.mailRole + ': ' + v.role,
+      '',
+      v.message
+    ].join('\n');
+
+    window.location.href = 'mailto:' + FALLBACK_MAIL +
+      '?subject=' + encodeURIComponent(t.mailSubject + ' — ' + v.name) +
+      '&body=' + encodeURIComponent(body);
+
+    document.getElementById('submit-btn').textContent = t.submitSent;
+    showNote(t.formNote, false);
+  }
+
+  function submitToService(form, v) {
+    var t = v.t;
+    var btn = document.getElementById('submit-btn');
+    var original = btn.textContent;
+
+    btn.disabled = true;
+    btn.textContent = t.submitSending || original;
+
+    fetch(FORM_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        access_key: FORM_ACCESS_KEY,
+        subject: t.mailSubject + ' — ' + v.name,
+        from_name: 'kanno.pl',
+        name: v.name,
+        email: v.email,
+        role: v.role,
+        message: v.message,
+        language: lang,
+        botcheck: v.botcheck
+      })
+    })
+      .then(function (res) { return res.json().catch(function () { return { success: res.ok }; }); })
+      .then(function (out) {
+        if (!out || !out.success) throw new Error((out && out.message) || 'send failed');
+        btn.textContent = t.submitSent;
+        showNote(t.formSent, false);
+        form.reset();
+      })
+      .catch(function () {
+        btn.disabled = false;
+        btn.textContent = original;
+        showNote(t.formError, true);
+      });
+  }
 
   function initForm() {
     var form = document.getElementById('contact-form');
@@ -151,25 +244,13 @@
         return;
       }
 
-      var t = dict().contact || {};
-      var data = new FormData(form);
-      var name = [data.get('firstName'), data.get('lastName')].filter(Boolean).join(' ');
-      var body = [
-        t.mailName + ': ' + name,
-        t.mailEmail + ': ' + data.get('email'),
-        t.mailRole + ': ' + data.get('role'),
-        '',
-        data.get('message') || ''
-      ].join('\n');
+      var v = fieldValues(form, dict().contact || {});
 
-      window.location.href = 'mailto:hello@kanno.pl' +
-        '?subject=' + encodeURIComponent(t.mailSubject + ' — ' + name) +
-        '&body=' + encodeURIComponent(body);
+      // Honeypot: only a bot fills this in.
+      if (v.botcheck) return;
 
-      document.getElementById('submit-btn').textContent = t.submitSent;
-      var note = document.getElementById('form-note');
-      note.textContent = t.formNote;
-      note.hidden = false;
+      if (FORM_ACCESS_KEY) submitToService(form, v);
+      else submitByMail(v);
     });
   }
 
