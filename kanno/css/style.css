@@ -327,6 +327,18 @@ h2 {
   align-items: start;
 }
 
+/* This heading sits between two paragraphs rather than at the top of its
+   section, so it is set smaller than the other section headings. At the full
+   54px it interrupts the reading flow instead of organising it, and in Polish
+   and Japanese it wraps onto a second line and swamps the column. */
+.about h2 {
+  font-size: clamp(26px, 2.4vw, 38px);
+  line-height: 1.18;
+  margin-top: 32px;
+}
+
+.about h2 + .body-text { margin-top: 18px; }
+
 .about-flags {
   display: flex;
   gap: 20px;
