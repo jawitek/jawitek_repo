@@ -22,7 +22,7 @@
      client, so nothing breaks and no inquiry is silently dropped. */
 
   var FORM_ENDPOINT = 'https://api.web3forms.com/submit';
-  var FORM_ACCESS_KEY = '';
+  var FORM_ACCESS_KEY = '269c07f7-b678-4c96-a96d-1ff34956eb17';
   var FALLBACK_MAIL = 'hello@kanno.pl';
 
   function dict() { return I18N[lang] || I18N[DEFAULT_LANG] || {}; }
