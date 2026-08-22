@@ -222,14 +222,14 @@ window.KANNO_I18N = {
     privacyHref: 'polityka-prywatnosci.html',
 
     meta: {
-      title: 'Kanno Noodle — Sztuka japońskiego makaronu, tworzona w Europie',
-      description: 'Japoński makaron ramen produkowany w centralnej Polsce w ramach joint venture z rodziną Kanno. Pięć stylów, z jajkiem lub bez, certyfikat IFS Food, produkt mrożony o 12-miesięcznym terminie przydatności.',
+      title: 'Kanno Noodle — japońskie noodle, europejska produkcja',
+      description: 'Japońskie noodle ramen produkowane w centralnej Polsce w ramach joint venture z rodziną Kanno. Pięć stylów, z jajkiem lub bez, certyfikat IFS Food, produkt mrożony o 12-miesięcznym terminie przydatności.',
       ogDescription: 'Siedemdziesiąt lat rzemiosła rodziny Kanno, japońskie receptury i know-how — produkowane w centralnej Polsce dla restauracji ramen i sieci handlowych w całej Europie.'
     },
 
     nav: {
       about: 'O nas',
-      products: 'Makarony',
+      products: 'Noodle',
       production: 'Produkcja',
       quality: 'Jakość',
       contact: 'Kontakt',
@@ -240,14 +240,14 @@ window.KANNO_I18N = {
 
     hero: {
       eyebrow: 'Tokio 1949 · Wyprodukowano w Polsce',
-      title: 'Sztuka japońskiego makaronu, tworzona w Europie',
-      lead: 'Japońskie receptury i siedemdziesiąt lat rzemiosła rodziny Kanno — teraz wytwarzane w centralnej Polsce. Dostarczamy lokalom ramen i sieciom handlowym mrożony makaron o powtarzalnej strukturze godnej każdego szefa kuchni.',
+      title: 'Japońskie noodle, europejska produkcja',
+      lead: 'Japońskie receptury i siedemdziesiąt lat rzemiosła rodziny Kanno — teraz wytwarzane w centralnej Polsce. Dostarczamy lokalom ramen i sieciom handlowym mrożone noodle o powtarzalnej strukturze godnej każdego szefa kuchni.',
       cta1: 'Porozmawiaj z naszym działem sprzedaży',
-      cta2: 'Zobacz naszą ofertę makaronów'
+      cta2: 'Zobacz naszą ofertę noodle'
     },
 
     stats: {
-      v1: '1949', l1: 'Wytwarzamy makaron od',
+      v1: '1949', l1: 'Wytwarzamy noodle od',
       v2: '500+ t', l2: 'Roczna wydajność',
       v3: '3,5 mln', l3: 'Porcji rocznie',
       l4: 'Certyfikowane<br>bezpieczeństwo żywności'
@@ -256,13 +256,13 @@ window.KANNO_I18N = {
     about: {
       eyebrow: 'O nas',
       title: 'Dziedzictwo Tokio z polskim adresem',
-      body1: 'Od ponad 70 lat rodzina Kanno doskonali sztukę wytwarzania makaronu w sercu Tokio. Od 1949 roku ich pasja i precyzja dostarczają autentyczny japoński makaron do tysięcy restauracji w Japonii oraz innych regionach Azji, w Ameryce Północnej i Australii. Dziedzictwo Kanno opiera się na głębokiej wiedzy, rzemiośle i jasnej misji: dostarczać bezpieczne produkty najwyższej jakości i rozwijać kulturę makaronu.',
-      body2: 'Spółka joint venture pana Yoshio Kanno z polską firmą rodzinną zapoczątkowała wyjątkowe partnerstwo międzynarodowe. W Polsce powstał niezależny zakład, wyposażony w japońskie maszyny produkcyjne i wspierany przez doświadczonych technologów żywności Kanno. Razem dostarczamy autentyczność japońskiego makaronu, opartą na tradycji, wzajemnym zaufaniu i wspólnym dążeniu do jakości.',
+      body1: 'Od ponad 70 lat rodzina Kanno doskonali sztukę wytwarzania noodle w sercu Tokio. Od 1949 roku ich pasja i precyzja dostarczają autentyczne japońskie noodle do tysięcy restauracji w Japonii oraz innych regionach Azji, w Ameryce Północnej i Australii. Dziedzictwo Kanno opiera się na głębokiej wiedzy, rzemiośle i jasnej misji: dostarczać bezpieczne produkty najwyższej jakości i rozwijać kulturę noodle.',
+      body2: 'Spółka joint venture pana Yoshio Kanno z polską firmą rodzinną zapoczątkowała wyjątkowe partnerstwo międzynarodowe. W Polsce powstał niezależny zakład, wyposażony w japońskie maszyny produkcyjne i wspierany przez doświadczonych technologów żywności Kanno. Razem dostarczamy autentyczność japońskich noodle, opartą na tradycji, wzajemnym zaufaniu i wspólnym dążeniu do jakości.',
       flags: 'Japońskie receptury i technologia. Europejska produkcja, obsługa i łańcuch dostaw.'
     },
 
     products: {
-      eyebrow: 'Oferta makaronów',
+      eyebrow: 'Oferta noodle',
       title: 'Pięć stylów, z jajkiem lub bez',
       lead: 'Każdy styl powstaje według tradycyjnej japońskiej receptury, łącząc autentyczność z praktycznym zastosowaniem.',
       lead2: 'Formaty, gramatury porcji i opakowania dostosowujemy do każdego Partnera.',
@@ -308,17 +308,17 @@ window.KANNO_I18N = {
       title: 'Powtarzalność, partia po partii',
       lead: 'Każda partia powstaje w kontrolowanych warunkach pod nadzorem doświadczonych technologów żywności, z zachowaniem rygorystycznych norm dotyczących tekstury, wagi i hydratacji. Wyselekcjonowane składniki i sprawdzone japońskie receptury gwarantują, że każda dostawa jest identyczna z poprzednią.',
       pack1Title: 'Mrożone u szczytu świeżości',
-      pack1Body: 'Makaron mrozimy zaraz po uformowaniu, zatrzymując strukturę i sprężystość. Gotuje się na zamówienie prosto z −18 °C, bez utraty jakości.',
+      pack1Body: 'Noodle mrozimy zaraz po uformowaniu, zatrzymując strukturę i sprężystość. Gotują się na zamówienie prosto z −18 °C, bez utraty jakości.',
       pack2Title: 'Powtarzalne porcje',
       pack2Body: 'Każda porcja jest ważona i sprawdzana pod kątem jakości, dzięki czemu struktura, smak i wygląd na talerzu pozostają takie same od pierwszego do ostatniego zamówienia.',
       pack3Title: 'Gotowe w około 90 sekund',
-      pack3Body: 'Z zamrażarki do miski w około półtorej minuty. Podawaj makaron najwyższej jakości bez wysiłku, nawet w najbardziej intensywnych godzinach.'
+      pack3Body: 'Z zamrażarki do miski w około półtorej minuty. Podawaj noodle najwyższej jakości bez wysiłku, nawet w najbardziej intensywnych godzinach.'
     },
 
     quality: {
       eyebrow: 'Jakość i zakład produkcyjny',
       title: 'Czysta produkcja w centrum Europy',
-      body1: 'Nasze makarony produkujemy w nowoczesnym zakładzie z precyzyjnie wydzielonymi strefami czystymi i ścisłą kontrolą procesów, popartą certyfikatem IFS. Każdy produkt jest magazynowany w zoptymalizowanych warunkach, które chronią świeżość, teksturę i pełnię smaku.',
+      body1: 'Nasze noodle produkujemy w nowoczesnym zakładzie z precyzyjnie wydzielonymi strefami czystymi i ścisłą kontrolą procesów, popartą certyfikatem IFS. Każdy produkt jest magazynowany w zoptymalizowanych warunkach, które chronią świeżość, teksturę i pełnię smaku.',
       body2: 'Produkcja mieści się w centralnej Polsce — to praktyczna baza dla niezawodnej dystrybucji mrożonek w Europie. Krótkie i pewne czasy dostaw drogą lądową docierają do Partnerów w Polsce i na rynkach europejskich, z możliwością zwiększania skali wraz z popytem.',
       s1v: 'IFS Food', s1l: 'Certyfikowany standard',
       s2v: 'Strefy czyste', s2l: 'Rygorystyczna kontrola procesów',
@@ -328,7 +328,7 @@ window.KANNO_I18N = {
     distribution: {
       eyebrow: 'W całej Europie',
       title: 'Obecni na większości rynków europejskich',
-      body: 'Nasz mrożony makaron jest dostępny dla restauracji i sieci handlowych w większości krajów Europy dzięki sprawdzonym partnerom dystrybucyjnym. Zapasy utrzymujemy blisko każdego rynku i przewozimy w kontrolowanym łańcuchu chłodniczym, więc dostawy pozostają niezawodne niezależnie od lokalizacji.',
+      body: 'Nasze mrożone noodle są dostępne dla restauracji i sieci handlowych w większości krajów Europy dzięki sprawdzonym partnerom dystrybucyjnym. Zapasy utrzymujemy blisko każdego rynku i przewozimy w kontrolowanym łańcuchu chłodniczym, więc dostawy pozostają niezawodne niezależnie od lokalizacji.',
       s1v: 'Cała Europa', s1l: 'Dostępni na większości rynków',
       s2v: 'Lokalny zapas', s2l: 'Utrzymywany blisko rynku',
       link: 'Zapytaj o dostępność →'
@@ -336,13 +336,13 @@ window.KANNO_I18N = {
 
     partner: {
       eyebrow: 'Dla restauracji ramen',
-      title: 'Zrobimy dla Ciebie Twój autorski makaron',
-      body1: 'Wytwarzanie makaronu na miejscu wymaga miejsca, ludzi i godzin, których zabieganym kuchniom rzadko wystarcza. Zostaw to nam. Nasi technolodzy żywności opracują makaron według Twojej receptury, a następnie wyprodukują go i dostarczą mrożony, w powtarzalnej jakości, partia po partii.',
-      body2: 'Zachowujesz charakter swojej miski i czas, który zespół poświęca na bulion i obsługę, a o makaron dba siedemdziesiąt lat doświadczenia Kanno.',
+      title: 'Zrobimy dla Ciebie Twoje autorskie noodle',
+      body1: 'Wytwarzanie noodle na miejscu wymaga miejsca, ludzi i godzin, których zabieganym kuchniom rzadko wystarcza. Zostaw to nam. Nasi technolodzy żywności opracują noodle według Twojej receptury, a następnie wyprodukują je i dostarczą mrożone, w powtarzalnej jakości, partia po partii.',
+      body2: 'Zachowujesz charakter swojej miski i czas, który zespół poświęca na bulion i obsługę, a o noodle dba siedemdziesiąt lat doświadczenia Kanno.',
       point1: 'Twoja receptura, opracowana i odtwarzana zgodnie ze specyfikacją',
       point2: 'Uwolnij miejsce w kuchni, pracę i czas przygotowań',
       point3: 'Ta sama jakość w każdej dostawie',
-      cta: 'Opracuj z nami swój makaron'
+      cta: 'Opracuj z nami swoje noodle'
     },
 
     faq: {
@@ -350,25 +350,25 @@ window.KANNO_I18N = {
       title: 'Najczęstsze pytania',
       still: 'Masz jeszcze pytanie?',
       link: 'Zapytaj nasz zespół →',
-      q1: 'Co decyduje o autentyczności makaronów Kanno?',
-      a1: 'Nasze makarony powstają według tradycyjnych receptur opracowanych przez rodzinę Kanno w Tokio od 1949 roku — to ponad 70 lat japońskiego dziedzictwa. Korzystamy z oryginalnych japońskich maszyn i wiedzy doświadczonych technologów żywności, dzięki czemu każda partia pozostaje wierna temu rzemiosłu.',
+      q1: 'Co decyduje o autentyczności noodle Kanno?',
+      a1: 'Nasze noodle powstają według tradycyjnych receptur opracowanych przez rodzinę Kanno w Tokio od 1949 roku — to ponad 70 lat japońskiego dziedzictwa. Korzystamy z oryginalnych japońskich maszyn i wiedzy doświadczonych technologów żywności, dzięki czemu każda partia pozostaje wierna temu rzemiosłu.',
       q2: 'Jak gwarantujecie bezpieczeństwo żywności i jakość?',
       a2: 'Jakość jest u nas na pierwszym miejscu na każdym etapie. Zakład pracuje w najwyższych standardach higieny, z wyraźnie wydzielonymi strefami czystymi, i posiada certyfikat IFS (International Featured Standards).',
-      q3: 'Czy możecie opracować makaron pod naszą restaurację lub markę?',
-      a3: 'Tak. Ściśle współpracujemy z Partnerami, dopasowując makaron do ich receptury, formatu i rynku. Skontaktuj się z nami, a nasz zespół opracuje makaron zgodnie z Twoją specyfikacją, a następnie wyprodukuje go i dostarczy w powtarzalnej jakości.',
+      q3: 'Czy możecie opracować noodle pod naszą restaurację lub markę?',
+      a3: 'Tak. Ściśle współpracujemy z Partnerami, dopasowując noodle do ich receptury, formatu i rynku. Skontaktuj się z nami, a nasz zespół opracuje noodle zgodnie z Twoją specyfikacją, a następnie wyprodukuje je i dostarczy w powtarzalnej jakości.',
       q4: 'Czy wysyłacie towar na terenie całej Europy?',
       a4: 'Tak. Nasz zakład w centralnej Polsce, blisko głównych szlaków drogowych i węzłów logistycznych, jest dobrze położony do szybkiej i niezawodnej dystrybucji mrożonek do Partnerów w całej Europie poprzez naszą sieć dystrybucji.',
       q5: 'Czy szefowie kuchni mogą poprosić o próbki przed rozpoczęciem współpracy?',
-      a5: 'Oczywiście — w kuchni japońskiej smak i tekstura są najważniejsze. Chętnie przekazujemy pakiety próbek za pośrednictwem naszych dystrybutorów, aby szefowie kuchni mogli przetestować nasze makarony z własnymi bulionami i sami ocenić jakość.',
+      a5: 'Oczywiście — w kuchni japońskiej smak i tekstura są najważniejsze. Chętnie przekazujemy pakiety próbek za pośrednictwem naszych dystrybutorów, aby szefowie kuchni mogli przetestować nasze noodle z własnymi bulionami i sami ocenić jakość.',
       q6: 'Jaki jest czas gotowania Waszego ramenu?',
-      a6: 'Zależy od grubości makaronu i stopnia uwodnienia ciasta, ale zwykle mieści się w przedziale od 60 sekund do około 3 minut — co realnie pomaga utrzymać płynność obsługi w godzinach szczytu.',
-      q7: 'Czy oferujecie makarony wegańskie?',
-      a7: 'Na ten moment nie. Nasz zespół aktywnie nad nimi pracuje i mamy nadzieję wkrótce rozszerzyć ofertę o makarony odpowiednie dla wegan.',
-      q8: 'Czy Wasze makarony są dostępne wszędzie w Europie?',
+      a6: 'Zależy od grubości noodle i stopnia uwodnienia ciasta, ale zwykle mieści się w przedziale od 60 sekund do około 3 minut — co realnie pomaga utrzymać płynność obsługi w godzinach szczytu.',
+      q7: 'Czy oferujecie noodle wegańskie?',
+      a7: 'Na ten moment nie. Nasz zespół aktywnie nad nimi pracuje i mamy nadzieję wkrótce rozszerzyć ofertę o noodle odpowiednie dla wegan.',
+      q8: 'Czy Wasze noodle są dostępne wszędzie w Europie?',
       a8: 'Dostarczamy do Partnerów na wielu rynkach europejskich, choć nie jesteśmy jeszcze obecni w każdym kraju. Jeśli działasz w regionie, w którym nas jeszcze nie ma, skontaktuj się z nami — zawsze chętnie szukamy rozwiązań logistycznych i budujemy nowe partnerstwa dystrybucyjne w Europie.',
       q9: 'Czy oferujecie produkcję pod marką własną i jaki jest minimalny wolumen?',
       a9: 'Tak. Oferujemy produkcję pod marką własną i możemy dopasować recepturę, grubość oraz opakowanie do Twojej marki. Minimalne wolumeny zależą od specyfiki projektu, dlatego prosimy o bezpośredni kontakt w celu omówienia szczegółów.',
-      q10: 'Jak pakowane są makarony i ile porcji mieści karton?',
+      q10: 'Jak pakowane są noodle i ile porcji mieści karton?',
       a10: 'Standardowy format to 10 opakowań foliowych w kartonie, po 5 porcji w każdym — łącznie 50 porcji na karton. Chroni to bezpieczeństwo żywności i świeżość. Pracujemy również nad mniejszymi opakowaniami, aby odpowiedzieć na potrzeby szerszego grona firm.'
     },
 
@@ -397,7 +397,7 @@ window.KANNO_I18N = {
       formSent: 'Twoje zapytanie do nas dotarło. Odpowiadamy na każdą wiadomość, zwykle w ciągu jednego dnia roboczego.',
       formError: 'Nie udało się wysłać zapytania. Spróbuj ponownie lub napisz bezpośrednio na hello@kanno.pl.',
       formNote: 'Powinien otworzyć się Twój program pocztowy z gotową wiadomością. Jeśli tak się nie stało, napisz bezpośrednio na adres: hello@kanno.pl.',
-      mailSubject: 'Zapytanie o makarony',
+      mailSubject: 'Zapytanie o noodle',
       mailName: 'Imię i nazwisko',
       mailEmail: 'E-mail',
       mailRole: 'Kontakt jako'
@@ -405,7 +405,7 @@ window.KANNO_I18N = {
 
     footer: {
       copy: '© 2026 Kanno Noodle Sp. z o.o.',
-      tag: 'Sztuka azjatyckiego makaronu',
+      tag: 'Sztuka azjatyckich noodle',
       privacy: 'Polityka prywatności',
       instagram: 'Instagram',
       top: 'Wróć na górę'
@@ -415,17 +415,17 @@ window.KANNO_I18N = {
       logo: 'Kanno Noodle',
       ifs: 'Certyfikat IFS Food',
       flags: 'Japonia i Polska',
-      board: 'Świeży makaron na drewnianej desce',
+      board: 'Świeże noodle na drewnianej desce',
       flour: 'Wyselekcjonowana mąka pszenna',
       shop: 'Bar ramen nocą',
-      sapporo: 'Makaron Sapporo style',
-      temomi: 'Makaron Temomi style',
-      straight: 'Makaron Tokyo straight',
-      wavy: 'Makaron Tokyo wavy',
-      tonkotsu: 'Makaron Tonkotsu style',
-      custom: 'Makaron Custom recipe',
-      chopsticks: 'Makaron podnoszony pałeczkami',
-      partner: 'Świeży makaron opracowany według receptury partnera',
+      sapporo: 'Noodle Sapporo style',
+      temomi: 'Noodle Temomi style',
+      straight: 'Noodle Tokyo straight',
+      wavy: 'Noodle Tokyo wavy',
+      tonkotsu: 'Noodle Tonkotsu style',
+      custom: 'Noodle Custom recipe',
+      chopsticks: 'Noodle podnoszone pałeczkami',
+      partner: 'Świeże noodle opracowane według receptury partnera',
       map: 'Dystrybucja z centralnej Polski w całej Europie'
     }
   },
