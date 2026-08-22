@@ -33,6 +33,35 @@
     }, dict());
   }
 
+  /* ---------- Typographic tidy-up ----------
+     Short linking words must not be left stranded at the end of a line. The
+     space after them is swapped for a non-breaking one, which glues them to
+     the word that follows.
+
+     This is done here rather than with <br> in the copy: a hard break sits at
+     one fixed spot and falls apart at any other window width, while a
+     non-breaking space keeps working at every size and in every language.
+
+     In Polish it is not a preference but a rule of the language — a
+     one-letter word may never end a line. Japanese does not use spaces
+     between words, so it is left alone. */
+
+  var STICKY = {
+    EN: /(^|[\s(“"'—–-])((?:an?|the|of|in|on|at|to|by|for|and|or|as|is|it|we|no|our|its)) /gi,
+    PL: /(^|[\s(„"'—–-])((?:[aiouwz]|do|na|po|za|od|ze|we|by|to|że|nie)) /gi
+  };
+
+  function typoTidy(text) {
+    var re = STICKY[lang];
+    if (!re || typeof text !== 'string') return text;
+    // Two passes, so runs like "one of the best" glue all the way through.
+    for (var i = 0; i < 2; i++) {
+      re.lastIndex = 0;
+      text = text.replace(re, '$1$2\u00A0');
+    }
+    return text;
+  }
+
   /* ---------- Language ---------- */
 
   function applyLang(next) {
@@ -42,13 +71,13 @@
 
     document.querySelectorAll('[data-i18n]').forEach(function (el) {
       var v = resolve(el.getAttribute('data-i18n'));
-      if (typeof v === 'string') el.textContent = v;
+      if (typeof v === 'string') el.textContent = typoTidy(v);
     });
 
     // Values that legitimately carry markup (line breaks in addresses etc.).
     document.querySelectorAll('[data-i18n-html]').forEach(function (el) {
       var v = resolve(el.getAttribute('data-i18n-html'));
-      if (typeof v === 'string') el.innerHTML = v;
+      if (typeof v === 'string') el.innerHTML = typoTidy(v);
     });
 
     document.querySelectorAll('[data-i18n-alt]').forEach(function (el) {
