@@ -788,6 +788,111 @@ h2 {
 }
 
 /* ==========================================================================
+   FAQ
+   ========================================================================== */
+
+.faq {
+  background: var(--cream);
+  border-top: 1px solid var(--hair-soft);
+}
+
+.faq-inner {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 110px var(--gut);
+}
+
+.faq-head { margin-bottom: 44px; }
+.faq h2 { font-size: clamp(32px, 3.4vw, 50px); margin-top: 18px; }
+
+.faq-list { border-top: 1px solid var(--hair); }
+.faq-item { border-bottom: 1px solid var(--hair); }
+.faq-item h3 { margin: 0; font-weight: inherit; font-size: inherit; }
+
+.faq-q {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 0;
+  background: none;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.35;
+  color: var(--ink);
+}
+
+.faq-q:hover { color: var(--red); }
+
+.faq-icon {
+  flex: none;
+  position: relative;
+  width: 18px;
+  height: 18px;
+  margin-top: 4px;
+}
+
+/* Plus sign drawn in CSS: the vertical stroke rotates away when open. */
+.faq-icon::before,
+.faq-icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  margin-top: -1px;
+  background: var(--red);
+  transition: transform 0.28s cubic-bezier(.22,.7,.3,1);
+}
+
+.faq-item.collapsed .faq-icon::after { transform: rotate(90deg); }
+
+/* Answers are open by default, so the text is present and readable with
+   JavaScript off — and to search engines. main.js collapses them on load. */
+.faq-a {
+  display: grid;
+  grid-template-rows: 1fr;
+  transition: grid-template-rows 0.32s cubic-bezier(.22,.7,.3,1);
+}
+
+.faq-item.collapsed .faq-a { grid-template-rows: 0fr; }
+
+.faq-a > p {
+  overflow: hidden;
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--body);
+  max-width: 68ch;
+}
+
+/* Padding only while open — on a collapsed row it would not shrink with the
+   row and would leave a strip of the answer showing. */
+.faq-item:not(.collapsed) .faq-a > p { padding-bottom: 26px; }
+
+.faq-foot {
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 16px;
+  color: var(--body);
+}
+
+.faq-foot .text-link { margin-top: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-a, .faq-icon::before, .faq-icon::after { transition: none; }
+}
+
+/* ==========================================================================
    Contact
    ========================================================================== */
 

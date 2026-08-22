@@ -21,6 +21,7 @@ window.KANNO_I18N = {
       quality: 'Quality',
       contact: 'Contact',
       distribution: 'Distribution',
+      faq: 'FAQ',
       cta: 'Request a quote'
     },
 
@@ -67,7 +68,7 @@ window.KANNO_I18N = {
       allergensNoEgg: 'Gluten',
       badgeCustom: 'Made to brief',
       allergensCustom: 'On specification',
-      note: 'Portion weights available from 100 g to 160 g. Alternative recipes are developed with partners on request.',
+      note: 'Portion weights available from 100 g to 160 g. Alternative recipes are developed with Partners on request.',
       noteLink: 'Ask about a custom recipe →',
       sapporoName: 'Sapporo style',
       sapporoJp: '札幌',
@@ -98,7 +99,7 @@ window.KANNO_I18N = {
       pack2Title: 'Consistent portions',
       pack2Body: 'Every serving is weighed and checked for quality, so texture, taste and plating stay consistent from the first order to the last.',
       pack3Title: 'Ready in about 90 seconds',
-      pack3Body: "From freezer to bowl in around a minute and a half. The result is worthy of any chef, whether it's the first order or the hundredth."
+      pack3Body: 'From freezer to bowl in around a minute and a half. Deliver premium noodle with quality texture effortlessly, even during your busiest shifts.'
     },
 
     quality: {
@@ -114,7 +115,7 @@ window.KANNO_I18N = {
     distribution: {
       eyebrow: 'Across Europe',
       title: 'Present in most European markets',
-      body: 'Our frozen noodles are available to restaurants and retailers across most of Europe through established distribution partners. Stock is held close to each market and moved under a controlled cold chain, so supply stays reliable wherever you are.',
+      body: 'Our frozen noodles are available to restaurants and retailers across most of Europe through established distribution Partners. Stock is held close to each market and moved under a controlled cold chain, so supply stays reliable wherever you are.',
       s1v: 'Across Europe', s1l: 'Available in most markets',
       s2v: 'Local stock', s2l: 'Held close to market',
       link: 'Ask about availability →'
@@ -129,6 +130,33 @@ window.KANNO_I18N = {
       point2: 'Free up kitchen space, labour and prep time',
       point3: 'The same quality in every delivery',
       cta: 'Develop your noodle with us'
+    },
+
+    faq: {
+      eyebrow: 'FAQ',
+      title: 'Questions, answered',
+      still: 'Still have a question?',
+      link: 'Ask our team →',
+      q1: 'What makes Kanno noodles authentic?',
+      a1: 'Our noodles are made to traditional recipes developed by the Kanno family in Tokyo since 1949 — over 70 years of Japanese heritage. We use original Japanese machinery and the expertise of seasoned food technologists to keep every batch true to that craft.',
+      q2: 'How do you guarantee food safety and quality?',
+      a2: 'Quality comes first at every step. Our facility works to the highest hygiene standards with clearly defined clean zones, and is backed by IFS (International Featured Standards) certification.',
+      q3: 'Can you customise noodles for our restaurant or brand?',
+      a3: 'Yes. We work closely with Partners to adapt our noodles to their recipe, format and market. Get in touch and our team will develop a noodle to your specification, then produce and deliver it at consistent quality.',
+      q4: 'Do you ship across Europe?',
+      a4: 'Yes. Based in central Poland, close to major road and logistics networks, our facility is well placed for fast, reliable frozen distribution to Partners across Europe through our distribution network.',
+      q5: 'Can chefs request samples before partnering with us?',
+      a5: 'Of course — taste and texture are everything in Japanese cuisine. We are happy to provide sample packs through our distributors so chefs can test our noodles with their own broths and judge the quality first hand.',
+      q6: 'What is the cooking time for your ramen?',
+      a6: 'It depends on the thickness of the noodle and the hydration of the dough, but generally ranges from a rapid 60 seconds up to about 3 minutes — a real help for keeping service moving during busy hours.',
+      q7: 'Do you offer vegan noodles?',
+      a7: 'Not at the moment. Our team is actively developing them and we hope to add noodles suitable for vegans to the range before long.',
+      q8: 'Are your noodles available everywhere in Europe?',
+      a8: 'We supply Partners across many European markets, though we are not yet present in every country. If you are in a region where we do not yet have a presence, please contact us — we are always keen to find logistics solutions and build new distribution partnerships across Europe.',
+      q9: 'Do you offer private label production, and what is the minimum volume?',
+      a9: 'Yes. We offer private label manufacturing and can tailor recipe, thickness and packaging to your brand. Minimum volumes depend on the specifics of the project, so please reach out directly to discuss the details.',
+      q10: 'How are the noodles packaged, and how many portions are in a carton?',
+      a10: 'Our standard format is 10 foil packs per carton, with 5 portions in each pack — 50 portions per carton. This protects food safety and freshness. We are also working on smaller packaging options to suit a wider range of businesses.'
     },
 
     contact: {
@@ -206,6 +234,7 @@ window.KANNO_I18N = {
       quality: 'Jakość',
       contact: 'Kontakt',
       distribution: 'Dystrybucja',
+      faq: 'FAQ',
       cta: 'Zapytaj o ofertę'
     },
 
@@ -283,7 +312,7 @@ window.KANNO_I18N = {
       pack2Title: 'Powtarzalne porcje',
       pack2Body: 'Każda porcja jest ważona i sprawdzana pod kątem jakości, dzięki czemu struktura, smak i wygląd na talerzu pozostają takie same od pierwszego do ostatniego zamówienia.',
       pack3Title: 'Gotowe w około 90 sekund',
-      pack3Body: 'Z zamrażarki do miski w około półtorej minuty. Efekt godny każdego szefa kuchni — przy pierwszym zamówieniu i przy setnym.'
+      pack3Body: 'Z zamrażarki do miski w około półtorej minuty. Podawaj makaron najwyższej jakości bez wysiłku, nawet w najbardziej intensywnych godzinach.'
     },
 
     quality: {
@@ -314,6 +343,33 @@ window.KANNO_I18N = {
       point2: 'Uwolnij miejsce w kuchni, pracę i czas przygotowań',
       point3: 'Ta sama jakość w każdej dostawie',
       cta: 'Opracuj z nami swój makaron'
+    },
+
+    faq: {
+      eyebrow: 'FAQ',
+      title: 'Najczęstsze pytania',
+      still: 'Masz jeszcze pytanie?',
+      link: 'Zapytaj nasz zespół →',
+      q1: 'Co decyduje o autentyczności makaronów Kanno?',
+      a1: 'Nasze makarony powstają według tradycyjnych receptur opracowanych przez rodzinę Kanno w Tokio od 1949 roku — to ponad 70 lat japońskiego dziedzictwa. Korzystamy z oryginalnych japońskich maszyn i wiedzy doświadczonych technologów żywności, dzięki czemu każda partia pozostaje wierna temu rzemiosłu.',
+      q2: 'Jak gwarantujecie bezpieczeństwo żywności i jakość?',
+      a2: 'Jakość jest u nas na pierwszym miejscu na każdym etapie. Zakład pracuje w najwyższych standardach higieny, z wyraźnie wydzielonymi strefami czystymi, i posiada certyfikat IFS (International Featured Standards).',
+      q3: 'Czy możecie opracować makaron pod naszą restaurację lub markę?',
+      a3: 'Tak. Ściśle współpracujemy z Partnerami, dopasowując makaron do ich receptury, formatu i rynku. Skontaktuj się z nami, a nasz zespół opracuje makaron zgodnie z Twoją specyfikacją, a następnie wyprodukuje go i dostarczy w powtarzalnej jakości.',
+      q4: 'Czy wysyłacie towar na terenie całej Europy?',
+      a4: 'Tak. Nasz zakład w centralnej Polsce, blisko głównych szlaków drogowych i węzłów logistycznych, jest dobrze położony do szybkiej i niezawodnej dystrybucji mrożonek do Partnerów w całej Europie poprzez naszą sieć dystrybucji.',
+      q5: 'Czy szefowie kuchni mogą poprosić o próbki przed rozpoczęciem współpracy?',
+      a5: 'Oczywiście — w kuchni japońskiej smak i tekstura są najważniejsze. Chętnie przekazujemy pakiety próbek za pośrednictwem naszych dystrybutorów, aby szefowie kuchni mogli przetestować nasze makarony z własnymi bulionami i sami ocenić jakość.',
+      q6: 'Jaki jest czas gotowania Waszego ramenu?',
+      a6: 'Zależy od grubości makaronu i stopnia uwodnienia ciasta, ale zwykle mieści się w przedziale od 60 sekund do około 3 minut — co realnie pomaga utrzymać płynność obsługi w godzinach szczytu.',
+      q7: 'Czy oferujecie makarony wegańskie?',
+      a7: 'Na ten moment nie. Nasz zespół aktywnie nad nimi pracuje i mamy nadzieję wkrótce rozszerzyć ofertę o makarony odpowiednie dla wegan.',
+      q8: 'Czy Wasze makarony są dostępne wszędzie w Europie?',
+      a8: 'Dostarczamy do Partnerów na wielu rynkach europejskich, choć nie jesteśmy jeszcze obecni w każdym kraju. Jeśli działasz w regionie, w którym nas jeszcze nie ma, skontaktuj się z nami — zawsze chętnie szukamy rozwiązań logistycznych i budujemy nowe partnerstwa dystrybucyjne w Europie.',
+      q9: 'Czy oferujecie produkcję pod marką własną i jaki jest minimalny wolumen?',
+      a9: 'Tak. Oferujemy produkcję pod marką własną i możemy dopasować recepturę, grubość oraz opakowanie do Twojej marki. Minimalne wolumeny zależą od specyfiki projektu, dlatego prosimy o bezpośredni kontakt w celu omówienia szczegółów.',
+      q10: 'Jak pakowane są makarony i ile porcji mieści karton?',
+      a10: 'Standardowy format to 10 opakowań foliowych w kartonie, po 5 porcji w każdym — łącznie 50 porcji na karton. Chroni to bezpieczeństwo żywności i świeżość. Pracujemy również nad mniejszymi opakowaniami, aby odpowiedzieć na potrzeby szerszego grona firm.'
     },
 
     contact: {
@@ -392,6 +448,7 @@ window.KANNO_I18N = {
       quality: '品質管理',
       contact: 'お問い合わせ',
       distribution: '流通・配送',
+      faq: 'よくあるご質問',
       cta: 'お見積り依頼'
     },
 
@@ -471,7 +528,7 @@ window.KANNO_I18N = {
       pack2Title: '安定したポーション',
       pack2Body: '一食ごとに計量し品質を確認。食感、味、盛り付けが最初の一杯から最後まで安定します。',
       pack3Title: '約90秒で提供',
-      pack3Body: '冷凍庫から丼まで約1分半。一杯目でも百杯目でも、料理人の名に恥じない仕上がりです。'
+      pack3Body: '冷凍庫から丼まで約1分半。繁忙時でも、上質な食感の麺を手間なくご提供いただけます。'
     },
 
     quality: {
@@ -502,6 +559,33 @@ window.KANNO_I18N = {
       point2: '厨房のスペース、人手、仕込み時間を削減',
       point3: 'どの納品でも変わらない品質',
       cta: '貴店の麺を一緒に開発する'
+    },
+
+    faq: {
+      eyebrow: 'FAQ',
+      title: 'よくあるご質問',
+      still: 'その他のご質問がありますか？',
+      link: '担当チームに問い合わせる →',
+      q1: '菅野の麺が「本物」である理由は何ですか。',
+      a1: '当社の麺は、1949年以来、東京の菅野家が築いてきた伝統的なレシピに基づいて製造しています。70年以上にわたる日本の伝統です。日本製の製麺機と経験豊富な食品技術者の知見により、どのロットもその技を忠実に守っています。',
+      q2: '食品安全と品質はどのように担保していますか。',
+      a2: 'すべての工程で品質を最優先しています。工場はクリーンゾーンを明確に区分した最高水準の衛生管理のもとで稼働し、IFS（International Featured Standards）認証を取得しています。',
+      q3: '当店やブランド向けに麺をカスタマイズできますか。',
+      a3: 'はい。お取引先と緊密に連携し、レシピ、形状、市場に合わせて麺を調整します。ご連絡いただければ、ご指定の仕様に合わせて麺を開発し、安定した品質で製造・納品いたします。',
+      q4: '欧州全域へ配送していますか。',
+      a4: 'はい。主要道路網と物流拠点に近いポーランド中部を拠点とし、当社の流通ネットワークを通じて欧州各地のお取引先へ迅速かつ確実に冷凍配送できる立地です。',
+      q5: '取引前にサンプルを依頼できますか。',
+      a5: 'もちろんです。日本料理において味と食感はすべてです。ディストリビューターを通じてサンプルパックをご提供しますので、ご自身のスープで実際にお試しいただき、品質をご確認ください。',
+      q6: 'ラーメンの茹で時間はどのくらいですか。',
+      a6: '麺の太さと加水率によりますが、おおむね60秒程度から約3分の範囲です。繁忙時のオペレーションを止めない大きな助けになります。',
+      q7: 'ヴィーガン対応の麺はありますか。',
+      a7: '現時点ではご用意がありません。開発を進めており、近い将来ヴィーガン対応の麺をラインナップに加えられればと考えています。',
+      q8: '欧州のどの国でも購入できますか。',
+      a8: '多くの欧州市場のお取引先に供給していますが、すべての国に進出しているわけではありません。まだ展開のない地域にいらっしゃる場合もぜひご連絡ください。物流面の解決策を探り、欧州で新たな流通パートナーシップを築いていきたいと考えています。',
+      q9: 'プライベートブランド生産は可能ですか。最小ロットはどのくらいですか。',
+      a9: 'はい。プライベートブランド製造に対応しており、レシピ、太さ、包装を貴社ブランドに合わせて調整できます。最小ロットは案件の内容により異なりますので、詳細は直接ご相談ください。',
+      q10: '麺の包装形態と、1ケースあたりの食数を教えてください。',
+      a10: '標準は1ケースあたりフィルム包装10袋、1袋5食入りで、合計50食です。食品の安全性と鮮度を保つ仕様です。より幅広い事業者に対応できるよう、小容量の包装も開発を進めています。'
     },
 
     contact: {
