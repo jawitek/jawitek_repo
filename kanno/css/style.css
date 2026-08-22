@@ -442,6 +442,15 @@ h2 {
   mix-blend-mode: multiply;
 }
 
+/* The custom-recipe card carries a photograph rather than a cut-out product
+   shot, so it fills the tile edge to edge. */
+.card-media-photo { padding: 0; }
+
+.card-media-photo img {
+  object-fit: cover;
+  mix-blend-mode: normal;
+}
+
 .badge {
   position: absolute;
   top: 16px;
@@ -637,7 +646,8 @@ h2 {
 
 .quality-photo {
   width: 100%;
-  height: 300px;
+  height: 100%;
+  min-height: 460px;
   object-fit: cover;
   border-radius: 4px;
   background: var(--cream-2);
@@ -666,6 +676,115 @@ h2 {
   line-height: 1.6;
   color: var(--muted);
   margin-top: 6px;
+}
+
+/* ==========================================================================
+   Distribution
+   ========================================================================== */
+
+.distribution {
+  background: #F1ECE3;
+  border-top: 1px solid var(--hair-soft);
+}
+
+.distribution-inner {
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding: 100px var(--gut);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.distribution h2 { font-size: clamp(32px, 3.4vw, 50px); }
+
+.distribution-stats {
+  display: flex;
+  gap: 40px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.ds-value {
+  font-family: var(--display);
+  font-weight: 900;
+  font-size: 34px;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.ds-label { font-size: 14px; color: var(--muted); margin-top: 4px; }
+
+.text-link {
+  display: inline-block;
+  margin-top: 26px;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.text-link:hover { color: var(--red); }
+
+.distribution-media { display: flex; justify-content: center; }
+.distribution-media img { width: 100%; max-width: 480px; height: auto; }
+
+/* ==========================================================================
+   For ramen restaurants
+   ========================================================================== */
+
+.partner {
+  background: var(--white);
+  border-top: 1px solid var(--hair-soft);
+}
+
+.partner-inner {
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding: 100px var(--gut);
+}
+
+.partner-card {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  border: 1px solid var(--hair);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.partner-copy { padding: 56px; align-content: center; display: grid; }
+
+.partner h2 { font-size: clamp(30px, 3.2vw, 46px); line-height: 1.08; }
+
+.partner-list {
+  list-style: none;
+  margin: 26px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.partner-list li {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.partner-list li span:first-child { color: var(--red); font-weight: 700; }
+
+.partner-cta { justify-self: start; margin-top: 30px; padding: 15px 28px; font-size: 15px; }
+.partner-cta:hover { background: var(--orange); }
+
+.partner-media { position: relative; min-height: 440px; background: var(--cream-2); }
+
+.partner-media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* ==========================================================================
@@ -902,7 +1021,15 @@ h2 {
   .about-grid,
   .quality-grid,
   .production-head,
+  .distribution-inner,
+  .partner-card,
   .contact-inner { grid-template-columns: 1fr; gap: 48px; }
+
+  .distribution-inner, .partner-inner { padding: 72px var(--gut); }
+  .partner-card { gap: 0; }
+  .partner-copy { padding: 40px var(--gut); }
+  .partner-media { min-height: 320px; }
+  .quality-photo { min-height: 360px; }
 
   .quality-grid { align-items: start; }
   .products-inner, .production-inner { padding: 88px var(--gut); }
@@ -968,6 +1095,10 @@ h2 {
   .about-media-pair { grid-template-columns: 1fr; }
   .about-hero-img { height: 300px; }
   .quality-stats { grid-template-columns: 1fr; gap: 16px; }
+  .distribution-stats { gap: 24px; }
+  .ds-value { font-size: 27px; }
+  .quality-photo { min-height: 280px; }
+  .partner-media { min-height: 260px; }
   .field-row { grid-template-columns: 1fr; }
   .contact-form { padding: 24px; }
   .filters { width: 100%; }

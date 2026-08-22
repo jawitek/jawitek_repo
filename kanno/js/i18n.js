@@ -20,19 +20,20 @@ window.KANNO_I18N = {
       production: 'Production',
       quality: 'Quality',
       contact: 'Contact',
+      distribution: 'Distribution',
       cta: 'Request a quote'
     },
 
     hero: {
       eyebrow: 'Tokyo 1949 · Made in Poland',
       title: 'The art of Japanese noodles, made in Europe',
-      lead: "Seventy years of Kanno family craft, Japanese recipes and know-how, produced in central Poland at the heart of Europe's logistics network — supplying ramen kitchens and retail with frozen noodles of consistent, chef-grade texture.",
+      lead: 'Japanese recipes and seventy years of Kanno family craft, now made in central Poland. We supply ramen kitchens and retail with frozen noodles of consistent texture worthy of any chef.',
       cta1: 'Talk to our sales team',
       cta2: 'See the noodle range'
     },
 
     stats: {
-      v1: '1949', l1: 'Kanno family since',
+      v1: '1949', l1: 'Making noodles since',
       v2: '500+ t', l2: 'Annual capacity',
       v3: '3.5 M', l3: 'Portions per year',
       l4: 'Certified<br>food safety'
@@ -41,15 +42,16 @@ window.KANNO_I18N = {
     about: {
       eyebrow: 'About us',
       title: 'A Tokyo legacy with a Polish address',
-      body1: 'For over 70 years the Kanno family has perfected noodle-making in the heart of Tokyo. Since 1949 their precision has supplied thousands of restaurants across Japan, Asia, North America and Australia — grounded in craftsmanship and a clear mission: safe, high-quality products that carry noodle culture forward.',
-      body2: "The joint venture between Mr. Yoshio Kanno and a Polish family business opened a new chapter. An independent production site was established in Poland, built on Kanno's recipes, standards and the support of their food technologists — the authenticity of Japanese noodles, built on tradition and mutual trust.",
+      body1: "For over 70 years, Kanno's family has been perfecting the art of noodle-making in the heart of Tokyo. Since 1949, their passion and precision have brought authentic Japanese noodles to thousands of restaurants across Japan and other regions of Asia, North America, and Australia. Kanno's legacy is grounded in deep knowledge, craftsmanship, and a clear mission to provide safe, high-quality products, contribute to the development of noodle food culture.",
+      body2: "The joint-venture between Mr. Yoshio Kanno and a Polish family-owned business marked the beginning of a unique international partnership. An independent facility was established in Poland, equipped with Japanese production machinery, and supported by Kanno's experienced food technologists. Together, we bring the authenticity of Japanese noodles, built on tradition, mutual trust and a shared commitment to quality.",
       flags: 'Japanese recipes and technology. European production, service and supply.'
     },
 
     products: {
       eyebrow: 'Noodle portfolio',
       title: 'Five styles, with or without egg',
-      lead: 'Every style follows a traditional Japanese recipe and the same production standard. Formats, portion weights and packaging are adapted to each partner.',
+      lead: 'Every style follows a traditional Japanese recipe, bringing together authenticity with practical application.',
+      lead2: 'Formats, portion weights and packaging are adapted to each Partner.',
       filterAll: 'Both variants',
       filterEgg: 'With egg',
       filterNoEgg: 'Without egg',
@@ -65,14 +67,14 @@ window.KANNO_I18N = {
       allergensNoEgg: 'Gluten',
       badgeCustom: 'Made to brief',
       allergensCustom: 'On specification',
-      note: 'Portion weights available in 130 g, 140 g and 155 g. Alternative recipes are developed with partners on request.',
+      note: 'Portion weights available from 100 g to 160 g. Alternative recipes are developed with partners on request.',
       noteLink: 'Ask about a custom recipe →',
       sapporoName: 'Sapporo style',
       sapporoJp: '札幌',
-      sapporoBlurb: 'Springy medium-thick curls that hold body in rich miso and shoyu broths.',
+      sapporoBlurb: 'Springy curls with medium thickness that hold body in rich miso and shoyu broths.',
       temomiName: 'Temomi style',
       temomiJp: '手揉み',
-      temomiBlurb: 'Hand-crimped irregular strands with a chewy bite that grips thicker broths.',
+      temomiBlurb: 'Hand crimped into irregular strands with a chewy bite that grips thicker broths.',
       straightName: 'Tokyo straight',
       straightJp: '東京 ストレート',
       straightBlurb: 'Clean straight strands, the classic pairing for clear shoyu and shio ramen.',
@@ -81,7 +83,7 @@ window.KANNO_I18N = {
       wavyBlurb: 'Wavy cut that carries broth along the strand from first bite to last.',
       tonkotsuName: 'Tonkotsu style',
       tonkotsuJp: '豚骨',
-      tonkotsuBlurb: 'Thin, firm and low-hydration — built for short cooking in pork-bone broth.',
+      tonkotsuBlurb: 'Thin, firm and low in hydration, built for short cooking in tonkotsu pork broth.',
       customName: 'Custom recipe',
       customJp: 'オーダーメイド',
       customBlurb: 'Developed with your kitchen or category team: hydration, cut, colour and format.'
@@ -91,30 +93,48 @@ window.KANNO_I18N = {
       eyebrow: 'Our production',
       title: 'Consistency, batch after batch',
       lead: 'Every batch is produced under controlled conditions and overseen by experienced food technologists, with defined standards for texture, weight and hydration. Selected ingredients and proven Japanese recipes keep each delivery identical to the last.',
-      pack1Title: 'Servings packing',
-      pack1Body: 'Standard film bag holds 5 portions — the best balance of production efficiency, freezing performance and handling. Configurations from 3 to 7 portions are available.',
-      pack2Title: 'Carton',
-      pack2Body: '10 film packs per carton, 600 × 400 × 80 mm, labelled with full product information and ventilated to support efficient freezing.',
-      pack3Title: 'Pallet',
-      pack3Body: 'Up to 80 cartons, 4 per layer over 20 layers, wrapped and labelled for secure, traceable transport.'
+      pack1Title: 'Frozen at peak freshness',
+      pack1Body: 'Noodles are frozen straight after forming, locking in texture and bite. They cook to order from −18 °C with no loss of quality.',
+      pack2Title: 'Consistent portions',
+      pack2Body: 'Every serving is weighed and checked for quality, so texture, taste and plating stay consistent from the first order to the last.',
+      pack3Title: 'Ready in about 90 seconds',
+      pack3Body: "From freezer to bowl in around a minute and a half. The result is worthy of any chef, whether it's the first order or the hundredth."
     },
 
     quality: {
       eyebrow: 'Quality & site',
       title: 'Clean production in the centre of Europe',
       body1: 'Our noodles are made in a modern facility with clearly defined clean zones and strict process control, backed by IFS certification. Every product is stored in optimised conditions that preserve freshness, texture and full flavour.',
-      body2: "The site sits in central Poland, close to major transport routes — fast, cost-effective distribution to domestic and international markets from one of Europe's strategic logistics hubs.",
+      body2: 'Production is based in central Poland, a practical base for reliable frozen distribution across Europe. Short, dependable road lead times reach Partners in Poland and European markets, with capacity to scale as demand grows.',
       s1v: 'IFS Food', s1l: 'Certified standard',
       s2v: 'Clean zones', s2l: 'Strict process control',
-      s3v: '−18 °C', s3l: 'Cold chain, 12 months',
-      mapTitle: 'Central Poland',
-      mapBody: "Two days by road to most of the EU, with direct access to Poland's motorway network."
+      s3v: '−18 °C', s3l: 'Cold chain, 12 months'
+    },
+
+    distribution: {
+      eyebrow: 'Across Europe',
+      title: 'Present in most European markets',
+      body: 'Our frozen noodles are available to restaurants and retailers across most of Europe through established distribution partners. Stock is held close to each market and moved under a controlled cold chain, so supply stays reliable wherever you are.',
+      s1v: 'Across Europe', s1l: 'Available in most markets',
+      s2v: 'Local stock', s2l: 'Held close to market',
+      link: 'Ask about availability →'
+    },
+
+    partner: {
+      eyebrow: 'For ramen restaurants',
+      title: 'Let us make your signature noodle',
+      body1: 'Making noodles in-house takes space, staff and hours that busy kitchens rarely have to spare. Hand it to us. Our food technologists develop a noodle to your recipe, then produce and deliver it frozen at consistent quality, batch after batch.',
+      body2: 'You keep the character of your bowl and the time your team spends on broth and service, while seventy years of Kanno know-how handles the noodle.',
+      point1: 'Your recipe, developed and reproduced to spec',
+      point2: 'Free up kitchen space, labour and prep time',
+      point3: 'The same quality in every delivery',
+      cta: 'Develop your noodle with us'
     },
 
     contact: {
       eyebrow: 'Contact us',
-      title: "Let's talk volumes, formats and timing",
-      lead: 'Tell us what you serve or sell and we will come back with a specification, portion format and lead time.',
+      title: 'Discuss volumes, formats and lead times',
+      lead: 'Tell us what you serve or sell, and our team will respond with a specification, portion format and lead time tailored to your operation.',
       address: 'Kanno Noodle Sp. z o.o.<br>al. Niepodległości 112<br>02-577 Warsaw, Poland',
       firstName: 'First name*',
       firstNamePh: 'Aiko',
@@ -163,11 +183,9 @@ window.KANNO_I18N = {
       wavy: 'Tokyo wavy noodles',
       tonkotsu: 'Tonkotsu style noodles',
       custom: 'Custom recipe noodles',
-      packFilm: 'Film pack of five portions',
-      packCarton: 'Carton with labelled packs',
-      packPallet: 'Wrapped pallet',
-      noodles: 'Kanno noodles',
-      map: 'Central Poland on the map of Europe'
+      chopsticks: 'Noodles lifted with chopsticks',
+      partner: "Fresh noodles developed to a partner's recipe",
+      map: 'Distribution from central Poland across Europe'
     }
   },
 
@@ -187,19 +205,20 @@ window.KANNO_I18N = {
       production: 'Produkcja',
       quality: 'Jakość',
       contact: 'Kontakt',
+      distribution: 'Dystrybucja',
       cta: 'Zapytaj o ofertę'
     },
 
     hero: {
       eyebrow: 'Tokio 1949 · Wyprodukowano w Polsce',
       title: 'Sztuka japońskiego makaronu, tworzona w Europie',
-      lead: 'Siedemdziesiąt lat rzemiosła rodziny Kanno, japońskie receptury i know-how. Produkcja w centralnej Polsce, w samym sercu europejskiej sieci logistycznej — dostarczamy mrożony makaron o powtarzalnej, szefowskiej sprężystości dla lokali ramen i sieci handlowych.',
+      lead: 'Japońskie receptury i siedemdziesiąt lat rzemiosła rodziny Kanno — teraz wytwarzane w centralnej Polsce. Dostarczamy lokalom ramen i sieciom handlowym mrożony makaron o powtarzalnej strukturze godnej każdego szefa kuchni.',
       cta1: 'Porozmawiaj z naszym działem sprzedaży',
       cta2: 'Zobacz naszą ofertę makaronów'
     },
 
     stats: {
-      v1: '1949', l1: 'Tradycja rodziny Kanno',
+      v1: '1949', l1: 'Wytwarzamy makaron od',
       v2: '500+ t', l2: 'Roczna wydajność',
       v3: '3,5 mln', l3: 'Porcji rocznie',
       l4: 'Certyfikowane<br>bezpieczeństwo żywności'
@@ -208,15 +227,16 @@ window.KANNO_I18N = {
     about: {
       eyebrow: 'O nas',
       title: 'Dziedzictwo Tokio z polskim adresem',
-      body1: 'Od ponad 70 lat rodzina Kanno doskonali sztukę wytwarzania makaronu w sercu Tokio. Od 1949 roku ich precyzja zasila tysiące restauracji w całej Japonii, Azji, Ameryce Północnej i Australii — w oparciu o mistrzowskie rzemiosło i jasną misję: bezpieczne produkty najwyższej jakości, które rozwijają kulturę makaronu.',
-      body2: 'Spółka joint venture pana Yoshio Kanno z polską firmą rodzinną otworzyła nowy rozdział. W Polsce powstał niezależny zakład produkcyjny, oparty na recepturach i standardach Kanno oraz wsparciu japońskich technologów żywności — to autentyczność japońskiego makaronu zrodzona z tradycji i wzajemnego zaufania.',
+      body1: 'Od ponad 70 lat rodzina Kanno doskonali sztukę wytwarzania makaronu w sercu Tokio. Od 1949 roku ich pasja i precyzja dostarczają autentyczny japoński makaron do tysięcy restauracji w Japonii oraz innych regionach Azji, w Ameryce Północnej i Australii. Dziedzictwo Kanno opiera się na głębokiej wiedzy, rzemiośle i jasnej misji: dostarczać bezpieczne produkty najwyższej jakości i rozwijać kulturę makaronu.',
+      body2: 'Spółka joint venture pana Yoshio Kanno z polską firmą rodzinną zapoczątkowała wyjątkowe partnerstwo międzynarodowe. W Polsce powstał niezależny zakład, wyposażony w japońskie maszyny produkcyjne i wspierany przez doświadczonych technologów żywności Kanno. Razem dostarczamy autentyczność japońskiego makaronu, opartą na tradycji, wzajemnym zaufaniu i wspólnym dążeniu do jakości.',
       flags: 'Japońskie receptury i technologia. Europejska produkcja, obsługa i łańcuch dostaw.'
     },
 
     products: {
       eyebrow: 'Oferta makaronów',
       title: 'Pięć stylów, z jajkiem lub bez',
-      lead: 'Każdy styl powstaje według tradycyjnej japońskiej receptury i tego samego standardu produkcyjnego. Formaty, gramatury porcji oraz opakowania dostosowujemy do potrzeb każdego partnera.',
+      lead: 'Każdy styl powstaje według tradycyjnej japońskiej receptury, łącząc autentyczność z praktycznym zastosowaniem.',
+      lead2: 'Formaty, gramatury porcji i opakowania dostosowujemy do każdego Partnera.',
       filterAll: 'Wszystkie warianty',
       filterEgg: 'Z jajkiem',
       filterNoEgg: 'Bez jajka',
@@ -232,14 +252,14 @@ window.KANNO_I18N = {
       allergensNoEgg: 'Gluten',
       badgeCustom: 'Tworzony na zamówienie',
       allergensCustom: 'Według specyfikacji',
-      note: 'Dostępne gramatury porcji: 130 g, 140 g i 155 g. Alternatywne receptury opracowujemy na życzenie partnerów.',
+      note: 'Dostępne gramatury porcji od 100 g do 160 g. Alternatywne receptury opracowujemy na życzenie partnerów.',
       noteLink: 'Zapytaj o recepturę dedykowaną →',
       sapporoName: 'Sapporo style',
       sapporoJp: '札幌',
-      sapporoBlurb: 'Sprężyste, średniej grubości fale, które zachowują idealną strukturę w bogatych bulionach miso i shoyu.',
+      sapporoBlurb: 'Sprężyste, średniej grubości fale, które zachowują strukturę w bogatych bulionach miso i shoyu.',
       temomiName: 'Temomi style',
       temomiJp: '手揉み',
-      temomiBlurb: 'Ręcznie zagniatane, nieregularne nitki o zwartej, sprężystej strukturze, które doskonale zbierają gęstsze buliony.',
+      temomiBlurb: 'Ręcznie zagniatane w nieregularne nitki, o sprężystym gryzie, który dobrze zbiera gęstsze buliony.',
       straightName: 'Tokyo straight',
       straightJp: '東京 ストレート',
       straightBlurb: 'Klasyczne, proste nitki — tradycyjny wybór do klarownych bulionów shoyu i shio ramen.',
@@ -248,7 +268,7 @@ window.KANNO_I18N = {
       wavyBlurb: 'Falisty kształt, który idealnie niesie smak bulionu od pierwszego do ostatniego kęsa.',
       tonkotsuName: 'Tonkotsu style',
       tonkotsuJp: '豚骨',
-      tonkotsuBlurb: 'Cienki, twardy i nisko uwodniony — stworzony do krótkiego gotowania w gęstym wywarze wieprzowym.',
+      tonkotsuBlurb: 'Cienki, twardy i nisko uwodniony — stworzony do krótkiego gotowania w wywarze tonkotsu.',
       customName: 'Custom recipe',
       customJp: 'オーダーメイド',
       customBlurb: 'Tworzony wspólnie z Twoją kuchnią lub zespołem ds. kategorii: stopień hydratacji, cięcie, barwa i format.'
@@ -258,30 +278,48 @@ window.KANNO_I18N = {
       eyebrow: 'Nasza produkcja',
       title: 'Powtarzalność, partia po partii',
       lead: 'Każda partia powstaje w kontrolowanych warunkach pod nadzorem doświadczonych technologów żywności, z zachowaniem rygorystycznych norm dotyczących tekstury, wagi i hydratacji. Wyselekcjonowane składniki i sprawdzone japońskie receptury gwarantują, że każda dostawa jest identyczna z poprzednią.',
-      pack1Title: 'Pakowanie porcji',
-      pack1Body: 'Standardowy worek foliowy mieści 5 porcji — to optymalny balans między wydajnością produkcji, efektywnością mrożenia a wygodą pracy w kuchni. Dostępne są konfiguracje od 3 do 7 porcji.',
-      pack2Title: 'Karton',
-      pack2Body: '10 opakowań foliowych w kartonie o wymiarach 600 × 400 × 80 mm. Pudełka są w pełni etykietowane i posiadają otwory wentylacyjne wspomagające proces mrożenia.',
-      pack3Title: 'Paleta',
-      pack3Body: 'Do 80 kartonów (4 kartony na warstwę, 20 warstw), zabezpieczone folią i oznakowane z myślą o bezpiecznym i w pełni identyfikowalnym transporcie.'
+      pack1Title: 'Mrożone u szczytu świeżości',
+      pack1Body: 'Makaron mrozimy zaraz po uformowaniu, zatrzymując strukturę i sprężystość. Gotuje się na zamówienie prosto z −18 °C, bez utraty jakości.',
+      pack2Title: 'Powtarzalne porcje',
+      pack2Body: 'Każda porcja jest ważona i sprawdzana pod kątem jakości, dzięki czemu struktura, smak i wygląd na talerzu pozostają takie same od pierwszego do ostatniego zamówienia.',
+      pack3Title: 'Gotowe w około 90 sekund',
+      pack3Body: 'Z zamrażarki do miski w około półtorej minuty. Efekt godny każdego szefa kuchni — przy pierwszym zamówieniu i przy setnym.'
     },
 
     quality: {
       eyebrow: 'Jakość i zakład produkcyjny',
       title: 'Czysta produkcja w centrum Europy',
       body1: 'Nasze makarony produkujemy w nowoczesnym zakładzie z precyzyjnie wydzielonymi strefami czystymi i ścisłą kontrolą procesów, popartą certyfikatem IFS. Każdy produkt jest magazynowany w zoptymalizowanych warunkach, które chronią świeżość, teksturę i pełnię smaku.',
-      body2: 'Zakład zlokalizowany jest w centralnej Polsce, blisko kluczowych szlaków komunikacyjnych — co zapewnia szybką i opłacalną dystrybucję na rynki krajowe i zagraniczne z jednego z najważniejszych hubów logistycznych w Europie.',
+      body2: 'Produkcja mieści się w centralnej Polsce — to praktyczna baza dla niezawodnej dystrybucji mrożonek w Europie. Krótkie i pewne czasy dostaw drogą lądową docierają do Partnerów w Polsce i na rynkach europejskich, z możliwością zwiększania skali wraz z popytem.',
       s1v: 'IFS Food', s1l: 'Certyfikowany standard',
       s2v: 'Strefy czyste', s2l: 'Rygorystyczna kontrola procesów',
-      s3v: '−18 °C', s3l: 'Ciągłość łańcucha chłodniczego, 12 miesięcy',
-      mapTitle: 'Centralna Polska',
-      mapBody: 'Dwa dni drogi lądowej do większości krajów UE, z bezpośrednim dostępem do polskiej sieci autostrad.'
+      s3v: '−18 °C', s3l: 'Ciągłość łańcucha chłodniczego, 12 miesięcy'
+    },
+
+    distribution: {
+      eyebrow: 'W całej Europie',
+      title: 'Obecni na większości rynków europejskich',
+      body: 'Nasz mrożony makaron jest dostępny dla restauracji i sieci handlowych w większości krajów Europy dzięki sprawdzonym partnerom dystrybucyjnym. Zapasy utrzymujemy blisko każdego rynku i przewozimy w kontrolowanym łańcuchu chłodniczym, więc dostawy pozostają niezawodne niezależnie od lokalizacji.',
+      s1v: 'Cała Europa', s1l: 'Dostępni na większości rynków',
+      s2v: 'Lokalny zapas', s2l: 'Utrzymywany blisko rynku',
+      link: 'Zapytaj o dostępność →'
+    },
+
+    partner: {
+      eyebrow: 'Dla restauracji ramen',
+      title: 'Zrobimy dla Ciebie Twój autorski makaron',
+      body1: 'Wytwarzanie makaronu na miejscu wymaga miejsca, ludzi i godzin, których zabieganym kuchniom rzadko wystarcza. Zostaw to nam. Nasi technolodzy żywności opracują makaron według Twojej receptury, a następnie wyprodukują go i dostarczą mrożony, w powtarzalnej jakości, partia po partii.',
+      body2: 'Zachowujesz charakter swojej miski i czas, który zespół poświęca na bulion i obsługę, a o makaron dba siedemdziesiąt lat doświadczenia Kanno.',
+      point1: 'Twoja receptura, opracowana i odtwarzana zgodnie ze specyfikacją',
+      point2: 'Uwolnij miejsce w kuchni, pracę i czas przygotowań',
+      point3: 'Ta sama jakość w każdej dostawie',
+      cta: 'Opracuj z nami swój makaron'
     },
 
     contact: {
       eyebrow: 'Skontaktuj się z nami',
       title: 'Porozmawiajmy o wolumenach, formatach i terminach',
-      lead: 'Powiedz nam, co serwujesz lub sprzedajesz, a my wrócimy ze specyfikacją, propozycją gramatury i czasem realizacji zamówienia.',
+      lead: 'Powiedz nam, co serwujesz lub sprzedajesz, a nasz zespół odpowie specyfikacją, formatem porcji i czasem realizacji dopasowanym do Twojej działalności.',
       address: 'Kanno Noodle Sp. z o.o.<br>al. Niepodległości 112<br>02-577 Warszawa, Polska',
       firstName: 'Imię*',
       firstNamePh: 'Aiko',
@@ -330,11 +368,9 @@ window.KANNO_I18N = {
       wavy: 'Makaron Tokyo wavy',
       tonkotsu: 'Makaron Tonkotsu style',
       custom: 'Makaron Custom recipe',
-      packFilm: 'Opakowanie foliowe zawierające pięć porcji',
-      packCarton: 'Karton z oznakowanymi opakowaniami',
-      packPallet: 'Zabezpieczona paleta towarowa',
-      noodles: 'Makarony Kanno',
-      map: 'Centralna Polska na mapie Europy'
+      chopsticks: 'Makaron podnoszony pałeczkami',
+      partner: 'Świeży makaron opracowany według receptury partnera',
+      map: 'Dystrybucja z centralnej Polski w całej Europie'
     }
   },
 
@@ -355,19 +391,20 @@ window.KANNO_I18N = {
       production: '製造について',
       quality: '品質管理',
       contact: 'お問い合わせ',
+      distribution: '流通・配送',
       cta: 'お見積り依頼'
     },
 
     hero: {
       eyebrow: '東京 1949年創業 · ポーランド製造',
       title: '欧州で創る、日本の麺の真髄',
-      lead: '70年以上にわたる菅野家の職人技と日本の伝統レシピ。欧州の物流拠点であるポーランド中部で製造し、プロ仕様の安定したコシと食感を持つ冷凍麺を欧州全域のラーメン店や小売店へお届けします。',
+      lead: '日本のレシピと菅野家70年の職人技を、ポーランド中部で。安定したコシと食感を持つ冷凍麺を、欧州のラーメン店と小売店へお届けします。',
       cta1: '営業担当にお問い合わせ',
       cta2: '製品ラインナップを見る'
     },
 
     stats: {
-      v1: '1949年', l1: '菅野家の歴史と伝統',
+      v1: '1949年', l1: '製麺の歴史',
       v2: '500t以上', l2: '年間生産能力',
       v3: '350万食', l3: '年間製造食数',
       l4: '食品安全<br>国際認証取得'
@@ -376,15 +413,16 @@ window.KANNO_I18N = {
     about: {
       eyebrow: '私たちについて',
       title: '東京の伝統技術、ポーランドから欧州へ',
-      body1: '70年以上にわたり、菅野ファミリーは東京の中心で麺作りの技を極めてきました。1949年の創業以来、その精密な製麺技術は日本国内のみならず、アジア、北米、オーストラリアの数千店舗を支えています。職人技と明確な使命感（麺文化を未来へつなぐ安全で高品質な製品作り）が私たちの原点です。',
-      body2: '菅野佳男氏とポーランドのファミリー企業との合弁事業により、新たな一歩を踏み出しました。菅野製麺所の独自レシピ、厳格な基準、そして食品技術者の知見をそのまま導入した独立生産工場をポーランドに設立。伝統と相互の信頼関係のもと、本物の日本クオリティを実現しています。',
+      body1: '70年以上にわたり、菅野家は東京の中心で製麺の技を磨いてきました。1949年の創業以来、その情熱と精密さは、日本国内はもとよりアジア各地、北米、オーストラリアの数千店舗に本物の日本の麺を届けています。菅野の伝統は、深い知見と職人技、そして安全で高品質な製品を提供し麺文化の発展に貢献するという明確な使命に支えられています。',
+      body2: '菅野義雄氏とポーランドの家族経営企業とのジョイント・ベンチャーは、他に類を見ない国際的パートナーシップの始まりとなりました。ポーランドには日本製の製麺機を備えた独立工場を設立し、菅野の経験豊富な食品技術者が支援しています。伝統と相互の信頼、そして品質への共通の姿勢に基づき、本物の日本の麺をお届けします。',
       flags: '日本のレシピと技術 × 欧州現地での製造・サービス・安定供給。'
     },
 
     products: {
       eyebrow: '麺のラインナップ',
       title: '選べる5つのスタイル（卵入り／卵不使用）',
-      lead: 'すべてのスタイルは伝統的な日本のレシピと統一された高水準な製造基準で作られています。麺の形状、ポーション重量、パッケージ仕様はお取引先様のご要望に合わせて柔軟に対応いたします。',
+      lead: 'すべてのスタイルは伝統的な日本のレシピに基づき、本格性と実用性を両立しています。',
+      lead2: '形状、ポーション重量、包装仕様はお取引先ごとに調整いたします。',
       filterAll: '全バリエーション',
       filterEgg: '卵入り',
       filterNoEgg: '卵不使用',
@@ -400,16 +438,16 @@ window.KANNO_I18N = {
       allergensNoEgg: '小麦',
       badgeCustom: 'オーダーメイド対応',
       allergensCustom: '規格に応じた製造',
-      note: '基本ポーションは130g、140g、155gから選択可能。ご要望に応じたオリジナルレシピの開発も承ります。',
+      note: 'ポーションは100gから160gまで対応可能。ご要望に応じたオリジナルレシピの開発も承ります。',
       noteLink: '特注レシピについて問い合わせる →',
       /* The Japanese style name is already carried in the product name here,
          so the kanji sub-label is left empty (hidden by CSS). */
       sapporoName: '札幌風（Sapporo style）',
       sapporoJp: '',
-      sapporoBlurb: '濃厚な味噌や醤油スープに負けない、しっかりとしたコシと弾力のある中太縮れ麺。',
+      sapporoBlurb: '濃厚な味噌・醤油スープに負けないコシを持つ、中太の縮れ麺。',
       temomiName: '手揉み風（Temomi style）',
       temomiJp: '',
-      temomiBlurb: '濃厚なスープをしっかりと絡め取る、手揉みならではの不規則な縮れともちもち食感。',
+      temomiBlurb: '手揉みによる不規則な縮れと、濃厚なスープをしっかり絡めるもちもちの食感。',
       straightName: '東京ストレート（Tokyo straight）',
       straightJp: '',
       straightBlurb: '澄んだ醤油ラーメンや塩ラーメンに最適な、のど越しの良い定番ストレート麺。',
@@ -418,7 +456,7 @@ window.KANNO_I18N = {
       wavyBlurb: '最後の一口までスープをしっかりと運び、豊かな風味を楽しめる伝統的な縮れ麺。',
       tonkotsuName: '豚骨風（Tonkotsu style）',
       tonkotsuJp: '',
-      tonkotsuBlurb: '濃厚な豚骨スープのために開発された、短時間の茹で上げに適した低加水・極細硬めストレート麺。',
+      tonkotsuBlurb: '低加水で細く硬めの麺。豚骨スープでの短時間の茹で上げに合わせて設計。',
       customName: 'オリジナル開発レシピ（Custom recipe）',
       customJp: '',
       customBlurb: '加水率、切り番、色味、形状など、貴店の厨房や商品開発チームのご要望に合わせて共同開発いたします。'
@@ -428,30 +466,48 @@ window.KANNO_I18N = {
       eyebrow: '製造工程',
       title: 'すべてのロットで徹底された均一性',
       lead: 'すべてのロットは厳格に管理された環境下で、熟練の食品技術者の監修のもと製造されています。食感・重量・加水率の基準を厳密に保ち、厳選された原材料と実績ある日本のレシピにより、常に変わらない品質をお届けします。',
-      pack1Title: '個包装仕様',
-      pack1Body: '1袋あたり5食入りの標準フィルム包装。生産効率、急速冷凍効果、現場での扱いやすさを追求した最適なバランスです（3〜7食入りも対応可能）。',
-      pack2Title: '段ボール仕様',
-      pack2Body: '1ケースあたり10袋入り（600 × 400 × 80 mm）。詳細な製品ラベルを貼付し、効率的な冷凍状態を保つ通気孔設計を採用。',
-      pack3Title: 'パレット積載',
-      pack3Body: '1パレット最大80ケース（1段4ケース × 20段）。安全で追跡可能な輸送のため、フィルムラッピングと識別ラベルを施しています。'
+      pack1Title: '製麺直後に急速冷凍',
+      pack1Body: '成形後すぐに冷凍し、食感とコシを閉じ込めます。−18℃から茹で上げても品質は損なわれません。',
+      pack2Title: '安定したポーション',
+      pack2Body: '一食ごとに計量し品質を確認。食感、味、盛り付けが最初の一杯から最後まで安定します。',
+      pack3Title: '約90秒で提供',
+      pack3Body: '冷凍庫から丼まで約1分半。一杯目でも百杯目でも、料理人の名に恥じない仕上がりです。'
     },
 
     quality: {
       eyebrow: '品質・生産拠点',
       title: '欧州の中心に位置するクリーンな製造環境',
       body1: '国際的なIFS認証に裏付けられた、明確なクリーンゾーン区分と厳格な工程管理を備えた最新鋭の工場で製造。常に最適な環境で保管され、鮮度、食感、豊かな風味を損なうことなく維持します。',
-      body2: '主要幹線道路に直結したポーランド中部に位置。欧州屈指の戦略的物流ハブから、欧州域内外の市場へスピーディーかつコスト効率の高い配送を実現します。',
+      body2: '生産拠点はポーランド中部。欧州全域への冷凍流通に適した立地です。ポーランド国内および欧州市場のお取引先へ、短く確実な陸送リードタイムでお届けし、需要の拡大に合わせた増産にも対応します。',
       s1v: 'IFS Food', s1l: '国際標準規格認証',
       s2v: 'クリーンゾーン', s2l: '厳格な工程衛生管理',
-      s3v: '−18℃', s3l: 'コールドチェーン徹底（賞味期限12ヶ月）',
-      mapTitle: 'ポーランド中部',
-      mapBody: '高速道路網へのダイレクトアクセスにより、EU主要国へ陸路2日以内で配送可能。'
+      s3v: '−18℃', s3l: 'コールドチェーン徹底（賞味期限12ヶ月）'
+    },
+
+    distribution: {
+      eyebrow: '欧州全域',
+      title: '欧州の主要市場で展開',
+      body: '当社の冷凍麺は、確立された流通パートナーを通じて欧州のほとんどの市場のレストラン・小売店にご利用いただけます。在庫は各市場の近くに保管し、管理されたコールドチェーンで輸送するため、どの地域でも安定供給が可能です。',
+      s1v: '欧州全域', s1l: 'ほとんどの市場で入手可能',
+      s2v: '現地在庫', s2l: '市場の近くに保管',
+      link: '在庫状況を問い合わせる →'
+    },
+
+    partner: {
+      eyebrow: 'ラーメン店の皆様へ',
+      title: '貴店だけの一杯を、私たちが製麺します',
+      body1: '自家製麺には、場所も人手も時間も必要です。多忙な厨房にその余裕はなかなかありません。私たちにお任せください。当社の食品技術者が貴店のレシピに合わせて麺を開発し、安定した品質で冷凍麺として製造・お届けします。',
+      body2: 'スープと接客に注ぐ時間、そして一杯の個性はそのままに、麺づくりは菅野70年の知見にお任せいただけます。',
+      point1: '貴店のレシピを、仕様どおりに開発・再現',
+      point2: '厨房のスペース、人手、仕込み時間を削減',
+      point3: 'どの納品でも変わらない品質',
+      cta: '貴店の麺を一緒に開発する'
     },
 
     contact: {
       eyebrow: 'お問い合わせ',
-      title: 'ロット・規格・納期についてのご相談',
-      lead: 'ご希望のメニューや販売形態をお知らせください。仕様、ポーション、納期のお見積りをご案内いたします。',
+      title: 'ロット・規格・納期のご相談',
+      lead: 'ご提供またはお取り扱いの内容をお知らせください。仕様、ポーション、納期を貴社の運営に合わせてご提案いたします。',
       address: 'Kanno Noodle Sp. z o.o.<br>al. Niepodległości 112<br>02-577 Warsaw, Poland',
       firstName: '名*',
       firstNamePh: '太郎',
@@ -500,11 +556,9 @@ window.KANNO_I18N = {
       wavy: '東京縮れ 麺',
       tonkotsu: '豚骨風 麺',
       custom: 'オリジナル開発レシピ 麺',
-      packFilm: '5食入りフィルム個包装パック',
-      packCarton: '製品ラベル付き段ボールケース',
-      packPallet: 'フィルム梱包された出荷用パレット',
-      noodles: '菅野製麺所の麺',
-      map: 'ヨーロッパ地図におけるポーランド中部の位置'
+      chopsticks: '箸で持ち上げた麺',
+      partner: 'パートナーのレシピに合わせて開発された生麺',
+      map: 'ポーランド中部から欧州全域への流通'
     }
   }
 };
