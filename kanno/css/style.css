@@ -910,16 +910,23 @@ h2 {
 
 .contact { background: var(--ink); color: #fff; }
 
+/* The source order is the mobile order — heading, logo, form, address — so the
+   two-column layout puts the address back where it belongs: under the logo, in
+   the left column, with the form spanning both rows on the right. */
+
 .contact-inner {
   max-width: var(--wrap);
   margin: 0 auto;
   padding: 110px var(--gut);
   display: grid;
   grid-template-columns: 0.9fr 1.1fr;
-  gap: 80px;
+  gap: 0 80px;
+  align-items: start;
 }
 
-.contact-info { align-content: start; }
+.contact-info { grid-column: 1; grid-row: 1; align-content: start; }
+.contact-form { grid-column: 2; grid-row: 1 / span 2; }
+.contact-details { grid-column: 1; grid-row: 2; }
 
 .contact-lead {
   font-size: 17px;
@@ -1141,6 +1148,12 @@ h2 {
   .distribution-inner,
   .partner-card,
   .contact-inner { grid-template-columns: 1fr; gap: 48px; }
+
+  /* One column: fall back to source order — heading, logo, form, address. */
+  .contact-info,
+  .contact-form,
+  .contact-details { grid-column: 1; grid-row: auto; }
+  .contact-details { padding-top: 0; }
 
   .distribution-inner, .partner-inner { padding: 72px var(--gut); }
   .partner-card { gap: 0; }
