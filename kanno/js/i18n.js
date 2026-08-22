@@ -42,7 +42,7 @@ window.KANNO_I18N = {
 
     about: {
       eyebrow: 'About us',
-      title: 'A Tokyo legacy with a Polish address',
+      title: 'A new chapter',
       body1: "For over 70 years, Kanno's family has been perfecting the art of noodle-making in the heart of Tokyo. Since 1949, their passion and precision have brought authentic Japanese noodles to thousands of restaurants across Japan and other regions of Asia, North America, and Australia. Kanno's legacy is grounded in deep knowledge, craftsmanship, and a clear mission to provide safe, high-quality products, contribute to the development of noodle food culture.",
       body2: "The joint-venture between Mr. Yoshio Kanno and a Polish family-owned business marked the beginning of a unique international partnership. An independent facility was established in Poland, equipped with Japanese production machinery, and supported by Kanno's experienced food technologists. Together, we bring the authenticity of Japanese noodles, built on tradition, mutual trust and a shared commitment to quality.",
       flags: 'Japanese recipes and technology. European production, service and supply.'
@@ -255,7 +255,7 @@ window.KANNO_I18N = {
 
     about: {
       eyebrow: 'O nas',
-      title: 'Dziedzictwo Tokio z polskim adresem',
+      title: 'Nowy rozdział',
       body1: 'Od ponad 70 lat rodzina Kanno doskonali sztukę wytwarzania noodle w sercu Tokio. Od 1949 roku ich pasja i precyzja dostarczają autentyczne japońskie noodle do tysięcy restauracji w Japonii oraz innych regionach Azji, w Ameryce Północnej i Australii. Dziedzictwo Kanno opiera się na głębokiej wiedzy, rzemiośle i jasnej misji: dostarczać bezpieczne produkty najwyższej jakości i rozwijać kulturę noodle.',
       body2: 'Spółka joint venture pana Yoshio Kanno z polską firmą rodzinną zapoczątkowała wyjątkowe partnerstwo międzynarodowe. W Polsce powstał niezależny zakład, wyposażony w japońskie maszyny produkcyjne i wspierany przez doświadczonych technologów żywności Kanno. Razem dostarczamy autentyczność japońskich noodle, opartą na tradycji, wzajemnym zaufaniu i wspólnym dążeniu do jakości.',
       flags: 'Japońskie receptury i technologia. Europejska produkcja, obsługa i łańcuch dostaw.'
@@ -469,7 +469,7 @@ window.KANNO_I18N = {
 
     about: {
       eyebrow: '私たちについて',
-      title: '東京の伝統技術、ポーランドから欧州へ',
+      title: '新たな章',
       body1: '70年以上にわたり、菅野家は東京の中心で製麺の技を磨いてきました。1949年の創業以来、その情熱と精密さは、日本国内はもとよりアジア各地、北米、オーストラリアの数千店舗に本物の日本の麺を届けています。菅野の伝統は、深い知見と職人技、そして安全で高品質な製品を提供し麺文化の発展に貢献するという明確な使命に支えられています。',
       body2: '菅野義雄氏とポーランドの家族経営企業とのジョイント・ベンチャーは、他に類を見ない国際的パートナーシップの始まりとなりました。ポーランドには日本製の製麺機を備えた独立工場を設立し、菅野の経験豊富な食品技術者が支援しています。伝統と相互の信頼、そして品質への共通の姿勢に基づき、本物の日本の麺をお届けします。',
       flags: '日本のレシピと技術 × 欧州現地での製造・サービス・安定供給。'
