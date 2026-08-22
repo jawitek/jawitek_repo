@@ -254,6 +254,31 @@
     });
   }
 
+  /* ---------- FAQ accordion ----------
+     The markup ships open so the answers are readable without JavaScript;
+     everything but the first item is collapsed here. */
+
+  function initFaq() {
+    var list = document.getElementById('faq-list');
+    if (!list) return;
+
+    list.querySelectorAll('.faq-item').forEach(function (item, i) {
+      var btn = item.querySelector('.faq-q');
+      var open = i === 0;
+      item.classList.toggle('collapsed', !open);
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+
+    list.addEventListener('click', function (ev) {
+      var btn = ev.target.closest('.faq-q');
+      if (!btn) return;
+      var item = btn.closest('.faq-item');
+      var willOpen = item.classList.contains('collapsed');
+      item.classList.toggle('collapsed', !willOpen);
+      btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+    });
+  }
+
   /* ---------- Mobile nav ---------- */
 
   function initBurger() {
@@ -276,6 +301,7 @@
 
   initLang();
   initFilters();
+  initFaq();
   initReveal();
   initForm();
   initBurger();
