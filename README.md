@@ -62,12 +62,15 @@ The Kanno logo master files were kept out of that removal and live in
 - **Japanese privacy policy.** The site itself switches fully between EN / PL
   / JA, but the policy exists in Polish and English only — the JA footer link
   serves the English page.
-- **Contact form — needs an access key.** The Web3Forms integration is
-  written and tested; it is dormant until a key is pasted into
-  `FORM_ACCESS_KEY` at the top of `kanno/js/main.js`. Get one at
-  web3forms.com, then add every recipient address on that key in the
-  Web3Forms dashboard. Until the key is set the form falls back to opening
-  the visitor's mail client, so no inquiry is silently dropped.
+- **Contact form recipients live outside this repo.** The form posts to
+  Web3Forms; who receives an inquiry is set in that dashboard, not in the
+  code. The access key in `kanno/js/main.js` is a public client-side key by
+  design. If the key is ever cleared, the form falls back to opening the
+  visitor's mail client rather than failing silently.
+- **Allowed domain.** The Web3Forms key is tied to
+  `jawitek.github.io/jawitek_repo/kanno/`. When the site moves to kanno.pl,
+  add the new domain in the Web3Forms dashboard or submissions will be
+  rejected.
 - **Product photo mapping.** The design bundle shipped six unnamed product
   images, matched to the five noodle styles by appearance. Worth checking
   against the real product line; easy to swap in `kanno/index.html`.
