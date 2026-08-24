@@ -147,6 +147,20 @@ svg { display: block; width: 100%; height: 100%; }
 .modetile .label { font-weight: 700; font-size: 19px; color: var(--ink); }
 .modetile .label small { display: block; font-weight: 600; font-size: 13px; color: var(--brown-soft); margin-top: 2px; letter-spacing: 0.4px; }
 
+.ttsnote {
+  margin-top: 16px;
+  background: var(--paper);
+  border-radius: 16px;
+  padding: 12px 16px;
+  box-shadow: 0 3px 8px rgba(150, 120, 80, 0.12);
+  font-weight: 600;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: var(--brown-soft);
+  text-align: center;
+  animation: fade-in 0.4s ease both;
+}
+
 /* ── Wybór tematu ── */
 .themes { display: flex; flex-direction: column; gap: 14px; margin-top: 22px; }
 .hint { text-align: center; font-weight: 600; font-size: 15px; color: var(--brown-soft); margin-top: 20px; }
@@ -293,7 +307,8 @@ svg { display: block; width: 100%; height: 100%; }
 .board .frame .art { width: 66%; height: 66%; }
 .board .frame .speaker { position: absolute; right: -14px; bottom: -14px; width: 42px; height: 42px; border-radius: 50%; background: var(--wood); box-shadow: var(--shadow-wood); padding: 9px; }
 .board .status { font-size: 16px; font-weight: 600; color: var(--board-txt); min-height: 22px; text-align: center; }
-.board .chalkword { font-weight: 700; font-size: 36px; letter-spacing: 7px; color: var(--cream); min-height: 46px; animation: chalk-in 0.3s ease both; }
+.board .chalkword { font-weight: 700; font-size: 36px; letter-spacing: 5px; color: var(--cream); min-height: 46px; animation: chalk-in 0.3s ease both; white-space: nowrap; }
+.board .chalkword.long { font-size: 25px; letter-spacing: 3px; }
 
 .microw { display: flex; align-items: center; justify-content: center; margin-top: -26px; position: relative; z-index: 1; }
 .micring { position: relative; display: flex; align-items: center; justify-content: center; }

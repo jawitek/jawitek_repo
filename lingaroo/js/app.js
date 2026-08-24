@@ -99,8 +99,18 @@
             <div class="label">Tablica<small>mówię z LingaRoo</small></div>
           </button>
         </div>
+        <div id="ttsNote"></div>
       </div>`;
     wire();
+    /* Lista głosów bywa pusta zaraz po starcie — sprawdzamy po chwili,
+     * żeby nie straszyć bez powodu w zwykłym Chrome. */
+    later(() => {
+      const note = document.getElementById('ttsNote');
+      if (note && Sound.ttsLikelyMissing()) {
+        note.className = 'ttsnote';
+        note.textContent = 'Ta przeglądarka nie ma lektora — otwórz grę w Chrome albo Safari, a LingaRoo będzie mówił.';
+      }
+    }, 1200);
   }
 
   /* ── Wybór tematu ── */
@@ -327,7 +337,7 @@
                 <button class="speaker" id="replay" aria-label="Posłuchaj jeszcze raz">${UI.speaker}</button>
               </div>
               ${ph === 'success'
-                ? `<div class="chalkword" id="chalk"></div>`
+                ? `<div class="chalkword ${w.en.length > 7 ? 'long' : ''}" id="chalk"></div>`
                 : `<div class="status">${statusTxt}</div>`}
             </div>
             <div class="microw">
@@ -379,16 +389,18 @@
       const t = everyLetter(() => {
         say.revealed++;
         Sound.tick();
-        chalk.textContent = letters.slice(0, say.revealed).join('-');
+        chalk.textContent = letters.slice(0, say.revealed).join(' ');
         if (say.revealed >= letters.length) {
           clearInterval(t);
           Sound.chime();
+          /* Po napisaniu słowa kredą LingaRoo czyta je w całości. */
+          later(() => Sound.speak(w.en), 350);
           later(() => {
             say.round++;
             say.phase = 'prompt';
             say.spoken = false;
             renderSay(themeId);
-          }, 1800);
+          }, 2200);
         }
       }, 260);
     }

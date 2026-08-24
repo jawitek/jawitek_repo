@@ -104,6 +104,18 @@ const Sound = (() => {
     return { available: true, en: vs.filter(v => /^en/i.test(v.lang)).length };
   }
 
+  /* Środowiska bez działającego lektora. Android WebView (przeglądarka
+   * wbudowana w aplikacje, w UA marker "; wv") ma speechSynthesis, które
+   * milczy bez błędu — wykrywamy je wprost, a poza tym ufamy liście głosów
+   * dopiero po chwili od startu (bywa pusta zaraz po załadowaniu). */
+  function ttsLikelyMissing() {
+    if (!('speechSynthesis' in window)) return true;
+    const ua = navigator.userAgent || '';
+    if (/Android/.test(ua) && /; wv\)/.test(ua)) return true;
+    if (/Android/.test(ua) && speechSynthesis.getVoices().length === 0) return true;
+    return false;
+  }
+
   function tone(freq, t0, dur, gainMax, type = 'sine') {
     const g = ctx.createGain();
     const o = ctx.createOscillator();
@@ -131,7 +143,7 @@ const Sound = (() => {
     tone(520, ctx.currentTime, 0.07, 0.03, 'triangle');
   }
 
-  return { speak, chime, tick, unlock, ttsStatus };
+  return { speak, chime, tick, unlock, ttsStatus, ttsLikelyMissing };
 })();
 
 /* Rozpoznawanie mowy — dostępne nie wszędzie (brak w Safari/iOS).
