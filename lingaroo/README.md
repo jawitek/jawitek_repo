@@ -34,11 +34,23 @@ Projekt jest świadomym przeciwieństwem krzykliwych gier mobilnych:
 | **Słówka** | ogląda kartę, słucha słowa, przewija dalej | okres 1: nazywanie |
 | **Znajdź słowo** | słyszy „Where is the owl?" i wskazuje jedną z trzech kart | okres 2: rozpoznawanie |
 | **Tablica (Tap & Say)** | LingaRoo mówi słowo, dziecko powtarza na głos; litery odsłaniają się kredą | okres 3: odtwarzanie |
-| **Pary** | dopasowuje, co do czego pasuje: dog–bone, bird–nest, boat–sea… | dobieranie |
+| **Pary** | dopasowuje, co do czego pasuje: dog–bone, spider–web, hammer–nail…; trafiona para znika z półki | dobieranie |
 
-Tematy na start: **Zwierzęta, Owoce, Kolory** (po 6 słów) + 6 par.
-Dane są czysto deklaratywne (`THEMES`, `PAIRS` w `js/data.js`) — nowy temat
-to nowy wpis z SVG, bez zmian w logice.
+Słownictwo: **10 tematów, ~140 słów** — Zwierzęta (18), Warzywa, Owoce,
+Kolory, Dom, Ubrania, Zawody, Pojazdy, Liczby, Kształty (po 12) — oraz
+**22 pary**. Dane są czysto deklaratywne (`THEMES`, `PAIRS` w `js/data.js`);
+nowy temat to nowy wpis z SVG, bez zmian w logice. Zawody i liczby mają
+generatory (`personSvg`, `numberSvg`) — wspólna sylwetka + akcesoria.
+
+### Pudełka: postęp bez punktów
+
+Słowa tematu leżą w **pudełkach po 6** (`BOX_SIZE`), otwieranych po kolei:
+ukończenie sesji Znajdź słowo albo Tablicy na bieżącym pudełku otwiera
+następne (jedyny punkt zaliczania to ekran końca sesji — postęp nie ma
+bocznych ścieżek). Ukończone pudełka zawsze można powtarzać — powtórka to
+w Montessori cel, nie strata czasu. Postęp jest w `localStorage`
+(`lingaroo.progress`); Strefa Rodzica ma wyzerowanie (z potwierdzeniem
+drugim dotknięciem, bez okien dialogowych).
 
 ### Wymowa: zapraszamy, nie oceniamy
 
@@ -57,8 +69,9 @@ Nawet przy włączonym sprawdzaniu porażka nie istnieje: nietrafiona próba to
 ## Strefa Rodzica
 
 Za bramką „przytrzymaj kółko 3 sekundy" (dziecko przypadkiem nie wejdzie):
-dźwięk/wyciszenie (zapamiętywane), tempo lektora, polskie podpowiedzi,
-sprawdzanie wymowy.
+dźwięk/wyciszenie (zapamiętywane), tempo lektora, test lektora z diagnozą
+głosów angielskich, polskie podpowiedzi, sprawdzanie wymowy, wyzerowanie
+postępów.
 
 ## Architektura
 

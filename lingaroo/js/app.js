@@ -15,6 +15,26 @@
   let activeRecognition = null;
 
   const themeById = id => THEMES.find(t => t.id === id) || THEMES[0];
+
+  /* ── Postępy: ile pudełek tematu jest ukończonych ──
+   * Ukończenie sesji Znajdź słowo albo Tablicy na bieżącym pudełku
+   * otwiera następne. Powtarzanie ukończonych pudełek niczego nie psuje —
+   * powtórka to w Montessori cel, nie strata czasu. */
+  const Progress = (() => {
+    const KEY = 'lingaroo.progress';
+    let cur = {};
+    try { cur = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
+    const save = () => { try { localStorage.setItem(KEY, JSON.stringify(cur)); } catch (e) {} };
+    return {
+      done: id => cur[id] | 0,
+      /* Zalicza pudełko `level`; zwraca true, gdy właśnie otworzyło kolejne. */
+      complete(id, level) {
+        if (level === (cur[id] | 0)) { cur[id] = level + 1; save(); return true; }
+        return false;
+      },
+      reset() { cur = {}; save(); },
+    };
+  })();
   const shuffle = arr => {
     const a = arr.slice();
     for (let i = a.length - 1; i > 0; i--) {
@@ -39,7 +59,7 @@
   function route() {
     const raw = location.hash.length > 1 ? location.hash.slice(1) : (memRoute || 'home');
     const parts = raw.split('/');
-    return { name: parts[0] || 'home', arg: parts[1] || '' };
+    return { name: parts[0] || 'home', arg: parts[1] || '', arg2: parts[2] || '' };
   }
   window.addEventListener('hashchange', () => { memRoute = location.hash.slice(1); render(); });
 
@@ -114,30 +134,74 @@
   }
 
   /* ── Wybór tematu ── */
+  const leafSvg = c => `<svg viewBox="0 0 24 24"><path d="M12 3c5 3 7 7 7 11a7 7 0 1 1-14 0c0-4 2-8 7-11Z" fill="${c}"/></svg>`;
+  function themeLeaves(t) {
+    const done = Progress.done(t.id);
+    return `<div class="boxleaves">${themeBoxes(t).map((_, i) =>
+      `<div class="leaf">${leafSvg(i < done ? 'var(--sage)' : 'var(--line)')}</div>`).join('')}</div>`;
+  }
   function renderThemes(mode) {
     const target = mode === 'say' ? 'say' : 'cards';
     app.innerHTML = `
       <div class="screen">
         ${topbar(target === 'say' ? 'Tablica' : 'Słówka')}
-        <p class="hint">Wybierz pudełko</p>
+        <p class="hint">Co dziś ćwiczymy?</p>
         <div class="themes">
           ${THEMES.map(t => `
-            <button class="modetile" data-go="${target}/${t.id}">
+            <button class="themetile" data-go="boxes/${target}/${t.id}">
               <div class="icon">${t.coverSvg}</div>
               <div class="label">${t.pl}<small>${t.en}</small></div>
+              ${themeLeaves(t)}
             </button>`).join('')}
         </div>
       </div>`;
     wire();
   }
 
+  /* ── Półka z pudełkami tematu ──
+   * Pudełka otwierają się po kolei: ukończenie sesji na bieżącym
+   * odblokowuje następne. Ukończone zawsze można powtarzać. */
+  function renderBoxes(mode, themeId) {
+    const theme = themeById(themeId);
+    const boxes = themeBoxes(theme);
+    const done = Progress.done(theme.id);
+    app.innerHTML = `
+      <div class="screen">
+        ${topbar(theme.pl)}
+        <p class="hint">Wybierz pudełko</p>
+        <div class="themes list">
+          ${boxes.map((box, i) => {
+            const state = i < done ? 'done' : i === done ? 'open' : 'locked';
+            return `
+            <button class="modetile ${state === 'locked' ? 'locked' : ''}" ${state === 'locked' ? '' : `data-go="${mode}/${theme.id}/${i}"`}>
+              <div class="icon">${box[0].svg}</div>
+              <div class="label">Pudełko ${i + 1}
+                <small>${state === 'done' ? 'ukończone — możesz powtarzać' : state === 'open' ? box.length + ' słów' : 'najpierw poprzednie pudełko'}</small>
+              </div>
+              ${state === 'done' ? `<div class="donebadge">${UI.check}</div>` : ''}
+            </button>`;
+          }).join('')}
+        </div>
+      </div>`;
+    wire();
+  }
+
+  /* Strażnik pudełek: do zamkniętego poziomu prowadzi tylko półka. */
+  function guardLevel(mode, themeId, level) {
+    if (level > Progress.done(themeId)) { goto(`boxes/${mode}/${themeId}`); return false; }
+    return true;
+  }
+
   /* ── Słówka: karty do oglądania ── */
   let cardIdx = 0;
   let cardTheme = '';
-  function renderCards(themeId) {
+  function renderCards(themeId, level) {
     const theme = themeById(themeId);
-    if (cardTheme !== theme.id) { cardTheme = theme.id; cardIdx = 0; }
-    const w = theme.words[cardIdx];
+    if (!guardLevel('cards', theme.id, level)) return;
+    const words = themeBoxes(theme)[level] || theme.words.slice(0, BOX_SIZE);
+    const key = `${theme.id}/${level}`;
+    if (cardTheme !== key) { cardTheme = key; cardIdx = 0; }
+    const w = words[cardIdx];
     app.innerHTML = `
       <div class="screen">
         ${topbar(theme.pl)}
@@ -152,10 +216,10 @@
           </div>
           <div class="cardnav">
             <button class="woodbtn" id="prev" ${cardIdx === 0 ? 'disabled' : ''} aria-label="Poprzednie"><div>${UI.arrowLeft}</div></button>
-            <div class="dots">${theme.words.map((_, i) => `<div class="dot ${i === cardIdx ? 'on' : ''}"></div>`).join('')}</div>
-            <button class="woodbtn" id="next" ${cardIdx === theme.words.length - 1 ? 'disabled' : ''} aria-label="Następne"><div>${UI.arrowRight}</div></button>
+            <div class="dots">${words.map((_, i) => `<div class="dot ${i === cardIdx ? 'on' : ''}"></div>`).join('')}</div>
+            <button class="woodbtn" id="next" ${cardIdx === words.length - 1 ? 'disabled' : ''} aria-label="Następne"><div>${UI.arrowRight}</div></button>
           </div>
-          <button class="softbtn" data-go="quiz/${theme.id}">Znajdź słowo</button>
+          <button class="softbtn" data-go="quiz/${theme.id}/${level}">Znajdź słowo</button>
         </div>
       </div>`;
     wire();
@@ -173,28 +237,33 @@
     };
     card.addEventListener('click', speakWord);
     document.getElementById('prev').addEventListener('click', () => {
-      if (cardIdx > 0) { cardIdx--; renderCards(theme.id); Sound.speak(theme.words[cardIdx].en); }
+      if (cardIdx > 0) { cardIdx--; renderCards(theme.id, level); Sound.speak(words[cardIdx].en); }
     });
     document.getElementById('next').addEventListener('click', () => {
-      if (cardIdx < theme.words.length - 1) { cardIdx++; renderCards(theme.id); Sound.speak(theme.words[cardIdx].en); }
+      if (cardIdx < words.length - 1) { cardIdx++; renderCards(theme.id, level); Sound.speak(words[cardIdx].en); }
     });
   }
 
   /* ── Znajdź słowo: pokaż trzy karty, poproś o jedną ──
    * Błędny wybór tylko lekko kołysze kartą — dziecko poprawia się samo. */
   let quiz = null;
-  function newQuiz(themeId) {
+  function newQuiz(themeId, level) {
     const theme = themeById(themeId);
-    return { theme, round: 0, total: 5, order: shuffle(theme.words), locked: false };
+    const words = themeBoxes(theme)[level] || theme.words.slice(0, BOX_SIZE);
+    return { theme, level, words, round: 0, total: 5, order: shuffle(words), locked: false };
   }
   function quizRoundData() {
     const target = quiz.order[quiz.round % quiz.order.length];
-    const others = shuffle(quiz.theme.words.filter(w => w.en !== target.en)).slice(0, 2);
+    const others = shuffle(quiz.words.filter(w => w.en !== target.en)).slice(0, 2);
     return { target, options: shuffle([target, ...others]) };
   }
-  function renderQuiz(themeId, fresh) {
-    if (fresh || !quiz || quiz.theme.id !== themeId) quiz = newQuiz(themeId);
-    if (quiz.round >= quiz.total) { renderEnd(`quiz/${themeId}`); return; }
+  function renderQuiz(themeId, level, fresh) {
+    if (!guardLevel('cards', themeId, level)) return;
+    if (fresh || !quiz || quiz.theme.id !== themeId || quiz.level !== level) quiz = newQuiz(themeId, level);
+    if (quiz.round >= quiz.total) {
+      renderEnd(`quiz/${themeId}/${level}`, { themeId, level, backTo: `boxes/cards/${themeId}` });
+      return;
+    }
     const { target, options } = quizRoundData();
     quiz.current = target;
     quiz.locked = false;
@@ -229,7 +298,7 @@
           Sound.speak(target.en);
           btn.classList.add('matched');
           document.getElementById('fig').classList.add('hop');
-          later(() => { quiz.round++; renderQuiz(themeId); }, 1400);
+          later(() => { quiz.round++; renderQuiz(themeId, level); }, 1400);
         } else {
           btn.classList.remove('wrong');
           void btn.offsetWidth; /* restart animacji */
@@ -258,7 +327,7 @@
         <div class="stage">
           <div class="pairsgrid">
             ${pairs.tiles.map((t, i) => `
-              <button class="wordcard ${pairs.matched.has(t.pair) ? 'matched' : ''}" data-i="${i}" aria-label="${t.en}">
+              <button class="wordcard ${pairs.matched.has(t.pair) ? 'gone' : ''}" data-i="${i}" aria-label="${t.en}">
                 <div class="art">${t.svg}</div>
                 <div class="cap">${t.en}</div>
               </button>`).join('')}
@@ -286,8 +355,10 @@
           pairs.matched.add(tile.pair);
           pairs.picked = null;
           firstBtn.classList.remove('picked');
-          firstBtn.classList.add('matched');
-          btn.classList.add('matched');
+          /* Trafiona para znika z ekranu; puste miejsca zostają,
+           * żeby reszta kart nie skakała. */
+          firstBtn.classList.add('gone');
+          btn.classList.add('gone');
           Sound.chime();
           document.getElementById('fig').classList.add('hop');
           later(() => document.getElementById('fig') && document.getElementById('fig').classList.remove('hop'), 700);
@@ -312,13 +383,18 @@
    * Sprawdzanie wymowy włącza się w Strefie Rodzica i działa tylko tam,
    * gdzie przeglądarka ma rozpoznawanie mowy. */
   let say = null;
-  function newSay(themeId) {
+  function newSay(themeId, level) {
     const theme = themeById(themeId);
-    return { theme, words: shuffle(theme.words).slice(0, 5), round: 0, phase: 'prompt', revealed: 0 };
+    const box = themeBoxes(theme)[level] || theme.words.slice(0, BOX_SIZE);
+    return { theme, level, words: shuffle(box).slice(0, 5), round: 0, phase: 'prompt', revealed: 0 };
   }
-  function renderSay(themeId, fresh) {
-    if (fresh || !say || say.theme.id !== themeId) say = newSay(themeId);
-    if (say.round >= say.words.length) { renderEnd(`say/${themeId}`); return; }
+  function renderSay(themeId, level, fresh) {
+    if (!guardLevel('say', themeId, level)) return;
+    if (fresh || !say || say.theme.id !== themeId || say.level !== level) say = newSay(themeId, level);
+    if (say.round >= say.words.length) {
+      renderEnd(`say/${themeId}/${level}`, { themeId, level, backTo: `boxes/say/${themeId}` });
+      return;
+    }
     const w = say.words[say.round];
     const ph = say.phase;
     const statusTxt =
@@ -365,7 +441,7 @@
     document.getElementById('mic').addEventListener('click', () => {
       if (say.phase !== 'prompt' && say.phase !== 'retry') return;
       say.phase = 'listening';
-      renderSay(themeId);
+      renderSay(themeId, level);
       const finish = ok => {
         if (!say || say.phase !== 'listening') return;
         activeRecognition = null;
@@ -383,7 +459,7 @@
     function succeed() {
       say.phase = 'success';
       say.revealed = 0;
-      renderSay(themeId);
+      renderSay(themeId, level);
       const chalk = document.getElementById('chalk');
       const letters = w.en.toUpperCase().split('');
       const t = everyLetter(() => {
@@ -399,25 +475,42 @@
             say.round++;
             say.phase = 'prompt';
             say.spoken = false;
-            renderSay(themeId);
+            renderSay(themeId, level);
           }, 2200);
         }
       }, 260);
     }
     function retry() {
       say.phase = 'retry';
-      renderSay(themeId);
+      renderSay(themeId, level);
       later(sayWord, 500);
       later(() => {
-        if (say && say.phase === 'retry') { say.phase = 'prompt'; renderSay(themeId); }
+        if (say && say.phase === 'retry') { say.phase = 'prompt'; renderSay(themeId, level); }
       }, 1900);
     }
   }
 
-  /* ── Koniec sesji — spokojna pochwała, bez punktów ── */
-  function renderEnd(againRoute) {
+  /* ── Koniec sesji — spokojna pochwała, bez punktów ──
+   * Jedyny punkt zaliczania pudełek: każda ukończona sesja przechodzi
+   * tędy, więc postęp nie ma bocznych ścieżek. */
+  function renderEnd(againRoute, completion) {
     Sound.speak('Well done!');
-    const home = `<button class="softbtn wood" data-go="home">Menu</button>`;
+    let unlockedMsg = '';
+    let nextBtn = '';
+    if (completion) {
+      const theme = themeById(completion.themeId);
+      const total = themeBoxes(theme).length;
+      const opened = Progress.complete(theme.id, completion.level);
+      if (opened) {
+        if (completion.level + 1 < total) {
+          unlockedMsg = 'Otworzyło się nowe pudełko!';
+          const act = againRoute.split('/')[0];
+          nextBtn = `<button class="softbtn" data-go="${act}/${completion.themeId}/${completion.level + 1}">Następne pudełko</button>`;
+        } else {
+          unlockedMsg = `Wszystkie pudełka z tematu „${theme.pl}" ukończone!`;
+        }
+      }
+    }
     app.innerHTML = `
       <div class="screen">
         ${topbar('')}
@@ -425,19 +518,21 @@
           <div class="endpanel">
             <div class="fig">${TEACHER_SVG}</div>
             <h2>Well done!</h2>
-            <p>Brawo, to była dobra zabawa.</p>
+            <p>${unlockedMsg || 'Brawo, to była dobra zabawa.'}</p>
             <div class="endrow">
-              ${home}
-              <button class="softbtn" id="again">Jeszcze raz</button>
+              <button class="softbtn wood" data-go="${completion ? completion.backTo : 'home'}">${completion ? 'Półka' : 'Menu'}</button>
+              ${nextBtn || '<button class="softbtn" id="again">Jeszcze raz</button>'}
             </div>
           </div>
         </div>
         ${trackHtml(5)}
       </div>`;
     wire();
-    document.getElementById('again').addEventListener('click', () => {
-      if (againRoute.startsWith('quiz/')) { renderQuiz(againRoute.split('/')[1], true); }
-      else if (againRoute.startsWith('say/')) { renderSay(againRoute.split('/')[1], true); }
+    const again = document.getElementById('again');
+    if (again) again.addEventListener('click', () => {
+      const p = againRoute.split('/');
+      if (p[0] === 'quiz') { renderQuiz(p[1], parseInt(p[2] || '0', 10) || 0, true); }
+      else if (p[0] === 'say') { renderSay(p[1], parseInt(p[2] || '0', 10) || 0, true); }
       else if (againRoute === 'pairs') { renderPairs(true); }
       else goto('home');
     });
@@ -513,6 +608,10 @@
             <div class="txt">Sprawdzanie wymowy<small>${srNote}</small></div>
             <button class="toggle ${Settings.get('checkSpeech') && Speech.supported ? 'on' : ''}" data-set="checkSpeech" ${Speech.supported ? '' : 'disabled'} role="switch" aria-checked="${Settings.get('checkSpeech') && Speech.supported}" aria-label="Sprawdzanie wymowy"></button>
           </div>
+          <div class="setrow">
+            <div class="txt">Postępy<small>Ukończone pudełka: ${THEMES.reduce((n, t) => n + Math.min(Progress.done(t.id), themeBoxes(t).length), 0)} z ${THEMES.reduce((n, t) => n + themeBoxes(t).length, 0)}. Wyzerowanie zamyka wszystkie pudełka poza pierwszymi.</small></div>
+            <button class="softbtn mini wood" id="resetProg">Wyzeruj</button>
+          </div>
         </div>
         <p class="about">LingaRoo 0.1 — angielski dla dzieci, spokojnie.<br>
         Bez reklam, bez punktów, bez presji czasu. Wszystko działa bez internetu.</p>
@@ -533,6 +632,14 @@
     document.getElementById('ttsTest').addEventListener('click', () => {
       Sound.speak('Hello! I am LingaRoo. Nice to meet you.');
     });
+    /* Wyzerowanie postępów wymaga drugiego dotknięcia — bez okien dialogowych. */
+    const resetBtn = document.getElementById('resetProg');
+    resetBtn.addEventListener('click', () => {
+      if (resetBtn.dataset.armed) { Progress.reset(); renderParent(); return; }
+      resetBtn.dataset.armed = '1';
+      resetBtn.textContent = 'Na pewno?';
+      later(() => { if (document.body.contains(resetBtn)) { delete resetBtn.dataset.armed; resetBtn.textContent = 'Wyzeruj'; } }, 3500);
+    });
   }
 
   /* ── Render główny ── */
@@ -541,12 +648,14 @@
     if (activeRecognition) { try { activeRecognition.abort(); } catch (e) {} activeRecognition = null; }
     if ('speechSynthesis' in window) speechSynthesis.cancel();
     const r = route();
+    const lvl = parseInt(r.arg2 || '0', 10) || 0;
     switch (r.name) {
       case 'themes': renderThemes(r.arg); break;
-      case 'cards':  renderCards(r.arg); break;
-      case 'quiz':   renderQuiz(r.arg, true); break;
+      case 'boxes':  renderBoxes(r.arg === 'say' ? 'say' : 'cards', r.arg2); break;
+      case 'cards':  renderCards(r.arg, lvl); break;
+      case 'quiz':   renderQuiz(r.arg, lvl, true); break;
       case 'pairs':  renderPairs(true); break;
-      case 'say':    renderSay(r.arg, true); break;
+      case 'say':    renderSay(r.arg, lvl, true); break;
       case 'gate':   renderGate(); break;
       case 'parent': renderParent(); break;
       default:       renderHome();
@@ -565,9 +674,10 @@
   if (new URLSearchParams(location.search).has('debug')) {
     window.lingaDebug = () => ({
       route: route(),
-      quiz: quiz && { round: quiz.round, current: quiz.current && quiz.current.en },
-      say: say && { round: say.round, phase: say.phase, word: say.words[say.round] && say.words[say.round].en },
-      pairs: pairs && { matched: [...pairs.matched], picked: pairs.picked },
+      quiz: quiz && { round: quiz.round, level: quiz.level, current: quiz.current && quiz.current.en },
+      say: say && { round: say.round, level: say.level, phase: say.phase, word: say.words[say.round] && say.words[say.round].en },
+      pairs: pairs && { matched: [...pairs.matched], picked: pairs.picked, tiles: pairs.tiles.map(t => t.pair) },
+      progress: THEMES.reduce((o, t) => (o[t.id] = Progress.done(t.id), o), {}),
       settings: ['sound', 'rate', 'plHints', 'checkSpeech'].reduce((o, k) => (o[k] = Settings.get(k), o), {}),
     });
   }
