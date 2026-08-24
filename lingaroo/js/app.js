@@ -304,8 +304,8 @@
       <div class="screen">
         ${topbar('LingaRoo', { parentBtn: true, profile: act })}
         <div class="hero">
-          <div class="bubble">Hello${act ? ', ' + esc(act.name) : ''}!<small>Pobawimy się razem?</small></div>
           <div class="roo" data-roo="hero">${TEACHER_SVG}</div>
+          <div class="bubble">Hello${act ? ', ' + esc(act.name) : ''}!<small>Pobawimy się razem?</small></div>
         </div>
         <div class="modes">
           <button class="modetile" data-go="themes/cards">
@@ -522,7 +522,10 @@
     quiz.variant = variant;
     quiz.locked = false;
     const promptHtml = variant === 'pic2word'
-      ? `<div class="prompt"><div class="minicard">${target.svg}</div></div>`
+      ? `<div class="prompt">
+           <button class="speaker" id="replay" aria-label="Posłuchaj polecenia">${UI.speaker}</button>
+           <div class="minicard">${target.svg}</div>
+         </div>`
       : `<div class="prompt">
            <button class="speaker" id="replay" aria-label="Posłuchaj jeszcze raz">${UI.speaker}</button>
            <span>${target.en}</span>
@@ -549,7 +552,9 @@
     if (variant === 'listen') later(ask, 350);
     const replayBtn = document.getElementById('replay');
     if (replayBtn) replayBtn.addEventListener('click', () => {
-      variant === 'listen' ? ask() : Sound.speak(target.en);
+      if (variant === 'listen') ask();
+      else if (variant === 'word2pic') Sound.speak(target.en);
+      else Sound.speak('Find the word!');
     });
     app.querySelectorAll('[data-word]').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -720,7 +725,10 @@
     review.variant = variant;
     review.locked = false;
     const promptHtml = variant === 'pic2word'
-      ? `<div class="prompt"><div class="minicard">${target.svg}</div></div>`
+      ? `<div class="prompt">
+           <button class="speaker" id="replay" aria-label="Posłuchaj polecenia">${UI.speaker}</button>
+           <div class="minicard">${target.svg}</div>
+         </div>`
       : `<div class="prompt">
            <button class="speaker" id="replay" aria-label="Posłuchaj jeszcze raz">${UI.speaker}</button>
            <span>${target.en}</span>

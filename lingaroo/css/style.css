@@ -108,45 +108,44 @@ svg { display: block; width: 100%; height: 100%; }
 .woodbtn > div, .woodbtn > svg { width: 26px; height: 26px; }
 .woodbtn.subtle { opacity: 0.7; }
 
-/* ── Ekran główny: kangur na środku, dymek wychodzi mu z buzi ── */
-.hero { display: flex; flex-direction: column; align-items: center; margin: 12px 0 6px; }
-.hero .roo { width: 150px; height: 180px; animation: breathe 4s ease-in-out infinite; }
+/* ── Ekran główny: mały kangur, dymek z prawej przy pyszczku ── */
+.hero { display: flex; align-items: flex-start; justify-content: center; gap: 12px; margin: 8px 0 2px; }
+.hero .roo { width: 96px; height: 118px; flex: none; animation: breathe 4s ease-in-out infinite; }
 /* Ilustracja źródłowa patrzy w lewo — w grze wszystkie kangury patrzą
  * w prawo (w stronę mety), więc odbijamy ją lustrzanie. */
 [data-roo] img { width: 100%; height: 100%; object-fit: contain; display: block; transform: scaleX(-1); }
 .hero .bubble {
   position: relative;
-  transform: translateX(-40px);
+  margin-top: 14px;
   background: var(--paper);
   border-radius: 18px;
-  padding: 12px 18px;
-  margin-bottom: 14px;
+  padding: 11px 16px;
   box-shadow: 0 4px 10px rgba(150, 120, 80, 0.14);
   font-weight: 600;
-  font-size: 17px;
+  font-size: 16px;
   color: var(--brown);
 }
-/* Ogonek dymka celuje w dół, w stronę pyszczka (kangur patrzy w prawo). */
+/* Ogonek dymka celuje w lewo, w stronę pyszczka (kangur patrzy w prawo). */
 .hero .bubble::after {
   content: '';
   position: absolute;
-  right: 12px;
-  bottom: -6px;
+  left: -6px;
+  top: 18px;
   width: 14px;
   height: 14px;
   background: var(--paper);
   border-radius: 2px;
   transform: rotate(45deg);
-  box-shadow: 3px 3px 6px rgba(150, 120, 80, 0.08);
+  box-shadow: -3px 3px 6px rgba(150, 120, 80, 0.08);
 }
 .hero .bubble small { display: block; font-size: 12px; color: var(--dim-txt); margin-top: 2px; }
 
-.modes { display: flex; flex-direction: column; gap: 14px; margin-top: 18px; }
+.modes { display: flex; flex-direction: column; gap: 12px; margin-top: 12px; }
 .modetile {
   display: flex;
   align-items: center;
   gap: 18px;
-  padding: 18px 22px;
+  padding: 15px 20px;
   border-radius: 22px;
   background: linear-gradient(175deg, var(--wood-hi), var(--wood));
   box-shadow: 0 8px 18px rgba(150, 120, 80, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.55);
