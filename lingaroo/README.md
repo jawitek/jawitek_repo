@@ -71,8 +71,20 @@ Nawet przy włączonym sprawdzaniu porażka nie istnieje: nietrafiona próba to
 
 Za bramką „przytrzymaj kółko 3 sekundy" (dziecko przypadkiem nie wejdzie):
 dźwięk/wyciszenie (zapamiętywane), tempo lektora, test lektora z diagnozą
-głosów angielskich, polskie podpowiedzi, sprawdzanie wymowy, wyzerowanie
-postępów.
+głosów angielskich, polskie podpowiedzi, sprawdzanie wymowy, a dla
+aktywnego profilu: wyzerowanie postępów i usunięcie profilu (oba
+z potwierdzeniem drugim dotknięciem).
+
+## Profile
+
+Do **6 profili na urządzeniu** — bez haseł, bez kont, bez chmury. Ekran
+„Kto dziś się bawi?" pokazuje kafelki z imieniem i zwierzątkiem-awatarem;
+przełączenie to jeden dotyk (kafelek awatara na ekranie głównym). Każdy
+profil ma własny postęp lekcji (`lingaroo.progress.<id>` w localStorage);
+postęp sprzed epoki profili migruje na pierwszy utworzony profil.
+Ograniczenie wpisane w projekt: profil żyje w tej przeglądarce, na tym
+urządzeniu — synchronizacji między urządzeniami celowo nie ma (byłaby
+pierwszym miejscem, gdzie dane dziecka opuszczają sprzęt).
 
 ## Architektura
 

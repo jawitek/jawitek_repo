@@ -16,23 +16,72 @@
 
   const themeById = id => THEMES.find(t => t.id === id) || THEMES[0];
 
-  /* ── Postępy: ile pudełek tematu jest ukończonych ──
-   * Ukończenie sesji Znajdź słowo albo Tablicy na bieżącym pudełku
-   * otwiera następne. Powtarzanie ukończonych pudełek niczego nie psuje —
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  /* ── Profile: do 6 dzieci na urządzeniu, bez haseł i bez chmury ── */
+  const AVATARS = {
+    owl: SVG_OWL, fox: SVG_FOX, bear: SVG_BEAR, rabbit: SVG_RABBIT,
+    frog: SVG_FROG, duck: SVG_DUCK, cat: SVG_CAT, dog: SVG_DOG,
+  };
+  const Profiles = (() => {
+    const KEY = 'lingaroo.profiles', ACT = 'lingaroo.activeProfile';
+    const read = () => { try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) { return []; } };
+    const write = l => { try { localStorage.setItem(KEY, JSON.stringify(l)); } catch (e) {} };
+    return {
+      MAX: 6,
+      list: read,
+      active() {
+        let id = null;
+        try { id = localStorage.getItem(ACT); } catch (e) {}
+        return read().find(p => p.id === id) || null;
+      },
+      setActive(id) { try { localStorage.setItem(ACT, id); } catch (e) {} },
+      add(name, avatar) {
+        const l = read();
+        if (l.length >= this.MAX) return null;
+        const p = { id: 'p' + Date.now().toString(36) + Math.floor(Math.random() * 1e4).toString(36), name, avatar };
+        l.push(p);
+        write(l);
+        /* Migracja: postęp sprzed epoki profili przechodzi na pierwszy profil. */
+        try {
+          const legacy = localStorage.getItem('lingaroo.progress');
+          if (legacy && l.length === 1) {
+            localStorage.setItem('lingaroo.progress.' + p.id, legacy);
+            localStorage.removeItem('lingaroo.progress');
+          }
+        } catch (e) {}
+        return p;
+      },
+      remove(id) {
+        write(read().filter(p => p.id !== id));
+        try {
+          localStorage.removeItem('lingaroo.progress.' + id);
+          if (localStorage.getItem(ACT) === id) localStorage.removeItem(ACT);
+        } catch (e) {}
+      },
+    };
+  })();
+
+  /* ── Postępy aktywnego profilu: ile lekcji tematu jest ukończonych ──
+   * Ukończenie sesji Znajdź słowo albo Tablicy na bieżącej lekcji
+   * otwiera następną. Powtarzanie ukończonych lekcji niczego nie psuje —
    * powtórka to w Montessori cel, nie strata czasu. */
   const Progress = (() => {
-    const KEY = 'lingaroo.progress';
-    let cur = {};
-    try { cur = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
-    const save = () => { try { localStorage.setItem(KEY, JSON.stringify(cur)); } catch (e) {} };
+    const key = () => {
+      const p = Profiles.active();
+      return 'lingaroo.progress' + (p ? '.' + p.id : '');
+    };
+    const read = () => { try { return JSON.parse(localStorage.getItem(key()) || '{}'); } catch (e) { return {}; } };
+    const write = o => { try { localStorage.setItem(key(), JSON.stringify(o)); } catch (e) {} };
     return {
-      done: id => cur[id] | 0,
-      /* Zalicza pudełko `level`; zwraca true, gdy właśnie otworzyło kolejne. */
+      done: id => read()[id] | 0,
+      /* Zalicza lekcję `level`; zwraca true, gdy właśnie otworzyła kolejną. */
       complete(id, level) {
-        if (level === (cur[id] | 0)) { cur[id] = level + 1; save(); return true; }
+        const o = read();
+        if (level === (o[id] | 0)) { o[id] = level + 1; write(o); return true; }
         return false;
       },
-      reset() { cur = {}; save(); },
+      reset() { try { localStorage.removeItem(key()); } catch (e) {} },
     };
   })();
   const shuffle = arr => {
@@ -63,15 +112,77 @@
   }
   window.addEventListener('hashchange', () => { memRoute = location.hash.slice(1); render(); });
 
-  function topbar(title, { parentBtn = false } = {}) {
+  function topbar(title, { parentBtn = false, profile = null } = {}) {
+    const left = profile
+      ? `<button class="woodbtn" data-go="who" aria-label="Zmień profil"><div>${AVATARS[profile.avatar] || ROO_HEAD_SVG}</div></button>`
+      : `<button class="woodbtn" data-go="home" aria-label="Powrót do menu"><div>${ROO_HEAD_SVG}</div></button>`;
     return `
       <header class="topbar">
-        <button class="woodbtn" data-go="home" aria-label="Powrót do menu"><div>${ROO_HEAD_SVG}</div></button>
+        ${left}
         <div class="title">${title}</div>
         ${parentBtn
           ? `<button class="woodbtn subtle" data-go="gate" aria-label="Strefa Rodzica"><div>${UI.gear}</div></button>`
           : `<div style="width:56px"></div>`}
       </header>`;
+  }
+
+  /* ── „Kto dziś się bawi?" — wybór profilu ── */
+  function renderWho() {
+    const list = Profiles.list();
+    if (!list.length) { renderNewProfile(); return; }
+    const act = Profiles.active();
+    app.innerHTML = `
+      <div class="screen">
+        ${topbar('LingaRoo')}
+        <p class="hint">Kto dziś się bawi?</p>
+        <div class="themes">
+          ${list.map(p => `
+            <button class="themetile ${act && act.id === p.id ? 'activeprof' : ''}" data-prof="${p.id}">
+              <div class="icon">${AVATARS[p.avatar] || SVG_OWL}</div>
+              <div class="label">${esc(p.name)}</div>
+            </button>`).join('')}
+          ${list.length < Profiles.MAX ? `
+            <button class="themetile" id="addProf">
+              <div class="icon plus">+</div>
+              <div class="label">Nowy profil<small>${list.length} z ${Profiles.MAX}</small></div>
+            </button>` : ''}
+        </div>
+      </div>`;
+    wire();
+    app.querySelectorAll('[data-prof]').forEach(b => b.addEventListener('click', () => {
+      Profiles.setActive(b.dataset.prof);
+      goto('home');
+    }));
+    const add = document.getElementById('addProf');
+    if (add) add.addEventListener('click', renderNewProfile);
+  }
+
+  function renderNewProfile() {
+    const avatars = Object.keys(AVATARS);
+    let chosen = avatars[Profiles.list().length % avatars.length];
+    app.innerHTML = `
+      <div class="screen">
+        ${topbar('Nowy profil')}
+        <p class="hint">Jak masz na imię?</p>
+        <div class="profform">
+          <input class="nameinput" id="pname" maxlength="14" autocomplete="off" placeholder="Imię">
+          <div class="avatargrid">
+            ${avatars.map(a => `<button class="avatar ${a === chosen ? 'sel' : ''}" data-av="${a}" aria-label="${a}">${AVATARS[a]}</button>`).join('')}
+          </div>
+          <button class="softbtn" id="createProf">Zaczynamy!</button>
+        </div>
+      </div>`;
+    wire();
+    app.querySelectorAll('[data-av]').forEach(b => b.addEventListener('click', () => {
+      chosen = b.dataset.av;
+      app.querySelectorAll('.avatar').forEach(x => x.classList.toggle('sel', x === b));
+    }));
+    document.getElementById('createProf').addEventListener('click', () => {
+      const name = (document.getElementById('pname').value || '').trim().slice(0, 14) || 'Ja';
+      const p = Profiles.add(name, chosen);
+      if (p) { Profiles.setActive(p.id); goto('home'); }
+      else goto('who');
+    });
   }
 
   function trackHtml(activeIdx, total = 5) {
@@ -98,11 +209,12 @@
 
   /* ── Ekran główny ── */
   function renderHome() {
+    const act = Profiles.active();
     app.innerHTML = `
       <div class="screen">
-        ${topbar('LingaRoo', { parentBtn: true })}
+        ${topbar('LingaRoo', { parentBtn: true, profile: act })}
         <div class="hero">
-          <div class="bubble">Hello!<small>Pobawimy się razem?</small></div>
+          <div class="bubble">Hello${act ? ', ' + esc(act.name) : ''}!<small>Pobawimy się razem?</small></div>
           <div class="roo" id="heroRoo">${TEACHER_SVG}</div>
         </div>
         <div class="modes">
@@ -659,10 +771,23 @@
             <div class="txt">Sprawdzanie wymowy<small>${srNote}</small></div>
             <button class="toggle ${Settings.get('checkSpeech') && Speech.supported ? 'on' : ''}" data-set="checkSpeech" ${Speech.supported ? '' : 'disabled'} role="switch" aria-checked="${Settings.get('checkSpeech') && Speech.supported}" aria-label="Sprawdzanie wymowy"></button>
           </div>
+          ${(() => {
+            const prof = Profiles.active();
+            if (!prof) return `
           <div class="setrow">
-            <div class="txt">Postępy<small>Ukończone lekcje: ${THEMES.reduce((n, t) => n + Math.min(Progress.done(t.id), themeBoxes(t).length), 0)} z ${THEMES.reduce((n, t) => n + themeBoxes(t).length, 0)}. Wyzerowanie zamyka wszystkie lekcje poza pierwszymi.</small></div>
+            <div class="txt">Profile<small>Brak aktywnego profilu — wybierz go na ekranie „Kto dziś się bawi?".</small></div>
+            <button class="softbtn mini wood" data-go="who">Wybierz</button>
+          </div>`;
+            return `
+          <div class="setrow">
+            <div class="txt">Postępy: ${esc(prof.name)}<small>Ukończone lekcje: ${THEMES.reduce((n, t) => n + Math.min(Progress.done(t.id), themeBoxes(t).length), 0)} z ${THEMES.reduce((n, t) => n + themeBoxes(t).length, 0)}. Wyzerowanie zamyka wszystkie lekcje poza pierwszymi.</small></div>
             <button class="softbtn mini wood" id="resetProg">Wyzeruj</button>
           </div>
+          <div class="setrow">
+            <div class="txt">Usuń profil „${esc(prof.name)}"<small>Znika profil i jego postępy z tego urządzenia. Profile: ${Profiles.list().length} z ${Profiles.MAX}.</small></div>
+            <button class="softbtn mini danger" id="delProf">Usuń</button>
+          </div>`;
+          })()}
         </div>
         <p class="about">LingaRoo 0.1 — angielski dla dzieci, spokojnie.<br>
         Bez reklam, bez punktów, bez presji czasu. Wszystko działa bez internetu.</p>
@@ -683,13 +808,21 @@
     document.getElementById('ttsTest').addEventListener('click', () => {
       Sound.speak('Hello! I am LingaRoo. Nice to meet you.');
     });
-    /* Wyzerowanie postępów wymaga drugiego dotknięcia — bez okien dialogowych. */
-    const resetBtn = document.getElementById('resetProg');
-    resetBtn.addEventListener('click', () => {
-      if (resetBtn.dataset.armed) { Progress.reset(); renderParent(); return; }
-      resetBtn.dataset.armed = '1';
-      resetBtn.textContent = 'Na pewno?';
-      later(() => { if (document.body.contains(resetBtn)) { delete resetBtn.dataset.armed; resetBtn.textContent = 'Wyzeruj'; } }, 3500);
+    /* Działania niszczące wymagają drugiego dotknięcia — bez okien dialogowych. */
+    const arm = (btn, label, fn) => {
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        if (btn.dataset.armed) { fn(); return; }
+        btn.dataset.armed = '1';
+        btn.textContent = 'Na pewno?';
+        later(() => { if (document.body.contains(btn)) { delete btn.dataset.armed; btn.textContent = label; } }, 3500);
+      });
+    };
+    arm(document.getElementById('resetProg'), 'Wyzeruj', () => { Progress.reset(); renderParent(); });
+    arm(document.getElementById('delProf'), 'Usuń', () => {
+      const prof = Profiles.active();
+      if (prof) Profiles.remove(prof.id);
+      goto('who');
     });
   }
 
@@ -699,8 +832,16 @@
     if (activeRecognition) { try { activeRecognition.abort(); } catch (e) {} activeRecognition = null; }
     if ('speechSynthesis' in window) speechSynthesis.cancel();
     const r = route();
+    /* Bez aktywnego profilu wszystko prowadzi do „Kto dziś się bawi?"
+     * (poza Strefą Rodzica, która jest ustawieniem urządzenia). */
+    if (!Profiles.active() && !['who', 'gate', 'parent'].includes(r.name)) {
+      renderWho();
+      window.scrollTo(0, 0);
+      return;
+    }
     const lvl = parseInt(r.arg2 || '0', 10) || 0;
     switch (r.name) {
+      case 'who':    renderWho(); break;
       case 'themes': renderThemes(r.arg); break;
       case 'boxes':  renderBoxes(r.arg === 'say' ? 'say' : 'cards', r.arg2); break;
       case 'cards':  renderCards(r.arg, lvl); break;
@@ -729,6 +870,7 @@
       say: say && { round: say.round, level: say.level, phase: say.phase, word: say.words[say.round] && say.words[say.round].en },
       pairs: pairs && { matched: [...pairs.matched], picked: pairs.picked, tiles: pairs.tiles.map(t => t.pair) },
       progress: THEMES.reduce((o, t) => (o[t.id] = Progress.done(t.id), o), {}),
+      profiles: { active: (Profiles.active() || {}).name || null, count: Profiles.list().length },
       settings: ['sound', 'rate', 'plHints', 'checkSpeech'].reduce((o, k) => (o[k] = Settings.get(k), o), {}),
     });
   }

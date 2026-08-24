@@ -209,6 +209,38 @@ svg { display: block; width: 100%; height: 100%; }
 .boxleaves .leaf { width: 13px; height: 13px; }
 
 .modetile.locked { opacity: 0.45; pointer-events: none; }
+.themetile.activeprof { box-shadow: 0 0 0 4px var(--sage-pale), 0 8px 18px rgba(150, 120, 80, 0.18); }
+.themetile .icon.plus { display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 600; color: var(--brown-soft); }
+
+/* ── Nowy profil ── */
+.profform { display: flex; flex-direction: column; align-items: center; gap: 20px; margin-top: 22px; }
+.nameinput {
+  width: min(80%, 300px);
+  border: none;
+  border-radius: 16px;
+  background: var(--paper);
+  padding: 16px 18px;
+  font: 600 18px var(--font);
+  color: var(--ink);
+  text-align: center;
+  box-shadow: inset 0 2px 5px rgba(150, 120, 80, 0.15);
+  -webkit-user-select: text;
+  user-select: text;
+}
+.nameinput:focus { outline: 3px solid var(--sage-pale); }
+.avatargrid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--paper);
+  padding: 10px;
+  box-shadow: 0 3px 8px rgba(150, 120, 80, 0.15);
+  transition: transform 0.15s ease;
+}
+.avatar:active { transform: scale(0.94); }
+.avatar.sel { box-shadow: 0 0 0 4px var(--sage), 0 3px 8px rgba(150, 120, 80, 0.15); }
+.softbtn.danger { background: linear-gradient(180deg, #D98A6C, #C96B5A); box-shadow: 0 6px 14px rgba(201, 107, 90, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3); }
 .modetile { position: relative; }
 .modetile .donebadge {
   position: absolute;
