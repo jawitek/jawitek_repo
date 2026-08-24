@@ -36,22 +36,33 @@ Projekt jest świadomym przeciwieństwem krzykliwych gier mobilnych:
 | **Tablica (Tap & Say)** | LingaRoo mówi słowo, dziecko powtarza na głos; litery odsłaniają się kredą | okres 3: odtwarzanie |
 | **Pary** | dopasowuje, co do czego pasuje: dog–bone, spider–web, hammer–nail…; trafiona para znika z półki | dobieranie |
 
-Słownictwo: **10 tematów, ~140 słów** — Zwierzęta (18), Warzywa, Owoce,
-Kolory, Dom, Ubrania, Zawody, Pojazdy, Liczby, Kształty (po 12) — oraz
-**22 pary**. Dane są czysto deklaratywne (`THEMES`, `PAIRS` w `js/data.js`);
-nowy temat to nowy wpis z SVG, bez zmian w logice. Zawody i liczby mają
-generatory (`personSvg`, `numberSvg`) — wspólna sylwetka + akcesoria.
+Słownictwo: **16 tematów, ~190 słów** — Zwierzęta (18), Warzywa, Owoce,
+Kolory, Dom, Ubrania, Zawody, Pojazdy, Liczby, Kształty, Ciało, Jedzenie,
+Czynności, Pogoda, Zabawki, Przeciwieństwa (po 12) — oraz **28 par**
+(w tym 6 prawdziwych przeciwieństw). Dane są czysto deklaratywne
+(`THEMES`, `PAIRS` w `js/data.js`); nowy temat to nowy wpis z SVG, bez
+zmian w logice. Zawody i liczby mają generatory (`personSvg`,
+`numberSvg`) — wspólna sylwetka + akcesoria.
 
-### Lekcje: postęp bez punktów
+### Lekcje: postęp bez punktów, głębia zamiast pośpiechu
 
 Słowa tematu leżą w **lekcjach po 6 słów** (`BOX_SIZE`), otwieranych po
-kolei: ukończenie sesji Znajdź słowo albo Tablicy na bieżącej lekcji
-otwiera następną (jedyny punkt zaliczania to ekran końca sesji — postęp
-nie ma bocznych ścieżek). Nowa lekcja zaczyna się od poznania słówek
-(karty), nie od zgadywania. Ukończone lekcje zawsze można powtarzać —
-powtórka to w Montessori cel, nie strata czasu. Postęp jest w
-`localStorage` (`lingaroo.progress`); Strefa Rodzica ma wyzerowanie
-(z potwierdzeniem drugim dotknięciem, bez okien dialogowych).
+kolei. Lekcję otwierającą następną domyka **pełny cykl trzech spotkań**
+ze słowami: obejrzenie kart + Znajdź słowo + Tablica (jedyny punkt
+zaliczania to ekran końca sesji — postęp nie ma bocznych ścieżek; ekran
+końcowy podpowiada, czego jeszcze brakuje). Nowa lekcja zaczyna się od
+poznania słówek, nie od zgadywania.
+
+**Powtórki mają własną głębię:** powtórny quiz tej samej lekcji ćwiczy
+czytanie (napis→obrazek i obrazek→napis, bez podpowiedzi lektora),
+a kafelek **Powtórka** na ekranie głównym miesza słowa ze wszystkich
+ukończonych lekcji, biorąc najpierw najsłabiej utrwalone. Osobno od
+cyklu **dojrzewa utrwalenie**: słowo jest „pewne", gdy padło poprawnie
+w dwóch różnych dniach; lekcja z samymi pewnymi słowami dostaje pełną
+łezkę (jasna łezka = cykl domknięty, kontur = przed cyklem).
+
+Postęp jest per profil w `localStorage` (`lingaroo.progress.<id>`);
+Strefa Rodzica ma wyzerowanie (z potwierdzeniem drugim dotknięciem).
 
 ### Wymowa: zapraszamy, nie oceniamy
 

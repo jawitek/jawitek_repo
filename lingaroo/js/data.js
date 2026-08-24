@@ -1086,6 +1086,588 @@ const SHAPES = [
   { en: 'ring',      pl: 'obrączka',  svg: `<svg viewBox="0 0 100 100"><circle cx="50" cy="56" r="22" fill="none" stroke="#C9A94F" stroke-width="10"/><path d="M50 24 L58 34 L50 40 L42 34Z" fill="#8FB0BE"/></svg>` },
 ];
 
+/* ── Ciało ── */
+
+const SVG_HEAD = `<svg viewBox="0 0 100 100">
+  <circle cx="50" cy="52" r="30" fill="#E7C4A8"/>
+  <path d="M22 44 Q24 20 50 20 Q76 20 78 44 Q66 30 50 30 Q34 30 22 44Z" fill="#8B5E45"/>
+  <ellipse cx="20" cy="54" rx="5" ry="8" fill="#E7C4A8"/>
+  <ellipse cx="80" cy="54" rx="5" ry="8" fill="#E7C4A8"/>
+  <circle cx="41" cy="52" r="2.6" fill="#2D3142"/>
+  <circle cx="59" cy="52" r="2.6" fill="#2D3142"/>
+  <path d="M44 66 Q50 70 56 66" stroke="#2D3142" stroke-width="2" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_EYES = `<svg viewBox="0 0 100 100">
+  <ellipse cx="30" cy="50" rx="18" ry="12" fill="#FDFBF7" stroke="#2D3142" stroke-width="2.5"/>
+  <ellipse cx="70" cy="50" rx="18" ry="12" fill="#FDFBF7" stroke="#2D3142" stroke-width="2.5"/>
+  <circle cx="33" cy="50" r="6.5" fill="#6B8E9F"/><circle cx="33" cy="50" r="3" fill="#2D3142"/>
+  <circle cx="73" cy="50" r="6.5" fill="#6B8E9F"/><circle cx="73" cy="50" r="3" fill="#2D3142"/>
+  <path d="M14 38 Q30 30 46 38 M54 38 Q70 30 86 38" stroke="#8B5E45" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_NOSE = `<svg viewBox="0 0 100 100">
+  <path d="M50 22 Q56 44 60 58 Q64 72 50 74 Q36 72 40 58 Q44 44 50 22Z" fill="#E7C4A8"/>
+  <ellipse cx="43" cy="70" rx="3.4" ry="2.4" fill="#C99B72"/>
+  <ellipse cx="57" cy="70" rx="3.4" ry="2.4" fill="#C99B72"/>
+</svg>`;
+
+const SVG_MOUTH = `<svg viewBox="0 0 100 100">
+  <path d="M20 48 Q35 40 50 48 Q65 40 80 48 Q68 70 50 70 Q32 70 20 48Z" fill="#C96B5A"/>
+  <path d="M24 49 Q50 56 76 49" stroke="#A34F4F" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_EARS = `<svg viewBox="0 0 100 100">
+  <path d="M34 28 Q14 30 16 52 Q18 74 34 72 Q28 52 34 28Z" fill="#E7C4A8"/>
+  <path d="M30 40 Q22 44 24 56" stroke="#C99B72" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M66 28 Q86 30 84 52 Q82 74 66 72 Q72 52 66 28Z" fill="#E7C4A8"/>
+  <path d="M70 40 Q78 44 76 56" stroke="#C99B72" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_HAIR = `<svg viewBox="0 0 100 100">
+  <circle cx="50" cy="60" r="26" fill="#EFE0D2"/>
+  <path d="M22 58 Q18 26 50 22 Q82 26 78 58 Q74 42 64 40 Q70 52 62 50 Q54 36 46 44 Q40 36 34 46 Q28 44 30 56 Q24 50 22 58Z" fill="#8B5E45"/>
+</svg>`;
+
+const SVG_HANDS = `<svg viewBox="0 0 100 100">
+  <path d="M30 84 V52 Q30 46 35 46 Q39 46 39 52 V40 Q39 34 44 34 Q48 34 48 40 V36 Q48 30 53 30 Q57 30 57 36 V44 Q57 40 61 40 Q65 40 65 46 V70 Q65 84 48 86 Q36 86 30 84Z" fill="#E7C4A8" transform="translate(-22 0)"/>
+  <path d="M30 84 V52 Q30 46 35 46 Q39 46 39 52 V40 Q39 34 44 34 Q48 34 48 40 V36 Q48 30 53 30 Q57 30 57 36 V44 Q57 40 61 40 Q65 40 65 46 V70 Q65 84 48 86 Q36 86 30 84Z" fill="#E7C4A8" transform="translate(28 0) scale(-1,1) translate(-95 0)"/>
+</svg>`;
+
+const SVG_FEET = `<svg viewBox="0 0 100 100">
+  <path d="M20 36 Q32 36 34 52 Q35 66 44 70 Q48 78 40 80 H26 Q18 74 18 58Z" fill="#E7C4A8"/>
+  <path d="M80 36 Q68 36 66 52 Q65 66 56 70 Q52 78 60 80 H74 Q82 74 82 58Z" fill="#E7C4A8"/>
+  <circle cx="42" cy="76" r="2" fill="#C99B72"/><circle cx="58" cy="76" r="2" fill="#C99B72"/>
+</svg>`;
+
+const SVG_LEGS = `<svg viewBox="0 0 100 100">
+  <path d="M30 14 H70 L72 40 H54 L50 30 L46 40 H28Z" fill="#6B8E9F"/>
+  <rect x="32" y="40" width="14" height="40" rx="7" fill="#E7C4A8"/>
+  <rect x="54" y="40" width="14" height="40" rx="7" fill="#E7C4A8"/>
+  <ellipse cx="38" cy="84" rx="11" ry="5" fill="#B98255"/>
+  <ellipse cx="62" cy="84" rx="11" ry="5" fill="#B98255"/>
+</svg>`;
+
+const SVG_ARMS = `<svg viewBox="0 0 100 100">
+  <path d="M10 20 H36 V44 H10Z" fill="#C96B5A"/>
+  <path d="M30 32 Q52 28 64 40 Q76 50 78 64" stroke="#E7C4A8" stroke-width="14" fill="none" stroke-linecap="round"/>
+  <circle cx="80" cy="70" r="10" fill="#E7C4A8"/>
+  <path d="M74 64 Q80 58 86 62" stroke="#C99B72" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_TUMMY = `<svg viewBox="0 0 100 100">
+  <path d="M28 18 H72 Q78 50 72 84 H28 Q22 50 28 18Z" fill="#D9A5A0"/>
+  <ellipse cx="50" cy="56" rx="17" ry="19" fill="#E7C4A8"/>
+  <circle cx="50" cy="58" r="3" fill="#C99B72"/>
+</svg>`;
+
+const SVG_TEETH = `<svg viewBox="0 0 100 100">
+  <path d="M16 44 Q50 30 84 44 Q78 74 50 74 Q22 74 16 44Z" fill="#C96B5A"/>
+  <path d="M24 45 H76 V54 Q76 58 71 58 H29 Q24 58 24 54Z" fill="#FDFBF7"/>
+  <path d="M33 45 V58 M42 45 V58 M51 45 V58 M60 45 V58 M69 45 V58" stroke="#E2D9C6" stroke-width="2"/>
+</svg>`;
+
+/* ── Jedzenie ── */
+
+const SVG_BREAD = `<svg viewBox="0 0 100 100">
+  <path d="M14 52 Q14 34 32 34 H74 Q88 34 88 46 Q88 54 80 56 V70 Q80 76 74 76 H26 Q20 76 20 70 V56 Q14 56 14 52Z" fill="#C9975F"/>
+  <path d="M34 44 Q40 38 46 44 M52 44 Q58 38 64 44 M70 44 Q76 38 80 44" stroke="#B07F45" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_MILK = `<svg viewBox="0 0 100 100">
+  <path d="M34 34 L40 18 H60 L66 34 V82 Q66 86 62 86 H38 Q34 86 34 82Z" fill="#FDFBF7" stroke="#E2D9C6" stroke-width="2.5"/>
+  <path d="M34 34 H66" stroke="#E2D9C6" stroke-width="2.5"/>
+  <rect x="34" y="46" width="32" height="16" fill="#8FB0BE"/>
+  <path d="M42 54 Q46 50 50 54 Q54 58 58 54" stroke="#FDFBF7" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_CHEESE = `<svg viewBox="0 0 100 100">
+  <path d="M14 62 L82 34 Q88 40 88 48 V70 Q88 74 84 74 H18 Q14 74 14 70Z" fill="#D9C25F"/>
+  <circle cx="40" cy="62" r="5" fill="#C9A94F"/>
+  <circle cx="62" cy="56" r="4" fill="#C9A94F"/>
+  <circle cx="74" cy="66" r="3.4" fill="#C9A94F"/>
+  <circle cx="28" cy="68" r="3" fill="#C9A94F"/>
+</svg>`;
+
+const SVG_EGG = `<svg viewBox="0 0 100 100">
+  <path d="M26 46 Q20 30 34 28 Q40 18 52 24 Q66 16 72 30 Q86 34 78 48 Q86 60 72 64 Q70 76 56 72 Q44 80 36 68 Q22 68 26 56 Q20 52 26 46Z" fill="#FDFBF7"/>
+  <circle cx="50" cy="48" r="13" fill="#D9B36C"/>
+  <circle cx="46" cy="44" r="4" fill="#E7C987"/>
+</svg>`;
+
+const SVG_CAKE = `<svg viewBox="0 0 100 100">
+  <path d="M22 46 H78 V78 Q50 84 22 78Z" fill="#E7C4A8"/>
+  <path d="M22 58 H78" stroke="#C96B5A" stroke-width="5"/>
+  <path d="M22 46 Q28 38 36 44 Q42 36 50 44 Q58 36 64 44 Q72 38 78 46 V52 H22Z" fill="#FDFBF7"/>
+  <circle cx="50" cy="32" r="6" fill="#B85C5C"/>
+  <path d="M50 26 Q52 20 56 18" stroke="#7A9A8B" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_SOUP = `<svg viewBox="0 0 100 100">
+  <path d="M40 18 Q38 26 42 30 Q46 34 44 40 M58 16 Q56 24 60 28 Q64 32 62 38" stroke="#B3A78F" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M14 50 H86 Q86 74 62 80 H38 Q14 74 14 50Z" fill="#C96B5A"/>
+  <ellipse cx="50" cy="50" rx="36" ry="7" fill="#D98A6C"/>
+  <ellipse cx="42" cy="50" rx="6" ry="2.5" fill="#D9B36C"/>
+  <ellipse cx="60" cy="51" rx="5" ry="2.2" fill="#A8C0A0"/>
+</svg>`;
+
+const SVG_JUICE = `<svg viewBox="0 0 100 100">
+  <path d="M34 26 H66 L62 82 H38Z" fill="#EFE6D8"/>
+  <path d="M36 42 H64 L62 80 H38Z" fill="#D08251"/>
+  <path d="M56 30 L70 12" stroke="#C96B5A" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="30" cy="22" r="7" fill="#D08251"/>
+  <path d="M28 16 Q32 12 36 14" stroke="#7A9A8B" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_WATER = `<svg viewBox="0 0 100 100">
+  <path d="M50 14 Q64 34 64 46 Q64 60 50 60 Q36 60 36 46 Q36 34 50 14Z" fill="#8FB0BE"/>
+  <path d="M44 44 Q42 50 46 53" stroke="#FDFBF7" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M20 76 Q30 70 40 76 Q50 82 60 76 Q70 70 80 76" stroke="#6B8E9F" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M24 88 Q34 82 44 88 Q54 94 64 88 Q72 84 78 88" stroke="#8FB0BE" stroke-width="4" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_PIZZA = `<svg viewBox="0 0 100 100">
+  <path d="M50 88 L18 24 Q50 8 82 24Z" fill="#D9B36C"/>
+  <path d="M18 24 Q50 8 82 24 L78 32 Q50 18 22 32Z" fill="#C96B5A"/>
+  <circle cx="44" cy="42" r="6" fill="#C96B5A"/>
+  <circle cx="60" cy="50" r="5" fill="#C96B5A"/>
+  <circle cx="48" cy="64" r="5" fill="#C96B5A"/>
+  <circle cx="36" cy="52" r="3" fill="#A8C0A0"/>
+  <circle cx="56" cy="34" r="3" fill="#A8C0A0"/>
+</svg>`;
+
+const SVG_HONEY = `<svg viewBox="0 0 100 100">
+  <path d="M30 34 H70 Q76 48 76 62 Q76 82 50 82 Q24 82 24 62 Q24 48 30 34Z" fill="#D9A94F"/>
+  <rect x="28" y="24" width="44" height="12" rx="4" fill="#8B5E45"/>
+  <path d="M32 52 H68 M30 62 H70" stroke="#C99B3F" stroke-width="3" stroke-linecap="round"/>
+  <path d="M50 44 Q54 48 50 52 Q46 48 50 44Z" fill="#FDFBF7" opacity="0.4"/>
+</svg>`;
+
+const SVG_COOKIE = `<svg viewBox="0 0 100 100">
+  <circle cx="50" cy="52" r="32" fill="#C9975F"/>
+  <circle cx="40" cy="42" r="4.5" fill="#6E5138"/>
+  <circle cx="60" cy="48" r="4" fill="#6E5138"/>
+  <circle cx="46" cy="62" r="4.5" fill="#6E5138"/>
+  <circle cx="63" cy="64" r="3.4" fill="#6E5138"/>
+  <circle cx="32" cy="56" r="3.4" fill="#6E5138"/>
+</svg>`;
+
+const SVG_BUTTER = `<svg viewBox="0 0 100 100">
+  <path d="M20 46 L64 36 L80 44 V62 L36 72 L20 64Z" fill="#E7D06C"/>
+  <path d="M64 36 L80 44 L36 54 L20 46Z" fill="#EFDC8C"/>
+  <path d="M36 54 V72" stroke="#D9C25F" stroke-width="2"/>
+  <ellipse cx="50" cy="80" rx="34" ry="6" fill="#FDFBF7" stroke="#E2D9C6" stroke-width="2"/>
+</svg>`;
+
+/* ── Czynności: mała postać w akcji ── */
+
+const KID_HEAD = (cx, cy, r = 11) => `
+  <circle cx="${cx}" cy="${cy}" r="${r}" fill="#E7C4A8"/>
+  <path d="M${cx - r} ${cy - 2} Q${cx - r + 2} ${cy - r - 3} ${cx} ${cy - r - 1} Q${cx + r - 2} ${cy - r - 3} ${cx + r} ${cy - 2} Q${cx + r - 4} ${cy - r + 3} ${cx} ${cy - r + 4} Q${cx - r + 4} ${cy - r + 3} ${cx - r} ${cy - 2}Z" fill="#8B5E45"/>
+  <circle cx="${cx - 4}" cy="${cy}" r="1.6" fill="#2D3142"/>
+  <circle cx="${cx + 4}" cy="${cy}" r="1.6" fill="#2D3142"/>
+  <path d="M${cx - 3} ${cy + 5} Q${cx} ${cy + 7} ${cx + 3} ${cy + 5}" stroke="#2D3142" stroke-width="1.4" fill="none" stroke-linecap="round"/>`;
+
+const SVG_RUN = `<svg viewBox="0 0 100 100">
+  <path d="M10 44 H26 M8 56 H22" stroke="#B3A78F" stroke-width="3" stroke-linecap="round"/>
+  ${KID_HEAD(62, 26)}
+  <path d="M58 38 Q54 52 58 62" stroke="#6B8E9F" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <path d="M58 44 Q70 46 78 40" stroke="#E7C4A8" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M56 46 Q46 50 40 46" stroke="#E7C4A8" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M58 62 Q70 66 76 76 M56 62 Q46 70 34 70" stroke="#567483" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <ellipse cx="80" cy="79" rx="7" ry="4" fill="#B98255"/>
+  <ellipse cx="30" cy="71" rx="7" ry="4" fill="#B98255"/>
+</svg>`;
+
+const SVG_JUMP = `<svg viewBox="0 0 100 100">
+  ${KID_HEAD(50, 22)}
+  <path d="M50 34 Q50 48 50 54" stroke="#C96B5A" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <path d="M46 38 Q34 32 28 22 M54 38 Q66 32 72 22" stroke="#E7C4A8" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M47 54 Q40 62 40 70 M53 54 Q60 62 60 70" stroke="#567483" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <ellipse cx="40" cy="74" rx="6" ry="3.5" fill="#B98255"/>
+  <ellipse cx="60" cy="74" rx="6" ry="3.5" fill="#B98255"/>
+  <path d="M28 88 H72" stroke="#B3A78F" stroke-width="3" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_EAT = `<svg viewBox="0 0 100 100">
+  ${KID_HEAD(46, 26)}
+  <path d="M46 38 Q46 54 46 60" stroke="#7A9A8B" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <path d="M50 44 Q60 40 58 32" stroke="#E7C4A8" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <ellipse cx="60" cy="28" rx="4" ry="6" fill="#A9A49B" transform="rotate(30 60 28)"/>
+  <path d="M42 44 Q34 48 30 54" stroke="#E7C4A8" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M24 66 H72 Q72 78 60 80 H36 Q24 78 24 66Z" fill="#C96B5A"/>
+  <ellipse cx="48" cy="66" rx="24" ry="4" fill="#D98A6C"/>
+</svg>`;
+
+const SVG_DRINK = `<svg viewBox="0 0 100 100">
+  ${KID_HEAD(50, 28)}
+  <path d="M50 40 Q50 58 50 68" stroke="#D08251" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <path d="M54 46 Q64 42 62 36" stroke="#E7C4A8" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M58 24 L70 20 L68 36 L58 38Z" fill="#8FB0BE"/>
+  <path d="M46 46 Q38 50 34 58" stroke="#E7C4A8" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M40 82 H60 M50 68 V82" stroke="#567483" stroke-width="7" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_SLEEP = `<svg viewBox="0 0 100 100">
+  <text x="64" y="26" font-family="Quicksand, sans-serif" font-weight="700" font-size="16" fill="#8A7A5F">z</text>
+  <text x="74" y="18" font-family="Quicksand, sans-serif" font-weight="700" font-size="12" fill="#B3A78F">z</text>
+  <circle cx="28" cy="52" r="11" fill="#E7C4A8"/>
+  <path d="M17 50 Q19 41 28 41 Q37 41 39 50 Q33 44 28 45 Q23 44 17 50Z" fill="#8B5E45"/>
+  <path d="M23 54 Q25 56 27 54 M31 54 Q33 56 35 54" stroke="#2D3142" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <path d="M38 56 Q60 50 84 56 V70 Q60 76 38 70Z" fill="#6B8E9F"/>
+  <rect x="14" y="66" width="74" height="8" rx="4" fill="#B98255"/>
+  <rect x="16" y="74" width="6" height="12" rx="2.5" fill="#8B5E45"/>
+  <rect x="80" y="74" width="6" height="12" rx="2.5" fill="#8B5E45"/>
+</svg>`;
+
+const SVG_SING = `<svg viewBox="0 0 100 100">
+  <path d="M70 26 V12 Q76 10 80 12 V24" stroke="#7A6A54" stroke-width="3" fill="none"/>
+  <circle cx="68" cy="28" r="4" fill="#7A6A54"/><circle cx="78" cy="26" r="4" fill="#7A6A54"/>
+  <circle cx="86" cy="44" r="3" fill="#B3A78F"/>
+  ${KID_HEAD(42, 30)}
+  <ellipse cx="42" cy="37" rx="3" ry="4" fill="#A34F4F"/>
+  <path d="M42 42 Q42 58 42 66" stroke="#D9A5A0" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <path d="M38 48 Q28 44 24 36 M46 48 Q56 44 60 36" stroke="#E7C4A8" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M39 66 Q36 74 36 80 M45 66 Q48 74 48 80" stroke="#567483" stroke-width="7" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_DANCE = `<svg viewBox="0 0 100 100">
+  <circle cx="20" cy="24" r="3.4" fill="#B3A78F"/>
+  <path d="M80 18 V32 M80 18 Q86 16 88 18 V30" stroke="#7A6A54" stroke-width="2.5" fill="none"/>
+  <circle cx="78" cy="34" r="3.4" fill="#7A6A54"/><circle cx="86" cy="32" r="3.4" fill="#7A6A54"/>
+  ${KID_HEAD(50, 26)}
+  <path d="M50 38 Q54 52 50 60" stroke="#D9B36C" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <path d="M48 42 Q36 36 30 26 M54 44 Q66 42 72 34" stroke="#E7C4A8" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M48 60 Q40 64 36 74 M52 60 Q62 62 66 54" stroke="#567483" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <ellipse cx="33" cy="77" rx="6" ry="3.5" fill="#B98255"/>
+  <ellipse cx="70" cy="52" rx="6" ry="3.5" fill="#B98255" transform="rotate(40 70 52)"/>
+</svg>`;
+
+const SVG_READ = `<svg viewBox="0 0 100 100">
+  ${KID_HEAD(50, 26)}
+  <path d="M50 38 Q50 52 50 58" stroke="#7A9A8B" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <path d="M44 46 Q36 52 34 58 M56 46 Q64 52 66 58" stroke="#E7C4A8" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M50 62 Q36 54 26 58 V74 Q36 70 50 78 Q64 70 74 74 V58 Q64 54 50 62Z" fill="#FDFBF7" stroke="#C96B5A" stroke-width="2.5"/>
+  <path d="M50 62 V78" stroke="#E2D9C6" stroke-width="2"/>
+  <path d="M32 62 Q40 60 46 64 M54 64 Q60 60 68 62" stroke="#B3A78F" stroke-width="1.8" fill="none"/>
+</svg>`;
+
+const SVG_DRAW = `<svg viewBox="0 0 100 100">
+  ${KID_HEAD(34, 24)}
+  <path d="M34 36 Q34 52 34 60" stroke="#C96B5A" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <path d="M38 42 Q50 44 58 50" stroke="#E7C4A8" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <rect x="56" y="48" width="5" height="14" rx="2.5" fill="#D9B36C" transform="rotate(-36 58 55)"/>
+  <rect x="50" y="30" width="38" height="46" rx="3" fill="#FDFBF7" stroke="#E2D9C6" stroke-width="2.5" transform="rotate(6 69 53)"/>
+  <path d="M62 44 Q70 38 78 44 Q74 52 66 52Z" fill="#7A9A8B" transform="rotate(6 69 53)"/>
+  <circle cx="76" cy="60" r="5" fill="#D9B36C" transform="rotate(6 69 53)"/>
+</svg>`;
+
+const SVG_WASH = `<svg viewBox="0 0 100 100">
+  <path d="M50 12 Q60 12 60 22 V28 H72 V36 H60" stroke="#A9A49B" stroke-width="6" fill="none"/>
+  <path d="M58 40 Q56 48 58 54 M64 40 Q62 48 64 54" stroke="#8FB0BE" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="48" cy="50" r="5" fill="#D7E3E8"/>
+  <circle cx="70" cy="48" r="4" fill="#D7E3E8"/>
+  <path d="M34 58 Q44 50 56 58 Q66 66 78 60" stroke="#E7C4A8" stroke-width="10" fill="none" stroke-linecap="round"/>
+  <path d="M20 78 H80 Q78 88 60 88 H40 Q22 88 20 78Z" fill="#8FB0BE"/>
+  <ellipse cx="50" cy="78" rx="30" ry="5" fill="#A7C2CC"/>
+</svg>`;
+
+const SVG_WALK = `<svg viewBox="0 0 100 100">
+  ${KID_HEAD(50, 24)}
+  <path d="M50 36 Q50 50 50 58" stroke="#6B8A7B" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <path d="M47 42 Q40 48 38 54 M53 42 Q60 48 62 54" stroke="#E7C4A8" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M48 58 Q42 66 38 76 M52 58 Q58 66 62 76" stroke="#567483" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <ellipse cx="36" cy="80" rx="6.5" ry="3.5" fill="#B98255"/>
+  <ellipse cx="64" cy="80" rx="6.5" ry="3.5" fill="#B98255"/>
+  <path d="M20 88 H80" stroke="#B3A78F" stroke-width="3" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_SWIM = `<svg viewBox="0 0 100 100">
+  ${KID_HEAD(30, 38)}
+  <path d="M40 46 Q54 50 66 48" stroke="#C96B5A" stroke-width="11" fill="none" stroke-linecap="round"/>
+  <path d="M40 42 Q50 32 60 30" stroke="#E7C4A8" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M66 48 Q76 50 84 46" stroke="#E7C4A8" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M8 64 Q18 56 28 64 Q38 72 48 64 Q58 56 68 64 Q78 72 88 64" stroke="#6B8E9F" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M12 80 Q22 72 32 80 Q42 88 52 80 Q62 72 72 80 Q80 86 88 80" stroke="#8FB0BE" stroke-width="5" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+/* ── Pogoda (sun, rain, moon, star są wyżej) ── */
+
+const SVG_CLOUD = `<svg viewBox="0 0 100 100">
+  <circle cx="34" cy="52" r="16" fill="#E9E0D0"/>
+  <circle cx="54" cy="44" r="20" fill="#E9E0D0"/>
+  <circle cx="72" cy="54" r="14" fill="#E9E0D0"/>
+  <rect x="20" y="54" width="66" height="16" rx="8" fill="#E9E0D0"/>
+  <circle cx="46" cy="50" r="16" fill="#F1EADC"/>
+</svg>`;
+
+const SVG_SNOW = `<svg viewBox="0 0 100 100">
+  <g stroke="#8FB0BE" stroke-width="4" stroke-linecap="round">
+    <path d="M50 14 V86 M19 32 L81 68 M81 32 L19 68"/>
+    <path d="M50 14 L44 22 M50 14 L56 22 M50 86 L44 78 M50 86 L56 78"/>
+    <path d="M19 32 L29 33 M19 32 L20 42 M81 68 L71 67 M81 68 L80 58"/>
+    <path d="M81 32 L71 33 M81 32 L80 42 M19 68 L29 67 M19 68 L20 58"/>
+  </g>
+  <circle cx="50" cy="50" r="6" fill="#8FB0BE"/>
+</svg>`;
+
+const SVG_WIND = `<svg viewBox="0 0 100 100">
+  <path d="M12 36 H62 Q74 36 74 26 Q74 18 66 18" stroke="#8FB0BE" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M10 52 H78 Q90 52 90 62 Q90 70 82 70" stroke="#6B8E9F" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M14 68 H50 Q60 68 60 76 Q60 84 52 84" stroke="#8FB0BE" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M28 22 Q34 18 38 22" stroke="#B3A78F" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_STORM = `<svg viewBox="0 0 100 100">
+  <circle cx="36" cy="34" r="14" fill="#A9A49B"/>
+  <circle cx="56" cy="28" r="17" fill="#A9A49B"/>
+  <circle cx="70" cy="38" r="12" fill="#A9A49B"/>
+  <rect x="24" y="36" width="58" height="14" rx="7" fill="#A9A49B"/>
+  <polygon points="52,52 40,72 50,72 42,92 64,66 53,66 60,52" fill="#D9B36C"/>
+</svg>`;
+
+const SVG_RAINBOW = `<svg viewBox="0 0 100 100">
+  <path d="M14 78 A36 36 0 0 1 86 78" stroke="#C96B5A" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M24 78 A26 26 0 0 1 76 78" stroke="#D9B36C" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M34 78 A16 16 0 0 1 66 78" stroke="#7A9A8B" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <path d="M44 78 A6 6 0 0 1 56 78" stroke="#6B8E9F" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <circle cx="16" cy="80" r="7" fill="#E9E0D0"/><circle cx="26" cy="82" r="6" fill="#E9E0D0"/>
+  <circle cx="84" cy="80" r="7" fill="#E9E0D0"/><circle cx="74" cy="82" r="6" fill="#E9E0D0"/>
+</svg>`;
+
+const SVG_FOG = `<svg viewBox="0 0 100 100">
+  <circle cx="50" cy="36" r="16" fill="#D9C25F" opacity="0.55"/>
+  <path d="M16 46 H84 M12 58 H88 M18 70 H82 M26 82 H74" stroke="#D9CBB4" stroke-width="7" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_ICE = `<svg viewBox="0 0 100 100">
+  <path d="M28 34 L64 26 L78 40 L74 72 L38 80 L24 66Z" fill="#D7E3E8"/>
+  <path d="M28 34 L64 26 L78 40 L42 48Z" fill="#E8F0F3"/>
+  <path d="M42 48 L38 80 M42 48 L78 40" stroke="#A7C2CC" stroke-width="2.5" fill="none"/>
+  <path d="M50 58 Q54 54 58 58" stroke="#FDFBF7" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_SKY = `<svg viewBox="0 0 100 100">
+  <rect x="12" y="18" width="76" height="64" rx="12" fill="#8FB0BE"/>
+  <circle cx="70" cy="34" r="10" fill="#D9C25F"/>
+  <circle cx="32" cy="42" r="8" fill="#FDFBF7"/><circle cx="42" cy="38" r="10" fill="#FDFBF7"/><circle cx="52" cy="44" r="7" fill="#FDFBF7"/>
+  <rect x="26" y="42" width="32" height="8" rx="4" fill="#FDFBF7"/>
+  <circle cx="58" cy="64" r="6" fill="#FDFBF7"/><circle cx="66" cy="61" r="7" fill="#FDFBF7"/><circle cx="74" cy="66" r="5" fill="#FDFBF7"/>
+  <rect x="54" y="63" width="24" height="6" rx="3" fill="#FDFBF7"/>
+</svg>`;
+
+/* ── Zabawki ── */
+
+const SVG_BALL = `<svg viewBox="0 0 100 100">
+  <circle cx="50" cy="52" r="32" fill="#FDFBF7"/>
+  <path d="M50 20 A32 32 0 0 1 78 68 Q60 60 50 20Z" fill="#C96B5A"/>
+  <path d="M50 20 A32 32 0 0 0 22 68 Q40 60 50 20Z" fill="#6B8E9F"/>
+  <path d="M22 68 Q50 84 78 68 A32 32 0 0 1 22 68Z" fill="#D9B36C"/>
+  <circle cx="50" cy="52" r="32" fill="none" stroke="rgba(45,49,66,0.12)" stroke-width="2"/>
+</svg>`;
+
+const SVG_DOLL = `<svg viewBox="0 0 100 100">
+  <circle cx="50" cy="28" r="15" fill="#E7C4A8"/>
+  <path d="M35 26 Q36 12 50 12 Q64 12 65 26 Q58 18 50 18 Q42 18 35 26Z" fill="#C9A052"/>
+  <circle cx="35" cy="24" r="4" fill="#C9A052"/><circle cx="65" cy="24" r="4" fill="#C9A052"/>
+  <circle cx="45" cy="28" r="2" fill="#2D3142"/><circle cx="55" cy="28" r="2" fill="#2D3142"/>
+  <path d="M46 34 Q50 37 54 34" stroke="#2D3142" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <path d="M40 44 H60 L70 78 H30Z" fill="#D9A5A0"/>
+  <path d="M40 50 Q30 54 26 62 M60 50 Q70 54 74 62" stroke="#E7C4A8" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <rect x="40" y="78" width="6" height="10" rx="3" fill="#E7C4A8"/>
+  <rect x="54" y="78" width="6" height="10" rx="3" fill="#E7C4A8"/>
+</svg>`;
+
+const SVG_TEDDY = `<svg viewBox="0 0 100 100">
+  <circle cx="32" cy="26" r="9" fill="#B98255"/><circle cx="68" cy="26" r="9" fill="#B98255"/>
+  <circle cx="32" cy="26" r="4" fill="#D9A97F"/><circle cx="68" cy="26" r="4" fill="#D9A97F"/>
+  <circle cx="50" cy="36" r="18" fill="#B98255"/>
+  <ellipse cx="50" cy="42" rx="8" ry="6" fill="#D9A97F"/>
+  <circle cx="44" cy="32" r="2.4" fill="#2D3142"/><circle cx="56" cy="32" r="2.4" fill="#2D3142"/>
+  <ellipse cx="50" cy="40" rx="2.6" ry="2" fill="#2D3142"/>
+  <ellipse cx="50" cy="68" rx="20" ry="17" fill="#B98255"/>
+  <ellipse cx="50" cy="70" rx="10" ry="11" fill="#D9A97F"/>
+  <ellipse cx="27" cy="62" rx="7" ry="10" fill="#B98255" transform="rotate(20 27 62)"/>
+  <ellipse cx="73" cy="62" rx="7" ry="10" fill="#B98255" transform="rotate(-20 73 62)"/>
+  <ellipse cx="34" cy="84" rx="9" ry="6" fill="#B98255"/>
+  <ellipse cx="66" cy="84" rx="9" ry="6" fill="#B98255"/>
+</svg>`;
+
+const SVG_BLOCKS = `<svg viewBox="0 0 100 100">
+  <rect x="30" y="18" width="26" height="26" rx="3" fill="#C96B5A"/>
+  <text x="43" y="37" text-anchor="middle" font-family="Quicksand, sans-serif" font-weight="700" font-size="15" fill="#FDFBF7">A</text>
+  <rect x="16" y="48" width="26" height="26" rx="3" fill="#6B8E9F"/>
+  <text x="29" y="67" text-anchor="middle" font-family="Quicksand, sans-serif" font-weight="700" font-size="15" fill="#FDFBF7">B</text>
+  <rect x="46" y="48" width="26" height="26" rx="3" fill="#7A9A8B"/>
+  <text x="59" y="67" text-anchor="middle" font-family="Quicksand, sans-serif" font-weight="700" font-size="15" fill="#FDFBF7">C</text>
+  <rect x="62" y="24" width="20" height="20" rx="3" fill="#D9B36C" transform="rotate(12 72 34)"/>
+</svg>`;
+
+const SVG_KITE = `<svg viewBox="0 0 100 100">
+  <path d="M50 10 L74 38 L50 66 L26 38Z" fill="#C96B5A"/>
+  <path d="M50 10 L74 38 L50 38Z" fill="#D98A6C"/>
+  <path d="M50 10 V66 M26 38 H74" stroke="#FDFBF7" stroke-width="2"/>
+  <path d="M50 66 Q46 78 52 84 Q58 90 54 94" stroke="#8A7A5F" stroke-width="2.5" fill="none"/>
+  <path d="M46 76 L54 72 M50 88 L58 84" stroke="#6B8E9F" stroke-width="3.4" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_DRUM = `<svg viewBox="0 0 100 100">
+  <path d="M20 16 L46 40 M80 16 L58 40" stroke="#8B5E45" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="18" cy="14" r="5" fill="#B98255"/><circle cx="82" cy="14" r="5" fill="#B98255"/>
+  <path d="M22 46 H78 V72 Q50 82 22 72Z" fill="#C96B5A"/>
+  <ellipse cx="50" cy="46" rx="28" ry="9" fill="#EFE6D8"/>
+  <path d="M30 52 L42 72 M42 52 L30 70 M58 52 L70 72 M70 52 L58 70" stroke="#D9B36C" stroke-width="3" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_ROBOT = `<svg viewBox="0 0 100 100">
+  <path d="M50 10 V18" stroke="#8F8A80" stroke-width="3"/>
+  <circle cx="50" cy="9" r="3.4" fill="#C96B5A"/>
+  <rect x="34" y="18" width="32" height="26" rx="6" fill="#A9A49B"/>
+  <circle cx="43" cy="30" r="4" fill="#6B8E9F"/><circle cx="57" cy="30" r="4" fill="#6B8E9F"/>
+  <path d="M44 38 H56" stroke="#2D3142" stroke-width="2.5" stroke-linecap="round"/>
+  <rect x="30" y="48" width="40" height="30" rx="6" fill="#BCB8AF"/>
+  <rect x="42" y="54" width="16" height="12" rx="2" fill="#7A9A8B"/>
+  <rect x="16" y="50" width="10" height="22" rx="5" fill="#A9A49B"/>
+  <rect x="74" y="50" width="10" height="22" rx="5" fill="#A9A49B"/>
+  <rect x="35" y="80" width="11" height="10" rx="3" fill="#A9A49B"/>
+  <rect x="54" y="80" width="11" height="10" rx="3" fill="#A9A49B"/>
+</svg>`;
+
+const SVG_PUZZLE = `<svg viewBox="0 0 100 100">
+  <path d="M18 30 H40 Q38 22 44 20 Q52 18 52 26 Q52 30 48 30 H70 V52 Q78 50 80 56 Q82 64 74 64 Q70 64 70 60 V82 H18Z" fill="#7A9A8B"/>
+  <path d="M70 30 H48 Q52 30 52 26 Q52 18 44 20 Q38 22 40 30 H18 V52 Q10 50 8 56 Q6 64 14 64 Q18 64 18 60" fill="none"/>
+  <rect x="52" y="12" width="30" height="0" fill="none"/>
+  <path d="M70 30 V52 Q78 50 80 56 Q82 64 74 64 Q70 64 70 60 V82 H48 Q50 90 44 92 Q36 94 36 86 Q36 82 40 82" fill="none" stroke="#6B8A7B" stroke-width="2"/>
+</svg>`;
+
+const SVG_DINOSAUR = `<svg viewBox="0 0 100 100">
+  <polygon points="34,38 40,28 46,38" fill="#6B8A7B"/>
+  <polygon points="46,34 52,24 58,34" fill="#6B8A7B"/>
+  <polygon points="58,36 64,27 70,36" fill="#6B8A7B"/>
+  <ellipse cx="50" cy="56" rx="27" ry="19" fill="#7A9A8B"/>
+  <path d="M24 60 Q8 64 6 76 Q18 76 28 68Z" fill="#7A9A8B"/>
+  <circle cx="76" cy="42" r="13" fill="#7A9A8B"/>
+  <ellipse cx="84" cy="47" rx="8" ry="5" fill="#A8C0A0"/>
+  <circle cx="78" cy="38" r="2.4" fill="#2D3142"/>
+  <rect x="36" y="70" width="10" height="16" rx="4" fill="#6B8A7B"/>
+  <rect x="56" y="70" width="10" height="16" rx="4" fill="#6B8A7B"/>
+  <ellipse cx="46" cy="58" rx="4" ry="3" fill="#A8C0A0"/>
+  <ellipse cx="58" cy="62" rx="3.4" ry="2.6" fill="#A8C0A0"/>
+</svg>`;
+
+const SVG_BALLOON = `<svg viewBox="0 0 100 100">
+  <ellipse cx="50" cy="38" rx="24" ry="28" fill="#C96B5A"/>
+  <ellipse cx="42" cy="28" rx="7" ry="10" fill="#D98A6C" transform="rotate(-16 42 28)"/>
+  <polygon points="46,64 54,64 50,72" fill="#A34F4F"/>
+  <path d="M50 72 Q44 80 50 86 Q56 92 52 96" stroke="#8A7A5F" stroke-width="2.5" fill="none"/>
+</svg>`;
+
+const SVG_SWING = `<svg viewBox="0 0 100 100">
+  <path d="M16 88 L34 16 H66 L84 88" stroke="#B98255" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M34 16 H66" stroke="#8B5E45" stroke-width="6" stroke-linecap="round"/>
+  <path d="M42 18 V62 M58 18 V62" stroke="#8A7A5F" stroke-width="3"/>
+  <rect x="36" y="62" width="28" height="7" rx="3" fill="#C96B5A"/>
+</svg>`;
+
+const SVG_SLIDE = `<svg viewBox="0 0 100 100">
+  <path d="M22 22 V78 M34 22 V60" stroke="#A9A49B" stroke-width="4"/>
+  <path d="M22 30 H34 M22 42 H34 M22 54 H34" stroke="#A9A49B" stroke-width="3.4"/>
+  <path d="M28 18 H40 Q44 18 46 24 Q56 56 84 74 Q88 78 84 82 Q60 84 44 66 Q30 50 26 24Z" fill="#C96B5A"/>
+  <path d="M84 82 Q60 84 44 66" stroke="#A34F4F" stroke-width="3" fill="none"/>
+</svg>`;
+
+/* ── Przeciwieństwa ── */
+
+const SVG_BIG = `<svg viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="38" fill="#6B8E9F"/>
+  <circle cx="50" cy="50" r="38" fill="none" stroke="#567483" stroke-width="3"/>
+</svg>`;
+const SVG_SMALL = `<svg viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="11" fill="#6B8E9F"/>
+  <circle cx="50" cy="50" r="11" fill="none" stroke="#567483" stroke-width="2"/>
+</svg>`;
+const SVG_HOT = `<svg viewBox="0 0 100 100">
+  <circle cx="38" cy="30" r="12" fill="#D9B36C"/>
+  <g stroke="#D9B36C" stroke-width="3.4" stroke-linecap="round">
+    <path d="M38 10 V16 M38 44 V50 M18 30 H24 M52 30 H58 M24 16 L28 20 M48 40 L52 44 M52 16 L48 20 M24 44 L28 40"/>
+  </g>
+  <rect x="66" y="18" width="12" height="52" rx="6" fill="#EFE6D8" stroke="#D9CBB4" stroke-width="2"/>
+  <circle cx="72" cy="78" r="10" fill="#C96B5A"/>
+  <rect x="68" y="28" width="8" height="46" rx="4" fill="#C96B5A"/>
+</svg>`;
+const SVG_COLD = `<svg viewBox="0 0 100 100">
+  <g stroke="#8FB0BE" stroke-width="3.4" stroke-linecap="round">
+    <path d="M34 12 V48 M19 21 L49 39 M49 21 L19 39"/>
+    <path d="M34 12 L30 17 M34 12 L38 17 M34 48 L30 43 M34 48 L38 43"/>
+  </g>
+  <rect x="66" y="18" width="12" height="52" rx="6" fill="#EFE6D8" stroke="#D9CBB4" stroke-width="2"/>
+  <circle cx="72" cy="78" r="10" fill="#6B8E9F"/>
+  <rect x="68" y="54" width="8" height="20" rx="4" fill="#6B8E9F"/>
+</svg>`;
+const SVG_HAPPY = `<svg viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="32" fill="#D9B36C"/>
+  <circle cx="39" cy="43" r="4" fill="#2D3142"/>
+  <circle cx="61" cy="43" r="4" fill="#2D3142"/>
+  <path d="M34 58 Q50 72 66 58" stroke="#2D3142" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+  <circle cx="31" cy="54" r="4.5" fill="#D98A6C" opacity="0.55"/>
+  <circle cx="69" cy="54" r="4.5" fill="#D98A6C" opacity="0.55"/>
+</svg>`;
+const SVG_SAD = `<svg viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="32" fill="#8FB0BE"/>
+  <circle cx="39" cy="44" r="4" fill="#2D3142"/>
+  <circle cx="61" cy="44" r="4" fill="#2D3142"/>
+  <path d="M36 66 Q50 56 64 66" stroke="#2D3142" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+  <path d="M64 50 Q66 58 62 62 Q58 58 60 52Z" fill="#6B8E9F"/>
+</svg>`;
+const SVG_DAY = `<svg viewBox="0 0 100 100">
+  <circle cx="50" cy="44" r="16" fill="#D9C25F"/>
+  <g stroke="#D9C25F" stroke-width="4" stroke-linecap="round">
+    <path d="M50 16 V24 M22 44 H30 M70 44 H78 M30 24 L36 30 M70 24 L64 30"/>
+  </g>
+  <path d="M12 76 H88" stroke="#7A9A8B" stroke-width="5" stroke-linecap="round"/>
+  <path d="M24 76 Q28 66 36 70 M62 70 Q70 64 76 76" stroke="#7A9A8B" stroke-width="3.4" fill="none" stroke-linecap="round"/>
+</svg>`;
+const SVG_NIGHT = `<svg viewBox="0 0 100 100">
+  <rect x="12" y="14" width="76" height="72" rx="14" fill="#46564C"/>
+  <path d="M58 28 A22 22 0 1 0 58 70 A17 17 0 1 1 58 28Z" fill="#D9C25F"/>
+  <circle cx="70" cy="32" r="2.4" fill="#EFE6D8"/>
+  <circle cx="76" cy="52" r="3" fill="#EFE6D8"/>
+  <circle cx="68" cy="70" r="2" fill="#EFE6D8"/>
+  <circle cx="26" cy="30" r="2" fill="#EFE6D8"/>
+</svg>`;
+const SVG_FAST = `<svg viewBox="0 0 100 100">
+  <path d="M8 36 H30 M4 48 H26 M10 60 H30" stroke="#B3A78F" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="58" cy="50" rx="24" ry="15" fill="#A5937E"/>
+  <circle cx="80" cy="42" r="9" fill="#A5937E"/>
+  <ellipse cx="80" cy="30" rx="4" ry="10" fill="#A5937E" transform="rotate(-30 80 30)"/>
+  <ellipse cx="88" cy="34" rx="3.4" ry="8" fill="#A5937E" transform="rotate(-14 88 34)"/>
+  <circle cx="84" cy="40" r="2" fill="#2D3142"/>
+  <circle cx="38" cy="52" r="6" fill="#FDFBF7"/>
+  <path d="M46 62 Q56 68 68 64 M76 58 Q82 60 86 56" stroke="#8F7D68" stroke-width="5" stroke-linecap="round" fill="none"/>
+</svg>`;
+const SVG_SLOW = `<svg viewBox="0 0 100 100">
+  <circle cx="46" cy="52" r="22" fill="#C9975F"/>
+  <path d="M46 34 Q58 36 60 48 Q60 60 48 60 Q40 60 40 52 Q40 46 46 46 Q51 46 51 51" stroke="#B07F45" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M24 66 Q16 64 12 56 M22 70 Q30 60 24 52" fill="none"/>
+  <path d="M66 60 Q76 58 80 48" stroke="#A8A868" stroke-width="8" fill="none" stroke-linecap="round"/>
+  <circle cx="82" cy="44" r="6" fill="#A8A868"/>
+  <path d="M80 40 Q78 34 74 32 M85 39 Q86 33 90 31" stroke="#A8A868" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M20 76 H84" stroke="#B3A78F" stroke-width="4" stroke-linecap="round"/>
+</svg>`;
+const SVG_CLEAN = `<svg viewBox="0 0 100 100">
+  <path d="M32 26 L44 20 Q50 26 56 20 L68 26 L76 40 L64 46 L64 78 H36 V46 L24 40Z" fill="#8FB0BE"/>
+  <path d="M50 40 L52 46 L58 48 L52 50 L50 56 L48 50 L42 48 L48 46Z" fill="#FDFBF7"/>
+  <path d="M28 60 L29 63 L32 64 L29 65 L28 68 L27 65 L24 64 L27 63Z" fill="#D7E3E8"/>
+  <path d="M74 56 L75 59 L78 60 L75 61 L74 64 L73 61 L70 60 L73 59Z" fill="#D7E3E8"/>
+</svg>`;
+const SVG_DIRTY = `<svg viewBox="0 0 100 100">
+  <path d="M32 26 L44 20 Q50 26 56 20 L68 26 L76 40 L64 46 L64 78 H36 V46 L24 40Z" fill="#8FB0BE"/>
+  <ellipse cx="46" cy="54" rx="7" ry="5" fill="#8B6A48"/>
+  <ellipse cx="58" cy="66" rx="5" ry="4" fill="#6E5138"/>
+  <circle cx="40" cy="68" r="3.4" fill="#8B6A48"/>
+  <circle cx="60" cy="38" r="3" fill="#6E5138"/>
+</svg>`;
+
 /* ── Pakiety słów ─────────────────────────────────────────────
  * pl służy tylko podpowiedzi dla rodzica/dziecka czytającego —
  * dziecko słyszy wyłącznie angielski. */
@@ -1271,6 +1853,126 @@ const THEMES = [
     coverSvg: SHAPES[2].svg,
     words: SHAPES,
   },
+  {
+    id: 'body',
+    pl: 'Ciało',
+    en: 'My body',
+    coverSvg: SVG_HEAD,
+    words: [
+      { en: 'head',   pl: 'głowa',  svg: SVG_HEAD },
+      { en: 'eyes',   pl: 'oczy',   svg: SVG_EYES },
+      { en: 'nose',   pl: 'nos',    svg: SVG_NOSE },
+      { en: 'mouth',  pl: 'buzia',  svg: SVG_MOUTH },
+      { en: 'ears',   pl: 'uszy',   svg: SVG_EARS },
+      { en: 'hair',   pl: 'włosy',  svg: SVG_HAIR },
+      { en: 'hands',  pl: 'ręce',   svg: SVG_HANDS },
+      { en: 'feet',   pl: 'stopy',  svg: SVG_FEET },
+      { en: 'legs',   pl: 'nogi',   svg: SVG_LEGS },
+      { en: 'arm',    pl: 'ramię',  svg: SVG_ARMS },
+      { en: 'tummy',  pl: 'brzuszek', svg: SVG_TUMMY },
+      { en: 'teeth',  pl: 'zęby',   svg: SVG_TEETH },
+    ],
+  },
+  {
+    id: 'food',
+    pl: 'Jedzenie',
+    en: 'Food',
+    coverSvg: SVG_BREAD,
+    words: [
+      { en: 'bread',  pl: 'chleb',   svg: SVG_BREAD },
+      { en: 'milk',   pl: 'mleko',   svg: SVG_MILK },
+      { en: 'cheese', pl: 'ser',     svg: SVG_CHEESE },
+      { en: 'egg',    pl: 'jajko',   svg: SVG_EGG },
+      { en: 'butter', pl: 'masło',   svg: SVG_BUTTER },
+      { en: 'honey',  pl: 'miód',    svg: SVG_HONEY },
+      { en: 'soup',   pl: 'zupa',    svg: SVG_SOUP },
+      { en: 'pizza',  pl: 'pizza',   svg: SVG_PIZZA },
+      { en: 'cake',   pl: 'ciasto',  svg: SVG_CAKE },
+      { en: 'cookie', pl: 'ciastko', svg: SVG_COOKIE },
+      { en: 'juice',  pl: 'sok',     svg: SVG_JUICE },
+      { en: 'water',  pl: 'woda',    svg: SVG_WATER },
+    ],
+  },
+  {
+    id: 'actions',
+    pl: 'Czynności',
+    en: 'Actions',
+    coverSvg: SVG_RUN,
+    words: [
+      { en: 'run',    pl: 'biegać',  svg: SVG_RUN },
+      { en: 'jump',   pl: 'skakać',  svg: SVG_JUMP },
+      { en: 'walk',   pl: 'chodzić', svg: SVG_WALK },
+      { en: 'eat',    pl: 'jeść',    svg: SVG_EAT },
+      { en: 'drink',  pl: 'pić',     svg: SVG_DRINK },
+      { en: 'sleep',  pl: 'spać',    svg: SVG_SLEEP },
+      { en: 'sing',   pl: 'śpiewać', svg: SVG_SING },
+      { en: 'dance',  pl: 'tańczyć', svg: SVG_DANCE },
+      { en: 'read',   pl: 'czytać',  svg: SVG_READ },
+      { en: 'draw',   pl: 'rysować', svg: SVG_DRAW },
+      { en: 'wash',   pl: 'myć',     svg: SVG_WASH },
+      { en: 'swim',   pl: 'pływać',  svg: SVG_SWIM },
+    ],
+  },
+  {
+    id: 'weather',
+    pl: 'Pogoda',
+    en: 'Weather',
+    coverSvg: SVG_RAINBOW,
+    words: [
+      { en: 'sun',     pl: 'słońce',  svg: SVG_SUN },
+      { en: 'cloud',   pl: 'chmura',  svg: SVG_CLOUD },
+      { en: 'rain',    pl: 'deszcz',  svg: SVG_RAIN },
+      { en: 'snow',    pl: 'śnieg',   svg: SVG_SNOW },
+      { en: 'wind',    pl: 'wiatr',   svg: SVG_WIND },
+      { en: 'storm',   pl: 'burza',   svg: SVG_STORM },
+      { en: 'rainbow', pl: 'tęcza',   svg: SVG_RAINBOW },
+      { en: 'fog',     pl: 'mgła',    svg: SVG_FOG },
+      { en: 'ice',     pl: 'lód',     svg: SVG_ICE },
+      { en: 'sky',     pl: 'niebo',   svg: SVG_SKY },
+      { en: 'moon',    pl: 'księżyc', svg: SVG_MOON },
+      { en: 'star',    pl: 'gwiazda', svg: SVG_STAR },
+    ],
+  },
+  {
+    id: 'toys',
+    pl: 'Zabawki',
+    en: 'Toys',
+    coverSvg: SVG_TEDDY,
+    words: [
+      { en: 'ball',     pl: 'piłka',    svg: SVG_BALL },
+      { en: 'doll',     pl: 'lalka',    svg: SVG_DOLL },
+      { en: 'teddy',    pl: 'miś przytulanka', svg: SVG_TEDDY },
+      { en: 'blocks',   pl: 'klocki',   svg: SVG_BLOCKS },
+      { en: 'kite',     pl: 'latawiec', svg: SVG_KITE },
+      { en: 'drum',     pl: 'bębenek',  svg: SVG_DRUM },
+      { en: 'robot',    pl: 'robot',    svg: SVG_ROBOT },
+      { en: 'puzzle',   pl: 'puzzle',   svg: SVG_PUZZLE },
+      { en: 'dinosaur', pl: 'dinozaur', svg: SVG_DINOSAUR },
+      { en: 'balloon',  pl: 'balon',    svg: SVG_BALLOON },
+      { en: 'swing',    pl: 'huśtawka', svg: SVG_SWING },
+      { en: 'slide',    pl: 'zjeżdżalnia', svg: SVG_SLIDE },
+    ],
+  },
+  {
+    id: 'opposites',
+    pl: 'Przeciwieństwa',
+    en: 'Opposites',
+    coverSvg: SVG_HOT,
+    words: [
+      { en: 'big',    pl: 'duży',     svg: SVG_BIG },
+      { en: 'small',  pl: 'mały',     svg: SVG_SMALL },
+      { en: 'hot',    pl: 'gorący',   svg: SVG_HOT },
+      { en: 'cold',   pl: 'zimny',    svg: SVG_COLD },
+      { en: 'happy',  pl: 'wesoły',   svg: SVG_HAPPY },
+      { en: 'sad',    pl: 'smutny',   svg: SVG_SAD },
+      { en: 'day',    pl: 'dzień',    svg: SVG_DAY },
+      { en: 'night',  pl: 'noc',      svg: SVG_NIGHT },
+      { en: 'fast',   pl: 'szybki',   svg: SVG_FAST },
+      { en: 'slow',   pl: 'wolny',    svg: SVG_SLOW },
+      { en: 'clean',  pl: 'czysty',   svg: SVG_CLEAN },
+      { en: 'dirty',  pl: 'brudny',   svg: SVG_DIRTY },
+    ],
+  },
 ];
 
 /* Pary „co do czego pasuje" — obie karty podpisane po angielsku. */
@@ -1297,6 +1999,13 @@ const PAIRS = [
   { id: 'book-glasses', a: { en: 'book', pl: 'książka', svg: SVG_BOOK },   b: { en: 'glasses', pl: 'okulary', svg: SVG_GLASSES } },
   { id: 'hammer-nail', a: { en: 'hammer', pl: 'młotek', svg: SVG_HAMMER }, b: { en: 'nail',   pl: 'gwóźdź',  svg: SVG_NAIL } },
   { id: 'soap-towel', a: { en: 'soap',  pl: 'mydło',    svg: SVG_SOAP },   b: { en: 'towel',  pl: 'ręcznik', svg: SVG_TOWEL } },
+  /* Prawdziwe przeciwieństwa */
+  { id: 'big-small',   a: { en: 'big',   pl: 'duży',   svg: SVG_BIG },   b: { en: 'small', pl: 'mały',   svg: SVG_SMALL } },
+  { id: 'hot-cold',    a: { en: 'hot',   pl: 'gorący', svg: SVG_HOT },   b: { en: 'cold',  pl: 'zimny',  svg: SVG_COLD } },
+  { id: 'happy-sad',   a: { en: 'happy', pl: 'wesoły', svg: SVG_HAPPY }, b: { en: 'sad',   pl: 'smutny', svg: SVG_SAD } },
+  { id: 'day-night',   a: { en: 'day',   pl: 'dzień',  svg: SVG_DAY },   b: { en: 'night', pl: 'noc',    svg: SVG_NIGHT } },
+  { id: 'fast-slow',   a: { en: 'fast',  pl: 'szybki', svg: SVG_FAST },  b: { en: 'slow',  pl: 'wolny',  svg: SVG_SLOW } },
+  { id: 'clean-dirty', a: { en: 'clean', pl: 'czysty', svg: SVG_CLEAN }, b: { en: 'dirty', pl: 'brudny', svg: SVG_DIRTY } },
 ];
 
 /* ── Pudełka: słowa tematu w porcjach po 6, odblokowywane po kolei ── */
@@ -1339,4 +2048,8 @@ const UI = {
     <circle cx="16" cy="12" r="4.5" stroke="#7A6A54" stroke-width="1.8"/>
   </svg>`,
   home: `<svg viewBox="0 0 24 24" fill="none"><path d="M4 11.5 12 4l8 7.5M6.5 10v9h11v-9" stroke="#7A6A54" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  repeat: `<svg viewBox="0 0 24 24" fill="none">
+    <path d="M6 8 Q6 4.5 9.5 4.5 H17 M17 4.5 L14 1.8 M17 4.5 L14 7.2" stroke="#7A6A54" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M18 16 Q18 19.5 14.5 19.5 H7 M7 19.5 L10 16.8 M7 19.5 L10 22.2" stroke="#7A6A54" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`,
 };

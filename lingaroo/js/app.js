@@ -62,28 +62,95 @@
     };
   })();
 
-  /* ── Postępy aktywnego profilu: ile lekcji tematu jest ukończonych ──
-   * Ukończenie sesji Znajdź słowo albo Tablicy na bieżącej lekcji
-   * otwiera następną. Powtarzanie ukończonych lekcji niczego nie psuje —
-   * powtórka to w Montessori cel, nie strata czasu. */
+  /* ── Postępy aktywnego profilu ──
+   * Lekcję otwierającą następną domyka pełny cykl trzech spotkań ze
+   * słowami: obejrzenie kart (seen) + Znajdź słowo (quiz) + Tablica (say).
+   * Osobno dojrzewa utrwalenie: słowo jest „pewne", gdy padło poprawnie
+   * w dwóch różnych dniach — lekcja z samymi pewnymi słowami dostaje
+   * pełną łezkę. Powtarzanie niczego nie psuje — powtórka to w Montessori
+   * cel, nie strata czasu. */
   const Progress = (() => {
     const key = () => {
       const p = Profiles.active();
       return 'lingaroo.progress' + (p ? '.' + p.id : '');
     };
-    const read = () => { try { return JSON.parse(localStorage.getItem(key()) || '{}'); } catch (e) { return {}; } };
-    const write = o => { try { localStorage.setItem(key(), JSON.stringify(o)); } catch (e) {} };
+    const load = () => {
+      let o = null;
+      try { o = JSON.parse(localStorage.getItem(key()) || 'null'); } catch (e) {}
+      if (!o) return { v: 2, themes: {}, words: {} };
+      if (!o.v) {
+        /* Migracja ze starego kształtu {temat: n}: n pierwszych lekcji
+         * dostaje pełny cykl, utrwalenie zaczyna się od zera. */
+        const themes = {};
+        Object.entries(o).forEach(([tid, n]) => {
+          themes[tid] = { lessons: Array.from({ length: n | 0 }, () => ({ seen: 1, quiz: 1, say: 1 })) };
+        });
+        return { v: 2, themes, words: {} };
+      }
+      return o;
+    };
+    const save = o => { try { localStorage.setItem(key(), JSON.stringify(o)); } catch (e) {} };
+    const lessonOf = (o, tid, lvl) => {
+      const t = o.themes[tid] || (o.themes[tid] = { lessons: [] });
+      return t.lessons[lvl] || (t.lessons[lvl] = {});
+    };
+    const isFull = l => !!(l && l.seen && l.quiz && l.say);
+    const today = () => new Date().toISOString().slice(0, 10);
     return {
-      done: id => read()[id] | 0,
-      /* Zalicza lekcję `level`; zwraca true, gdy właśnie otworzyła kolejną. */
-      complete(id, level) {
-        const o = read();
-        if (level === (o[id] | 0)) { o[id] = level + 1; write(o); return true; }
-        return false;
+      done(tid) {
+        const o = load();
+        const t = o.themes[tid];
+        if (!t) return 0;
+        let n = 0;
+        while (isFull(t.lessons[n])) n++;
+        return n;
+      },
+      flags(tid, lvl) {
+        const o = load();
+        const l = (o.themes[tid] && o.themes[tid].lessons[lvl]) || {};
+        return { seen: !!l.seen, quiz: !!l.quiz, say: !!l.say };
+      },
+      /* Odhacza aktywność; zwraca true, gdy właśnie domknęła cykl lekcji. */
+      mark(tid, lvl, act) {
+        const o = load();
+        const l = lessonOf(o, tid, lvl);
+        const before = isFull(l);
+        l[act] = 1;
+        save(o);
+        return !before && isFull(l);
+      },
+      /* Utrwalanie: liczy różne dni, w których słowo padło poprawnie. */
+      wordCorrect(en) {
+        const o = load();
+        const w = o.words[en] || (o.words[en] = { d: '', n: 0 });
+        const t = today();
+        if (w.d !== t) { w.d = t; w.n = Math.min(9, (w.n | 0) + 1); }
+        save(o);
+      },
+      wordDays(en) { const o = load(); return ((o.words[en] || {}).n) | 0; },
+      wordLast(en) { const o = load(); return (o.words[en] || {}).d || ''; },
+      masteredLesson(tid, lvl) {
+        const box = themeBoxes(themeById(tid))[lvl] || [];
+        return box.length > 0 && box.every(w => this.wordDays(w.en) >= 2);
       },
       reset() { try { localStorage.removeItem(key()); } catch (e) {} },
     };
   })();
+
+  /* Skorowidz słów (do Powtórki): en → słowo + temat + lekcja. */
+  const WORD_INDEX = {};
+  THEMES.forEach(t => themeBoxes(t).forEach((box, lvl) => box.forEach(w => {
+    if (!WORD_INDEX[w.en]) WORD_INDEX[w.en] = { ...w, theme: t.id, level: lvl };
+  })));
+  /* Słowa z lekcji o pełnym cyklu — pula Powtórki. */
+  function reviewPool() {
+    const pool = [];
+    THEMES.forEach(t => {
+      const n = Progress.done(t.id);
+      themeBoxes(t).forEach((box, lvl) => { if (lvl < n) pool.push(...box); });
+    });
+    return pool;
+  }
   const shuffle = arr => {
     const a = arr.slice();
     for (let i = a.length - 1; i > 0; i--) {
@@ -255,6 +322,11 @@
             <div class="label">Tablica<small>mówię z LingaRoo</small></div>
             <div class="countpill">${lessonsDone()}/${lessonsTotal()}</div>
           </button>
+          ${reviewPool().length >= 6 ? `
+          <button class="modetile" data-go="review">
+            <div class="icon">${UI.repeat}</div>
+            <div class="label">Powtórka<small>słowa, które już znam</small></div>
+          </button>` : ''}
         </div>
         <div id="ttsNote"></div>
       </div>`;
@@ -272,10 +344,16 @@
 
   /* ── Wybór tematu ── */
   const leafSvg = (fill, stroke) => `<svg viewBox="0 0 24 24"><path d="M12 3c5 3 7 7 7 11a7 7 0 1 1-14 0c0-4 2-8 7-11Z" fill="${fill}"${stroke ? ` stroke="${stroke}" stroke-width="1.8"` : ''}/></svg>`;
+  /* Łezka lekcji: kontur = przed cyklem, jasna = cykl domknięty,
+   * pełna szałwia = wszystkie słowa utrwalone w dwóch różnych dniach. */
   function themeLeaves(t) {
     const done = Math.min(Progress.done(t.id), themeBoxes(t).length);
-    return `<div class="boxleaves">${themeBoxes(t).map((_, i) =>
-      `<div class="leaf">${i < done ? leafSvg('var(--sage)') : leafSvg('var(--paper)', 'var(--dim-txt)')}</div>`).join('')}
+    return `<div class="boxleaves">${themeBoxes(t).map((_, i) => {
+      if (i >= done) return `<div class="leaf">${leafSvg('var(--paper)', 'var(--dim-txt)')}</div>`;
+      return `<div class="leaf">${Progress.masteredLesson(t.id, i)
+        ? leafSvg('var(--sage)')
+        : leafSvg('var(--sage-pale)', 'var(--sage)')}</div>`;
+    }).join('')}
       <span class="cnt">${done}/${themeBoxes(t).length}</span></div>`;
   }
   const lessonsDone = () => THEMES.reduce((n, t) => n + Math.min(Progress.done(t.id), themeBoxes(t).length), 0);
@@ -312,11 +390,24 @@
         <div class="themes list">
           ${boxes.map((box, i) => {
             const state = i < done ? 'done' : i === done ? 'open' : 'locked';
+            let sub = 'najpierw poprzednia lekcja';
+            if (state === 'done') {
+              sub = Progress.masteredLesson(theme.id, i)
+                ? 'utrwalona — brawo!'
+                : 'ukończona — powtórki ją utrwalą';
+            } else if (state === 'open') {
+              const f = Progress.flags(theme.id, i);
+              const left = [];
+              if (!f.seen) left.push('słówka');
+              if (!f.quiz) left.push('Znajdź słowo');
+              if (!f.say) left.push('Tablica');
+              sub = left.length === 3 ? box.length + ' słów' : 'zostało: ' + left.join(', ');
+            }
             return `
             <button class="modetile ${state === 'locked' ? 'locked' : ''}" ${state === 'locked' ? '' : `data-go="${mode}/${theme.id}/${i}"`}>
               <div class="icon">${box[0].svg}</div>
               <div class="label">Lekcja ${i + 1}
-                <small>${state === 'done' ? 'ukończona — możesz powtarzać' : state === 'open' ? box.length + ' słów' : 'najpierw poprzednia lekcja'}</small>
+                <small>${sub}</small>
               </div>
               ${state === 'done' ? `<div class="donebadge">${UI.check}</div>` : ''}
             </button>`;
@@ -359,10 +450,21 @@
             <div class="dots">${words.map((_, i) => `<div class="dot ${i === cardIdx ? 'on' : ''}"></div>`).join('')}</div>
             <button class="woodbtn" id="next" ${cardIdx === words.length - 1 ? 'disabled' : ''} aria-label="Następne"><div>${UI.arrowRight}</div></button>
           </div>
+          <div class="quizmsg" id="seenNote"></div>
           <button class="softbtn" data-go="quiz/${theme.id}/${level}">Znajdź słowo</button>
         </div>
       </div>`;
     wire();
+    /* Dotarcie do ostatniej karty odhacza „obejrzane" w cyklu lekcji. */
+    if (cardIdx === words.length - 1) {
+      const closed = Progress.mark(theme.id, level, 'seen');
+      if (closed) {
+        Sound.chime();
+        const note = document.getElementById('seenNote');
+        note.textContent = 'Otworzyła się nowa lekcja!';
+        note.style.color = 'var(--sage)';
+      }
+    }
     /* Dotknięcie karty zawsze daje widoczną odpowiedź — dźwięk nigdy nie
      * jest jedynym potwierdzeniem, że coś się stało. */
     const card = document.getElementById('card');
@@ -385,12 +487,17 @@
   }
 
   /* ── Znajdź słowo: pokaż trzy karty, poproś o jedną ──
-   * Błędny wybór tylko lekko kołysze kartą — dziecko poprawia się samo. */
+   * Błędny wybór tylko lekko kołysze kartą — dziecko poprawia się samo.
+   * Pierwsze przejście: słuchanie (lektor pyta). Powtórki tej samej lekcji
+   * ćwiczą czytanie: napis→obrazek i obrazek→napis, bez podpowiedzi głosem. */
   let quiz = null;
   function newQuiz(themeId, level) {
     const theme = themeById(themeId);
     const words = themeBoxes(theme)[level] || theme.words.slice(0, BOX_SIZE);
-    return { theme, level, words, round: 0, total: 5, order: shuffle(words), locked: false };
+    const replay = Progress.flags(theme.id, level).quiz;
+    const total = 5;
+    const variants = Array.from({ length: total }, (_, i) => (replay ? (i % 2 ? 'pic2word' : 'word2pic') : 'listen'));
+    return { theme, level, words, round: 0, total, variants, order: shuffle(words), locked: false };
   }
   function quizRoundData() {
     const target = quiz.order[quiz.round % quiz.order.length];
@@ -401,25 +508,30 @@
     if (!guardLevel('cards', themeId, level)) return;
     if (fresh || !quiz || quiz.theme.id !== themeId || quiz.level !== level) quiz = newQuiz(themeId, level);
     if (quiz.round >= quiz.total) {
-      renderEnd(`quiz/${themeId}/${level}`, { themeId, level, backTo: `boxes/cards/${themeId}` });
+      renderEnd(`quiz/${themeId}/${level}`, { themeId, level, activity: 'quiz', backTo: `boxes/cards/${themeId}` });
       return;
     }
     const { target, options } = quizRoundData();
+    const variant = quiz.variants[quiz.round];
     quiz.current = target;
+    quiz.variant = variant;
     quiz.locked = false;
+    const promptHtml = variant === 'pic2word'
+      ? `<div class="prompt"><div class="minicard">${target.svg}</div></div>`
+      : `<div class="prompt">
+           <button class="speaker" id="replay" aria-label="Posłuchaj jeszcze raz">${UI.speaker}</button>
+           <span>${target.en}</span>
+         </div>`;
+    const optionsHtml = variant === 'pic2word'
+      ? options.map(o => `<button class="wordcard textcard" data-word="${o.en}" aria-label="${o.en}"><span>${o.en}</span></button>`).join('')
+      : options.map(o => `<button class="wordcard" data-word="${o.en}" aria-label="${o.en}"><div class="art">${o.svg}</div></button>`).join('');
     app.innerHTML = `
       <div class="screen">
         ${topbar(quiz.theme.pl)}
         <div class="stage">
-          <div class="prompt">
-            <button class="speaker" id="replay" aria-label="Posłuchaj jeszcze raz">${UI.speaker}</button>
-            <span>${target.en}</span>
-          </div>
+          ${promptHtml}
           <div class="choices">
-            ${options.map(o => `
-              <button class="wordcard" data-word="${o.en}" aria-label="${o.en}">
-                <div class="art">${o.svg}</div>
-              </button>`).join('')}
+            ${optionsHtml}
           </div>
           <div class="quizmsg" id="quizMsg"></div>
           <div class="teacher"><div class="fig" id="fig" data-roo="hero">${TEACHER_SVG}</div></div>
@@ -428,8 +540,12 @@
       </div>`;
     wire();
     const ask = () => Sound.speak(`Where is the ${target.en}?`);
-    later(ask, 350);
-    document.getElementById('replay').addEventListener('click', ask);
+    /* Warianty czytane obywają się bez lektora — to jest ich sens. */
+    if (variant === 'listen') later(ask, 350);
+    const replayBtn = document.getElementById('replay');
+    if (replayBtn) replayBtn.addEventListener('click', () => {
+      variant === 'listen' ? ask() : Sound.speak(target.en);
+    });
     app.querySelectorAll('[data-word]').forEach(btn => {
       btn.addEventListener('click', () => {
         if (quiz.locked) return;
@@ -437,6 +553,7 @@
           quiz.locked = true;
           Sound.chime();
           Sound.speak(target.en);
+          Progress.wordCorrect(target.en);
           btn.classList.add('matched');
           document.getElementById('fig').classList.add('hop');
           later(() => { quiz.round++; renderQuiz(themeId, level); }, 1400);
@@ -457,6 +574,79 @@
             fig.classList.remove('nod');
             if (msg.textContent === `Let's try that again`) msg.textContent = '';
           }, 1600);
+        }
+      });
+    });
+  }
+
+  /* ── Powtórka: słowa z ukończonych lekcji, najpierw najsłabiej utrwalone ──
+   * Miks form: słuchanie→obrazek i obrazek→napis. Niekończące się źródło
+   * powtórek z materiału, który dziecko już zna. */
+  let review = null;
+  function newReview() {
+    const pool = reviewPool();
+    if (pool.length < 6) return null;
+    const ranked = shuffle(pool).sort((a, b) =>
+      (Progress.wordDays(a.en) - Progress.wordDays(b.en)) ||
+      (Progress.wordLast(a.en) < Progress.wordLast(b.en) ? -1 : 1));
+    return { pool, targets: ranked.slice(0, 5), round: 0, total: 5, locked: false };
+  }
+  function renderReview(fresh) {
+    if (fresh || !review) review = newReview();
+    if (!review) { goto('home'); return; }
+    if (review.round >= review.total) { renderEnd('review'); return; }
+    const target = review.targets[review.round];
+    const variant = review.round % 2 ? 'pic2word' : 'listen';
+    const others = shuffle(review.pool.filter(w => w.en !== target.en))
+      .filter((w, i, arr) => arr.findIndex(x => x.en === w.en) === i)
+      .slice(0, 2);
+    const options = shuffle([target, ...others]);
+    review.current = target;
+    review.variant = variant;
+    review.locked = false;
+    const promptHtml = variant === 'pic2word'
+      ? `<div class="prompt"><div class="minicard">${target.svg}</div></div>`
+      : `<div class="prompt">
+           <button class="speaker" id="replay" aria-label="Posłuchaj jeszcze raz">${UI.speaker}</button>
+           <span>${target.en}</span>
+         </div>`;
+    const optionsHtml = variant === 'pic2word'
+      ? options.map(o => `<button class="wordcard textcard" data-word="${o.en}" aria-label="${o.en}"><span>${o.en}</span></button>`).join('')
+      : options.map(o => `<button class="wordcard" data-word="${o.en}" aria-label="${o.en}"><div class="art">${o.svg}</div></button>`).join('');
+    app.innerHTML = `
+      <div class="screen">
+        ${topbar('Powtórka')}
+        <div class="stage">
+          ${promptHtml}
+          <div class="choices">${optionsHtml}</div>
+          <div class="quizmsg" id="quizMsg"></div>
+          <div class="teacher"><div class="fig" id="fig" data-roo="hero">${TEACHER_SVG}</div></div>
+        </div>
+        ${trackHtml(review.round)}
+      </div>`;
+    wire();
+    const ask = () => Sound.speak(`Where is the ${target.en}?`);
+    if (variant === 'listen') later(ask, 350);
+    const replayBtn = document.getElementById('replay');
+    if (replayBtn) replayBtn.addEventListener('click', ask);
+    app.querySelectorAll('[data-word]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (review.locked) return;
+        if (btn.dataset.word === target.en) {
+          review.locked = true;
+          Sound.chime();
+          Sound.speak(target.en);
+          Progress.wordCorrect(target.en);
+          btn.classList.add('matched');
+          document.getElementById('fig').classList.add('hop');
+          later(() => { review.round++; renderReview(); }, 1400);
+        } else {
+          btn.classList.remove('wrong');
+          void btn.offsetWidth;
+          btn.classList.add('wrong');
+          const msg = document.getElementById('quizMsg');
+          msg.textContent = `Let's try that again`;
+          later(() => { btn.classList.remove('wrong'); if (msg.textContent) msg.textContent = ''; }, 1600);
         }
       });
     });
@@ -547,7 +737,7 @@
     if (!guardLevel('say', themeId, level)) return;
     if (fresh || !say || say.theme.id !== themeId || say.level !== level) say = newSay(themeId, level);
     if (say.round >= say.words.length) {
-      renderEnd(`say/${themeId}/${level}`, { themeId, level, backTo: `boxes/say/${themeId}` });
+      renderEnd(`say/${themeId}/${level}`, { themeId, level, activity: 'say', backTo: `boxes/say/${themeId}` });
       return;
     }
     const w = say.words[say.round];
@@ -624,6 +814,7 @@
         if (say.revealed >= letters.length) {
           clearInterval(t);
           Sound.chime();
+          Progress.wordCorrect(w.en);
           /* Po napisaniu słowa kredą LingaRoo czyta je w całości. */
           later(() => Sound.speak(w.en), 350);
           later(() => {
@@ -675,22 +866,29 @@
    * tędy, więc postęp nie ma bocznych ścieżek. */
   function renderEnd(againRoute, completion) {
     Sound.speak('Well done!');
-    let unlockedMsg = '';
+    let msg = 'Brawo, to była dobra zabawa.';
     let nextBtn = '';
     if (completion) {
       const theme = themeById(completion.themeId);
       const total = themeBoxes(theme).length;
-      const opened = Progress.complete(theme.id, completion.level);
-      if (opened) {
+      const closed = Progress.mark(theme.id, completion.level, completion.activity);
+      const flags = Progress.flags(theme.id, completion.level);
+      const missing = [];
+      if (!flags.seen) missing.push(['cards', 'Obejrzyj słówka', 'słówka']);
+      if (!flags.quiz) missing.push(['quiz', 'Znajdź słowo', 'Znajdź słowo']);
+      if (!flags.say) missing.push(['say', 'Tablica', 'Tablica']);
+      if (closed) {
         if (completion.level + 1 < total) {
-          unlockedMsg = 'Otworzyła się nowa lekcja!';
-          /* Nowa lekcja zaczyna się od poznania słówek, nie od zgadywania —
-           * z Tablicy wracamy na Tablicę (tam LingaRoo i tak mówi pierwszy). */
-          const act = againRoute.split('/')[0] === 'say' ? 'say' : 'cards';
-          nextBtn = `<button class="softbtn" data-go="${act}/${completion.themeId}/${completion.level + 1}">Następna lekcja</button>`;
+          msg = 'Otworzyła się nowa lekcja!';
+          /* Nowa lekcja zaczyna się od poznania słówek, nie od zgadywania. */
+          nextBtn = `<button class="softbtn" data-go="cards/${completion.themeId}/${completion.level + 1}">Następna lekcja</button>`;
         } else {
-          unlockedMsg = `Wszystkie lekcje z tematu „${theme.pl}" ukończone!`;
+          msg = `Wszystkie lekcje z tematu „${theme.pl}" ukończone!`;
         }
+      } else if (missing.length) {
+        const first = missing[0];
+        msg = `Do otwarcia następnej lekcji: ${missing.map(m => m[2]).join(' i ')}.`;
+        nextBtn = `<button class="softbtn" data-go="${first[0]}/${completion.themeId}/${completion.level}">${first[1]}</button>`;
       }
     }
     app.innerHTML = `
@@ -700,7 +898,7 @@
           <div class="endpanel">
             <div class="fig" data-roo="hero">${TEACHER_SVG}</div>
             <h2>Well done!</h2>
-            <p>${unlockedMsg || 'Brawo, to była dobra zabawa.'}</p>
+            <p>${msg}</p>
             <div class="endrow">
               <button class="softbtn wood" data-go="${completion ? completion.backTo : 'home'}">${completion ? 'Lekcje' : 'Menu'}</button>
               ${nextBtn || `<button class="softbtn" id="again">${againRoute === 'pairs' ? 'Następne pary' : 'Jeszcze raz'}</button>`}
@@ -716,6 +914,7 @@
       if (p[0] === 'quiz') { renderQuiz(p[1], parseInt(p[2] || '0', 10) || 0, true); }
       else if (p[0] === 'say') { renderSay(p[1], parseInt(p[2] || '0', 10) || 0, true); }
       else if (againRoute === 'pairs') { renderPairs(true); }
+      else if (againRoute === 'review') { renderReview(true); }
       else goto('home');
     });
   }
@@ -866,6 +1065,7 @@
       case 'cards':  renderCards(r.arg, lvl); break;
       case 'quiz':   renderQuiz(r.arg, lvl, true); break;
       case 'pairs':  renderPairs(true); break;
+      case 'review': renderReview(true); break;
       case 'say':    renderSay(r.arg, lvl, true); break;
       case 'gate':   renderGate(); break;
       case 'parent': renderParent(); break;
@@ -885,7 +1085,10 @@
   if (new URLSearchParams(location.search).has('debug')) {
     window.lingaDebug = () => ({
       route: route(),
-      quiz: quiz && { round: quiz.round, level: quiz.level, current: quiz.current && quiz.current.en },
+      quiz: quiz && { round: quiz.round, level: quiz.level, variant: quiz.variant, current: quiz.current && quiz.current.en },
+      review: review && { round: review.round, variant: review.variant, current: review.current && review.current.en, poolSize: review.pool.length },
+      lessonFlags: (t, l) => Progress.flags(t, l),
+      wordDays: en => Progress.wordDays(en),
       say: say && { round: say.round, level: say.level, phase: say.phase, word: say.words[say.round] && say.words[say.round].en },
       pairs: pairs && { matched: [...pairs.matched], picked: pairs.picked, tiles: pairs.tiles.map(t => t.pair) },
       progress: THEMES.reduce((o, t) => (o[t.id] = Progress.done(t.id), o), {}),
