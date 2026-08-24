@@ -499,7 +499,9 @@
   function newQuiz(themeId, level) {
     const theme = themeById(themeId);
     const words = themeBoxes(theme)[level] || theme.words.slice(0, BOX_SIZE);
-    const replay = Progress.flags(theme.id, level).quiz;
+    /* Rundy z napisami tylko przy powtórce lekcji i tylko gdy rodzic
+     * włączył ćwiczenie czytania — gra celuje w dzieci przedczytające. */
+    const replay = Progress.flags(theme.id, level).quiz && Settings.get('reading');
     const total = 5;
     const variants = Array.from({ length: total }, (_, i) => (replay ? (i % 2 ? 'pic2word' : 'word2pic') : 'listen'));
     return { theme, level, words, round: 0, total, variants, order: shuffle(words), locked: false };
@@ -716,7 +718,7 @@
     if (!review) { goto('home'); return; }
     if (review.round >= review.total) { renderEnd('review'); return; }
     const target = review.targets[review.round];
-    const variant = review.round % 2 ? 'pic2word' : 'listen';
+    const variant = (Settings.get('reading') && review.round % 2) ? 'pic2word' : 'listen';
     const others = shuffle(review.pool.filter(w => w.en !== target.en))
       .filter((w, i, arr) => arr.findIndex(x => x.en === w.en) === i)
       .slice(0, 2);
@@ -1107,6 +1109,10 @@
           <div class="setrow">
             <div class="txt">Polskie podpowiedzi<small>Małe polskie podpisy pod angielskimi słowami.</small></div>
             <button class="toggle ${Settings.get('plHints') ? 'on' : ''}" data-set="plHints" role="switch" aria-checked="${Settings.get('plHints')}" aria-label="Polskie podpowiedzi"></button>
+          </div>
+          <div class="setrow">
+            <div class="txt">Ćwiczenie czytania<small>Powtórki pytają też napisami (napis→obrazek i obrazek→napis). Włącz, gdy dziecko zaczyna czytać — wyłączone: wszystkie rundy głosem i obrazkami.</small></div>
+            <button class="toggle ${Settings.get('reading') ? 'on' : ''}" data-set="reading" role="switch" aria-checked="${Settings.get('reading')}" aria-label="Ćwiczenie czytania"></button>
           </div>
           <div class="setrow">
             <div class="txt">Sprawdzanie wymowy<small>${srNote}</small></div>

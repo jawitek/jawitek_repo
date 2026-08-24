@@ -9,6 +9,7 @@ const Settings = (() => {
     sound: true,        // lektor + sygnały
     rate: 0.85,         // tempo lektora (spokojniejsze niż 1.0)
     plHints: true,      // polskie podpisy pod słowami
+    reading: false,     // rundy z napisami (dla dzieci zaczynających czytać)
     checkSpeech: false, // sprawdzanie wymowy mikrofonem (tylko gdy wspierane)
   };
   let cur = { ...defaults };
