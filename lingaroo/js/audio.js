@@ -58,10 +58,15 @@ const Sound = (() => {
     if (AC && !ctx) ctx = new AC();
     if (ctx && ctx.state === 'suspended') ctx.resume();
     if ('speechSynthesis' in window) {
-      // Pusta wypowiedź w ramach gestu odblokowuje TTS na iOS.
-      const u = new SpeechSynthesisUtterance('');
-      u.volume = 0;
-      speechSynthesis.speak(u);
+      try {
+        // iOS potrafi trzymać syntezator w stanie "paused" — bez resume()
+        // speak() milczy bez żadnego błędu.
+        speechSynthesis.resume();
+        // Pusta wypowiedź w ramach gestu odblokowuje TTS na iOS.
+        const u = new SpeechSynthesisUtterance('');
+        u.volume = 0;
+        speechSynthesis.speak(u);
+      } catch (e) {}
     }
   }
   window.addEventListener('pointerdown', unlock, { capture: true });
@@ -70,7 +75,7 @@ const Sound = (() => {
     if (!Settings.get('sound')) return Promise.resolve();
     if (!('speechSynthesis' in window)) return Promise.resolve();
     return new Promise(resolve => {
-      speechSynthesis.cancel();
+      try { speechSynthesis.cancel(); } catch (e) {}
       const u = new SpeechSynthesisUtterance(text);
       if (!voicesReady) pickVoice();
       if (voice) u.voice = voice;
@@ -79,10 +84,24 @@ const Sound = (() => {
       u.pitch = opts.pitch || 1;
       u.onend = resolve;
       u.onerror = resolve;
-      speechSynthesis.speak(u);
+      /* Chrome gubi utterance wysłane synchronicznie tuż po cancel() —
+       * odstęp jednej klatki omija to niezawodnie. resume() jak wyżej. */
+      setTimeout(() => {
+        try {
+          speechSynthesis.resume();
+          speechSynthesis.speak(u);
+        } catch (e) { resolve(); }
+      }, 60);
       // Siatka bezpieczeństwa: onend potrafi nie przyjść (np. cancel).
-      setTimeout(resolve, 1000 + text.length * 220);
+      setTimeout(resolve, 1200 + text.length * 220);
     });
+  }
+
+  /* Diagnostyka lektora dla Strefy Rodzica. */
+  function ttsStatus() {
+    if (!('speechSynthesis' in window)) return { available: false, en: 0 };
+    const vs = speechSynthesis.getVoices();
+    return { available: true, en: vs.filter(v => /^en/i.test(v.lang)).length };
   }
 
   function tone(freq, t0, dur, gainMax, type = 'sine') {
@@ -112,7 +131,7 @@ const Sound = (() => {
     tone(520, ctx.currentTime, 0.07, 0.03, 'triangle');
   }
 
-  return { speak, chime, tick, unlock };
+  return { speak, chime, tick, unlock, ttsStatus };
 })();
 
 /* Rozpoznawanie mowy — dostępne nie wszędzie (brak w Safari/iOS).

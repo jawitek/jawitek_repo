@@ -24,13 +24,24 @@
     return a;
   };
 
-  /* ── Nawigacja ── */
-  function goto(route) { location.hash = '#' + route; }
+  /* ── Nawigacja ──
+   * Hash jest źródłem prawdy, ale nie warunkiem działania: w środowiskach,
+   * które blokują nawigację (osadzenie w piaskownicy), trzymamy trasę
+   * w pamięci i renderujemy wprost. */
+  let memRoute = '';
+  function goto(r) {
+    memRoute = r;
+    const want = '#' + r;
+    if (location.hash === want) { render(); return; }
+    try { location.hash = want; } catch (e) {}
+    setTimeout(() => { if (location.hash !== want) render(); }, 0);
+  }
   function route() {
-    const parts = (location.hash || '#home').slice(1).split('/');
+    const raw = location.hash.length > 1 ? location.hash.slice(1) : (memRoute || 'home');
+    const parts = raw.split('/');
     return { name: parts[0] || 'home', arg: parts[1] || '' };
   }
-  window.addEventListener('hashchange', render);
+  window.addEventListener('hashchange', () => { memRoute = location.hash.slice(1); render(); });
 
   function topbar(title, { parentBtn = false } = {}) {
     return `
@@ -138,8 +149,19 @@
         </div>
       </div>`;
     wire();
-    const speakWord = () => Sound.speak(w.en);
-    document.getElementById('card').addEventListener('click', speakWord);
+    /* Dotknięcie karty zawsze daje widoczną odpowiedź — dźwięk nigdy nie
+     * jest jedynym potwierdzeniem, że coś się stało. */
+    const card = document.getElementById('card');
+    const label = app.querySelector('.wordlabel .en');
+    const speakWord = () => {
+      card.classList.remove('saying');
+      label.classList.remove('saying');
+      void card.offsetWidth;
+      card.classList.add('saying');
+      label.classList.add('saying');
+      Sound.speak(w.en);
+    };
+    card.addEventListener('click', speakWord);
     document.getElementById('prev').addEventListener('click', () => {
       if (cardIdx > 0) { cardIdx--; renderCards(theme.id); Sound.speak(theme.words[cardIdx].en); }
     });
@@ -463,6 +485,15 @@
             <input type="range" id="rate" min="0.6" max="1.1" step="0.05" value="${Settings.get('rate')}" aria-label="Tempo lektora">
           </div>
           <div class="setrow">
+            <div class="txt">Lektor angielski<small>${(() => {
+              const s = Sound.ttsStatus();
+              if (!s.available) return 'Ta przeglądarka nie ma syntezatora mowy — gra działa, ale bez lektora.';
+              if (s.en === 0) return 'Nie widać jeszcze głosu angielskiego. Jeśli test milczy, zainstaluj głos angielski w ustawieniach systemu (Tekst na mowę).';
+              return `Głosy angielskie w systemie: ${s.en}. Jeśli test milczy, sprawdź tryb cichy telefonu.`;
+            })()}</small></div>
+            <button class="softbtn mini" id="ttsTest">Test</button>
+          </div>
+          <div class="setrow">
             <div class="txt">Polskie podpowiedzi<small>Małe polskie podpisy pod angielskimi słowami.</small></div>
             <button class="toggle ${Settings.get('plHints') ? 'on' : ''}" data-set="plHints" role="switch" aria-checked="${Settings.get('plHints')}" aria-label="Polskie podpowiedzi"></button>
           </div>
@@ -486,6 +517,9 @@
     document.getElementById('rate').addEventListener('change', e => {
       Settings.set('rate', parseFloat(e.target.value));
       Sound.speak('Hello, I am LingaRoo.');
+    });
+    document.getElementById('ttsTest').addEventListener('click', () => {
+      Sound.speak('Hello! I am LingaRoo. Nice to meet you.');
     });
   }
 
