@@ -102,8 +102,8 @@
       <div class="screen">
         ${topbar('LingaRoo', { parentBtn: true })}
         <div class="hero">
-          <div class="roo" id="heroRoo">${TEACHER_SVG}</div>
           <div class="bubble">Hello!<small>Pobawimy się razem?</small></div>
+          <div class="roo" id="heroRoo">${TEACHER_SVG}</div>
         </div>
         <div class="modes">
           <button class="modetile" data-go="themes/cards">
