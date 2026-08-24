@@ -9,6 +9,7 @@ static host (`python3 -m http.server` locally).
 | Kanno Noodle | `kanno/` | https://jawitek.github.io/jawitek_repo/kanno/ |
 | Na Zaspę 3 | `nazaspe3/` | https://jawitek.github.io/jawitek_repo/nazaspe3/ |
 | Pogo Pogo | `pogo-pogo/` | https://jawitek.github.io/jawitek_repo/pogo-pogo/ |
+| LingaRoo | `lingaroo/` | https://jawitek.github.io/jawitek_repo/lingaroo/ |
 
 The repository root holds only a redirect from `/` to `/kanno/`, so links to
 the old root address keep working.

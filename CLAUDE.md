@@ -9,6 +9,8 @@ nie zaniedbanie. Utrzymuj go.
 kanno/       strona firmowa Kanno Noodle
 nazaspe3/    biurowiec na wynajem, Gdańsk Nowy Port
 pogo-pogo/   gra zręcznościowa
+lingaroo/    angielski dla dzieci (Calm Technology / Montessori);
+             docelowo osobne repo i aplikacja Android/iOS — patrz README projektu
 ```
 
 Każdy projekt ma własny `README.md` z opisem i decyzjami projektowymi.
