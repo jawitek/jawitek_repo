@@ -1668,6 +1668,53 @@ const SVG_DIRTY = `<svg viewBox="0 0 100 100">
   <circle cx="60" cy="38" r="3" fill="#6E5138"/>
 </svg>`;
 
+/* ── Wyprawa: plecak i przebarwialne przedmioty ── */
+
+const BACKPACK_SVG = `<svg viewBox="0 0 100 100">
+  <path d="M34 26 Q34 12 50 12 Q66 12 66 26" stroke="#6E6B47" stroke-width="7" fill="none" stroke-linecap="round"/>
+  <rect x="20" y="26" width="60" height="62" rx="16" fill="#8B885E"/>
+  <rect x="20" y="26" width="60" height="20" rx="10" fill="#77744E"/>
+  <rect x="32" y="52" width="36" height="28" rx="9" fill="#A5A276"/>
+  <rect x="44" y="48" width="12" height="10" rx="3" fill="#6E6B47"/>
+  <rect x="47" y="54" width="6" height="10" rx="2" fill="#D9CBB4"/>
+</svg>`;
+
+/* Zestawy kolorów (main / jaśniejszy / ciemniejszy) do przebarwiania. */
+const TRIP_COLORS = {
+  red:    { pl: 'czerwone', c: ['#C96B5A', '#D98A6C', '#A34F4F'] },
+  blue:   { pl: 'niebieskie', c: ['#6B8E9F', '#8FB0BE', '#567483'] },
+  green:  { pl: 'zielone', c: ['#7A9A8B', '#8CAB9C', '#6B8A7B'] },
+  yellow: { pl: 'żółte', c: ['#D9B36C', '#E7C987', '#C9A052'] },
+};
+function recolorSvg(svg, from, to) {
+  let out = svg;
+  from.forEach((f, i) => { if (to[i]) out = out.split(f).join(to[i]); });
+  return out;
+}
+/* Bazy rysowane w schemacie czerwonym/niebieskim — from wymienia ich kolory. */
+const TRIP_BASES = [
+  { en: 'car',     pl: 'auta',    svg: SVG_CAR,     from: ['#C96B5A', '#D98A6C', '#A34F4F'] },
+  { en: 'balloon', pl: 'balony',  svg: SVG_BALLOON, from: ['#C96B5A', '#D98A6C', '#A34F4F'] },
+  { en: 'cup',     pl: 'kubki',   svg: SVG_CUP,     from: ['#6B8E9F', '#8FB0BE', '#567483'] },
+  { en: 'kite',    pl: 'latawce', svg: SVG_KITE,    from: ['#C96B5A', '#D98A6C', '#A34F4F'] },
+];
+function tripItemSvg(baseEn, colorKey) {
+  const base = TRIP_BASES.find(b => b.en === baseEn);
+  return recolorSvg(base.svg, base.from, TRIP_COLORS[colorKey].c);
+}
+/* Wyprawa działa w tematach z policzalnymi, „pakowalnymi" rzeczami. */
+const TRIP_THEMES = ['animals', 'vegetables', 'fruit', 'home', 'clothes', 'vehicles', 'toys', 'food', 'shapes'];
+
+/* Angielska liczba mnoga — reguły + wyjątki z naszych pakietów. */
+const PLURAL_IRREG = { sheep: 'sheep', fish: 'fish', mouse: 'mice', bus: 'buses' };
+function plural(en) {
+  if (PLURAL_IRREG[en]) return PLURAL_IRREG[en];
+  if (/(ss|x|ch|sh)$/.test(en)) return en + 'es';
+  if (/s$/.test(en)) return en; /* gloves, boots, trousers — już mnogie */
+  if (/[^aeiou]y$/.test(en)) return en.slice(0, -1) + 'ies';
+  return en + 's';
+}
+
 /* ── Pakiety słów ─────────────────────────────────────────────
  * pl służy tylko podpowiedzi dla rodzica/dziecka czytającego —
  * dziecko słyszy wyłącznie angielski. */

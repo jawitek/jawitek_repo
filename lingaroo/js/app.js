@@ -108,7 +108,7 @@
       flags(tid, lvl) {
         const o = load();
         const l = (o.themes[tid] && o.themes[tid].lessons[lvl]) || {};
-        return { seen: !!l.seen, quiz: !!l.quiz, say: !!l.say };
+        return { seen: !!l.seen, quiz: !!l.quiz, say: !!l.say, trip: !!l.trip };
       },
       /* Odhacza aktywność; zwraca true, gdy właśnie domknęła cykl lekcji. */
       mark(tid, lvl, act) {
@@ -276,17 +276,19 @@
    * się wczyta, podmienia figury oznaczone data-roo. Brak pliku kosztuje
    * wygląd, nie działanie. */
   const RooArt = (() => {
-    let heroSrc = null;
-    const im = new Image();
-    im.onload = () => { heroSrc = im.src; upgradeRoos(); };
-    im.src = 'assets/roo-hero.png?v=1';
-    return { hero: () => heroSrc };
+    const srcs = { hero: 'assets/roo-hero.png?v=1', pack: 'assets/roo-pack.png?v=1' };
+    const ready = {};
+    Object.entries(srcs).forEach(([k, src]) => {
+      const im = new Image();
+      im.onload = () => { ready[k] = im.src; upgradeRoos(); };
+      im.src = src;
+    });
+    return { get: k => ready[k] || null };
   })();
   function upgradeRoos() {
-    const src = RooArt.hero();
-    if (!src) return;
-    app.querySelectorAll('[data-roo="hero"]').forEach(el => {
-      if (!el.querySelector('img')) el.innerHTML = `<img src="${src}" alt="">`;
+    app.querySelectorAll('[data-roo]').forEach(el => {
+      const src = RooArt.get(el.dataset.roo);
+      if (src && !el.querySelector('img')) el.innerHTML = `<img src="${src}" alt="">`;
     });
   }
 
@@ -461,6 +463,9 @@
       ['quiz', UI.find, 'Znajdź słowo', 'wskaż, co słyszysz', f.quiz],
       ['say', UI.board, 'Tablica', 'powiedz na głos', f.say],
     ];
+    if (TRIP_THEMES.includes(theme.id)) {
+      steps.push(['trip', BACKPACK_SVG, 'Wyprawa', 'spakuj plecak LingaRoo', f.trip]);
+    }
     app.innerHTML = `
       <div class="screen">
         ${topbar(theme.pl)}
@@ -828,6 +833,226 @@
     });
   }
 
+  /* ── Wyprawa: utrwalenie lekcji — spakuj plecak LingaRoo ──
+   * Lektor prosi („Pack all the apples!"), dziecko przeciąga albo stuka
+   * właściwe rzeczy; plecak łagodnie oddaje złe. Trudność rośnie:
+   * rzeczowniki → kolor+rzeczownik (gdy lekcja ma przebarwialny przedmiot)
+   * → rozmiar. Nie odblokowuje lekcji — utrwala słowa (dojrzewanie łezek). */
+  let trip = null;
+  function tripRound(box, round) {
+    const words = shuffle(box);
+    const colorable = box.filter(w => TRIP_BASES.some(b => b.en === w.en));
+    const mk = defs => shuffle(defs).map((d, i) => ({ ...d, id: i }));
+    if (round < 3 || (round === 4 && !colorable.length && box.length < 4)) {
+      const target = words[round % words.length];
+      const rest = shuffle(box.filter(w => w.en !== target.en)).slice(0, 3);
+      return {
+        task: `Pack all the ${plural(target.en)}!`,
+        credit: [target.en],
+        items: mk([
+          ...[0, 1, 2].map(() => ({ svg: target.svg, en: target.en, target: true })),
+          ...rest.map(w => ({ svg: w.svg, en: w.en, target: false })),
+        ]),
+      };
+    }
+    if (colorable.length && round === 3) {
+      const baseWord = shuffle(colorable)[0];
+      const keys = shuffle(Object.keys(TRIP_COLORS));
+      const [col, other, third] = keys;
+      const rest = shuffle(box.filter(w => w.en !== baseWord.en)).slice(0, 2);
+      return {
+        task: `Pack all the ${col} ${plural(baseWord.en)}!`,
+        credit: [baseWord.en, col],
+        items: mk([
+          { svg: tripItemSvg(baseWord.en, col), en: `${col} ${baseWord.en}`, target: true },
+          { svg: tripItemSvg(baseWord.en, col), en: `${col} ${baseWord.en}`, target: true },
+          { svg: tripItemSvg(baseWord.en, other), en: `${other} ${baseWord.en}`, target: false },
+          { svg: tripItemSvg(baseWord.en, third), en: `${third} ${baseWord.en}`, target: false },
+          ...rest.map(w => ({ svg: w.svg, en: w.en, target: false })),
+        ]),
+      };
+    }
+    /* rozmiar — a przy przebarwialnym przedmiocie: rozmiar + kolor */
+    const size = shuffle(['big', 'small'])[0];
+    const anti = size === 'big' ? 'small' : 'big';
+    if (colorable.length) {
+      const baseWord = shuffle(colorable)[0];
+      const [col, other] = shuffle(Object.keys(TRIP_COLORS));
+      const restW = shuffle(box.filter(w => w.en !== baseWord.en)).slice(0, 1);
+      return {
+        task: `Pack all the ${size} ${col} ${plural(baseWord.en)}!`,
+        credit: [baseWord.en, col, size],
+        items: mk([
+          { svg: tripItemSvg(baseWord.en, col), en: `${size} ${col} ${baseWord.en}`, target: true, size },
+          { svg: tripItemSvg(baseWord.en, col), en: `${size} ${col} ${baseWord.en}`, target: true, size },
+          { svg: tripItemSvg(baseWord.en, col), en: `${anti} ${col} ${baseWord.en}`, target: false, size: anti },
+          { svg: tripItemSvg(baseWord.en, other), en: `${size} ${other} ${baseWord.en}`, target: false, size },
+          { svg: tripItemSvg(baseWord.en, other), en: `${anti} ${other} ${baseWord.en}`, target: false, size: anti },
+          ...restW.map(w => ({ svg: w.svg, en: w.en, target: false })),
+        ]),
+      };
+    }
+    const target = words[0];
+    const rest = shuffle(box.filter(w => w.en !== target.en)).slice(0, 2);
+    return {
+      task: `Pack all the ${size} ${plural(target.en)}!`,
+      credit: [target.en, size],
+      items: mk([
+        { svg: target.svg, en: `${size} ${target.en}`, target: true, size },
+        { svg: target.svg, en: `${size} ${target.en}`, target: true, size },
+        { svg: target.svg, en: `${anti} ${target.en}`, target: false, size: anti },
+        { svg: target.svg, en: `${anti} ${target.en}`, target: false, size: anti },
+        ...rest.map(w => ({ svg: w.svg, en: w.en, target: false, size: shuffle([size, anti])[0] })),
+      ]),
+    };
+  }
+
+  function renderTrip(themeId, level, fresh) {
+    const theme = themeById(themeId);
+    if (!guardLevel(theme.id, level)) return;
+    rememberLesson(theme.id, level);
+    if (fresh || !trip || trip.themeId !== theme.id || trip.level !== level) {
+      trip = { themeId: theme.id, level, round: 0, total: 5, data: null, packed: new Set(), busy: false, spoken: false };
+    }
+    if (trip.round >= trip.total) {
+      renderEnd(`trip/${theme.id}/${level}`, { themeId: theme.id, level, activity: 'trip', backTo: `lesson/${theme.id}/${level}` });
+      return;
+    }
+    const box = themeBoxes(theme)[level] || theme.words.slice(0, BOX_SIZE);
+    if (!trip.data) { trip.data = tripRound(box, trip.round); trip.packed = new Set(); }
+    const d = trip.data;
+    const slots = [[8, 6], [39, 2], [70, 8], [10, 52], [41, 56], [70, 50]];
+    app.innerHTML = `
+      <div class="screen">
+        ${topbar('Wyprawa')}
+        <div class="stage triplayout">
+          <div class="prompt tripprompt">
+            <button class="speaker" id="replay" aria-label="Posłuchaj jeszcze raz">${UI.speaker}</button>
+            <span>${d.task}</span>
+          </div>
+          <div class="tripboard" id="board">
+            ${d.items.map((it, i) => trip.packed.has(it.id) ? '' : `
+              <button class="tripitem ${it.size || ''}" data-i="${it.id}" aria-label="${it.en}"
+                style="left:${slots[i % slots.length][0] + ((trip.round * 7 + i * 37) % 11) - 5}%;top:${slots[i % slots.length][1] + ((trip.round * 5 + i * 29) % 9) - 4}%">
+                ${it.svg}
+              </button>`).join('')}
+          </div>
+          <div class="quizmsg" id="quizMsg"></div>
+          <div class="packwrap" id="packwrap">
+            <div class="packroo" data-roo="pack">${BACKPACK_SVG}</div>
+            <div id="packZone"></div>
+          </div>
+        </div>
+        ${trackHtml(trip.round)}
+      </div>`;
+    wire();
+    const speakTask = () => Sound.speak(d.task);
+    if (!trip.spoken) { trip.spoken = true; later(speakTask, 400); }
+    document.getElementById('replay').addEventListener('click', speakTask);
+
+    const msgEl = () => document.getElementById('quizMsg');
+    const packwrap = document.getElementById('packwrap');
+    const zoneRect = () => document.getElementById('packZone').getBoundingClientRect();
+    let lastPointer = 0;
+
+    function packBounce() {
+      packwrap.classList.remove('bounce');
+      void packwrap.offsetWidth;
+      packwrap.classList.add('bounce');
+    }
+    function finishRound() {
+      Sound.chime();
+      d.credit.forEach(c => Progress.wordCorrect(c));
+      trip.busy = true;
+      later(() => {
+        trip.round++;
+        trip.data = null;
+        trip.spoken = false;
+        trip.busy = false;
+        renderTrip(theme.id, level);
+      }, 1100);
+    }
+    function tryPack(el, it) {
+      if (it.target) {
+        trip.packed.add(it.id);
+        Sound.tick();
+        packBounce();
+        el.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
+        el.style.opacity = '0';
+        later(() => el.remove(), 300);
+        const left = d.items.filter(x => x.target && !trip.packed.has(x.id)).length;
+        if (!left) finishRound();
+      } else {
+        msgEl().textContent = `Let's try that again`;
+        el.classList.remove('wrong');
+        void el.offsetWidth;
+        el.classList.add('wrong');
+        el.style.transition = 'transform 0.4s ease';
+        el.style.transform = '';
+        later(() => { el.classList.remove('wrong'); if (msgEl()) msgEl().textContent = ''; }, 1500);
+      }
+    }
+    function flyAndPack(el, it) {
+      if (trip.busy) return;
+      const er = el.getBoundingClientRect();
+      const zr = zoneRect();
+      const dx = (zr.left + zr.width / 2) - (er.left + er.width / 2);
+      const dy = (zr.top + zr.height / 2) - (er.top + er.height / 2);
+      el.style.transition = 'transform 0.45s ease';
+      el.style.transform = `translate(${dx}px, ${dy}px) scale(0.35)`;
+      later(() => {
+        if (it.target) tryPack(el, it);
+        else {
+          el.style.transform = '';
+          tryPack(el, it);
+        }
+      }, 460);
+    }
+    app.querySelectorAll('[data-i]').forEach(el => {
+      const it = d.items.find(x => x.id === +el.dataset.i);
+      let sx = 0, sy = 0, moved = 0, dragging = false;
+      el.addEventListener('pointerdown', e => {
+        if (trip.busy) return;
+        try { el.setPointerCapture(e.pointerId); } catch (err) {}
+        sx = e.clientX; sy = e.clientY; moved = 0; dragging = true;
+        el.classList.add('dragging');
+        el.style.transition = 'none';
+      });
+      el.addEventListener('pointermove', e => {
+        if (!dragging) return;
+        const dx = e.clientX - sx, dy = e.clientY - sy;
+        moved = Math.max(moved, Math.hypot(dx, dy));
+        el.style.transform = `translate(${dx}px, ${dy}px)`;
+      });
+      const drop = () => {
+        if (!dragging) return;
+        dragging = false;
+        lastPointer = performance.now();
+        el.classList.remove('dragging');
+        if (moved < 10) { el.style.transform = ''; flyAndPack(el, it); return; }
+        const er = el.getBoundingClientRect();
+        const zr = zoneRect();
+        const hit = !(er.right < zr.left || er.left > zr.right || er.bottom < zr.top || er.top > zr.bottom);
+        if (hit) tryPack(el, it);
+        else {
+          el.style.transition = 'transform 0.35s ease';
+          el.style.transform = '';
+        }
+      };
+      el.addEventListener('pointerup', drop);
+      el.addEventListener('pointercancel', () => {
+        dragging = false;
+        el.classList.remove('dragging');
+        el.style.transition = 'transform 0.35s ease';
+        el.style.transform = '';
+      });
+      el.addEventListener('click', () => {
+        if (performance.now() - lastPointer < 500) return;
+        flyAndPack(el, it);
+      });
+    });
+  }
+
   /* ── Pary ── */
   let pairs = null;
   function newPairs() {
@@ -1090,6 +1315,7 @@
       const p = againRoute.split('/');
       if (p[0] === 'quiz') { renderQuiz(p[1], parseInt(p[2] || '0', 10) || 0, true); }
       else if (p[0] === 'say') { renderSay(p[1], parseInt(p[2] || '0', 10) || 0, true); }
+      else if (p[0] === 'trip') { renderTrip(p[1], parseInt(p[2] || '0', 10) || 0, true); }
       else if (againRoute === 'pairs') { renderPairs(true); }
       else if (againRoute === 'review') { renderReview(true); }
       else goto('home');
@@ -1250,6 +1476,7 @@
       case 'quiz':   renderQuiz(r.arg, lvl, true); break;
       case 'pairs':  renderPairs(true); break;
       case 'review': renderReview(true); break;
+      case 'trip':   renderTrip(r.arg, lvl, true); break;
       case 'survey': renderSurvey(); break;
       case 'say':    renderSay(r.arg, lvl, true); break;
       case 'gate':   renderGate(); break;
@@ -1276,6 +1503,7 @@
       wordDays: en => Progress.wordDays(en),
       say: say && { round: say.round, level: say.level, phase: say.phase, word: say.words[say.round] && say.words[say.round].en },
       pairs: pairs && { matched: [...pairs.matched], picked: pairs.picked, tiles: pairs.tiles.map(t => t.pair) },
+      trip: trip && trip.data && { round: trip.round, task: trip.data.task, left: trip.data.items.filter(x => x.target && !trip.packed.has(x.id)).length, items: trip.data.items.map(x => ({ i: x.id, en: x.en, target: x.target, packed: trip.packed.has(x.id) })) },
       progress: THEMES.reduce((o, t) => (o[t.id] = Progress.done(t.id), o), {}),
       profiles: { active: (Profiles.active() || {}).name || null, count: Profiles.list().length },
       settings: ['sound', 'rate', 'plHints', 'checkSpeech'].reduce((o, k) => (o[k] = Settings.get(k), o), {}),

@@ -2,7 +2,7 @@
  * Prosty cache-first dla zasobów aplikacji. Nazwa cache niesie numer wersji:
  * podbij LINGAROO_V razem z ?v=N w index.html przy każdym wdrożeniu. */
 
-const LINGAROO_V = 16;
+const LINGAROO_V = 17;
 const CACHE = `lingaroo-v${LINGAROO_V}`;
 
 const APP_SHELL = [
@@ -17,6 +17,7 @@ const APP_SHELL = [
   `./icons/icon-512.png?v=${LINGAROO_V}`,
   `./icons/icon-maskable-512.png?v=${LINGAROO_V}`,
   './assets/roo-hero.png?v=1',
+  './assets/roo-pack.png?v=1',
 ];
 
 self.addEventListener('install', e => {
