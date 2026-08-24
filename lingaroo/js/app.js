@@ -113,9 +113,13 @@
   window.addEventListener('hashchange', () => { memRoute = location.hash.slice(1); render(); });
 
   function topbar(title, { parentBtn = false, profile = null } = {}) {
+    /* Lewy róg zawsze nosi zwierzaka zalogowanego dziecka: na ekranie
+     * głównym prowadzi do zmiany profilu, głębiej — wraca do menu. */
+    const act = Profiles.active();
+    const avatar = act ? (AVATARS[act.avatar] || ROO_HEAD_SVG) : ROO_HEAD_SVG;
     const left = profile
-      ? `<button class="woodbtn" data-go="who" aria-label="Zmień profil"><div>${AVATARS[profile.avatar] || ROO_HEAD_SVG}</div></button>`
-      : `<button class="woodbtn" data-go="home" aria-label="Powrót do menu"><div>${ROO_HEAD_SVG}</div></button>`;
+      ? `<button class="woodbtn" data-go="who" aria-label="Zmień profil"><div>${avatar}</div></button>`
+      : `<button class="woodbtn" data-go="home" aria-label="Powrót do menu"><div>${avatar}</div></button>`;
     return `
       <header class="topbar">
         ${left}
