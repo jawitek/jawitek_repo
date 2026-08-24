@@ -2,7 +2,7 @@
  * Prosty cache-first dla zasobów aplikacji. Nazwa cache niesie numer wersji:
  * podbij LINGAROO_V razem z ?v=N w index.html przy każdym wdrożeniu. */
 
-const LINGAROO_V = 10;
+const LINGAROO_V = 11;
 const CACHE = `lingaroo-v${LINGAROO_V}`;
 
 const APP_SHELL = [
@@ -36,6 +36,22 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
   if (e.request.method !== 'GET') return;
+
+  /* Nawigacja: najpierw sieć, żeby nowe wdrożenie było widoczne od
+   * pierwszego otwarcia; cache tylko gdy nie ma internetu. Bez tego
+   * cache-first potrafi serwować starą stronę startową w nieskończoność. */
+  if (e.request.mode === 'navigate') {
+    e.respondWith(
+      fetch(e.request)
+        .then(res => {
+          const copy = res.clone();
+          caches.open(CACHE).then(c => c.put('./index.html', copy));
+          return res;
+        })
+        .catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
 
   /* Fonty Google: sieć, a gdy jej nie ma — to, co już mamy w cache.
    * Brak fontu nie psuje aplikacji (jest zapasowy systemowy krój). */
