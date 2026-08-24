@@ -110,7 +110,7 @@ svg { display: block; width: 100%; height: 100%; }
 /* ── Ekran główny: kangur na środku, dymek wychodzi mu z buzi ── */
 .hero { display: flex; flex-direction: column; align-items: center; margin: 12px 0 6px; }
 .hero .roo { width: 150px; height: 180px; animation: breathe 4s ease-in-out infinite; }
-.hero .roo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+[data-roo] img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .hero .bubble {
   position: relative;
   transform: translateX(40px);
@@ -205,8 +205,20 @@ svg { display: block; width: 100%; height: 100%; }
 .themetile .label { font-weight: 700; font-size: 16.5px; color: var(--ink); text-align: center; }
 .themetile .label small { display: block; font-weight: 600; font-size: 12px; color: var(--brown-soft); margin-top: 1px; letter-spacing: 0.4px; }
 
-.boxleaves { display: flex; gap: 5px; }
-.boxleaves .leaf { width: 13px; height: 13px; }
+.boxleaves { display: flex; align-items: center; gap: 5px; }
+.boxleaves .leaf { width: 14px; height: 14px; }
+.boxleaves .cnt { font-size: 12px; font-weight: 700; color: var(--brown-soft); margin-left: 4px; }
+.countpill {
+  margin-left: auto;
+  flex: none;
+  background: var(--paper);
+  border-radius: 12px;
+  padding: 7px 11px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--brown-soft);
+  box-shadow: inset 0 1px 3px rgba(150, 120, 80, 0.18);
+}
 
 .modetile.locked { opacity: 0.45; pointer-events: none; }
 .themetile.activeprof { box-shadow: 0 0 0 4px var(--sage-pale), 0 8px 18px rgba(150, 120, 80, 0.18); }
@@ -457,7 +469,7 @@ svg { display: block; width: 100%; height: 100%; }
 .track .peg.done { background: linear-gradient(175deg, var(--sage-hi), var(--sage)); box-shadow: 0 6px 12px rgba(150, 120, 80, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.35); }
 .track .peg.active { background: linear-gradient(175deg, var(--terra-hi), var(--terra)); box-shadow: 0 6px 12px rgba(150, 120, 80, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.35); }
 .track .peg.upcoming { background: var(--dim); box-shadow: inset 0 3px 6px rgba(120, 95, 60, 0.18); }
-.track .peg .roo { position: absolute; bottom: 38px; left: 50%; transform: translateX(-50%); width: 40px; height: 40px; animation: roo-jump 1s ease-in-out infinite; }
+.track .peg .roo { position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%); width: 44px; height: 56px; animation: roo-jump 1s ease-in-out infinite; }
 .track .link { width: clamp(24px, 8vw, 64px); height: 4px; border-radius: 2px; background: var(--line); margin: 0 4px; }
 .track .link.done { background: var(--sage-pale); }
 

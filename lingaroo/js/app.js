@@ -192,7 +192,7 @@
       const color = state === 'upcoming' ? 'var(--dim-txt)' : '#FDFBF7';
       html += `<div class="step">
         <div class="peg ${state}">
-          ${state === 'active' ? `<div class="roo">${ROO_SVG}</div>` : ''}
+          ${state === 'active' ? `<div class="roo" data-roo="hero">${ROO_SVG}</div>` : ''}
           <div class="ico">${TRACK_ICONS[i % TRACK_ICONS.length](color)}</div>
         </div>
         ${i < total - 1 ? `<div class="link ${i < activeIdx ? 'done' : ''}"></div>` : ''}
@@ -201,10 +201,29 @@
     return html + '</div>';
   }
 
+  /* Ilustrowany LingaRoo: SVG z kodu renderuje się od razu, a gdy plik
+   * się wczyta, podmienia figury oznaczone data-roo. Brak pliku kosztuje
+   * wygląd, nie działanie. */
+  const RooArt = (() => {
+    let heroSrc = null;
+    const im = new Image();
+    im.onload = () => { heroSrc = im.src; upgradeRoos(); };
+    im.src = 'assets/roo-hero.png?v=1';
+    return { hero: () => heroSrc };
+  })();
+  function upgradeRoos() {
+    const src = RooArt.hero();
+    if (!src) return;
+    app.querySelectorAll('[data-roo="hero"]').forEach(el => {
+      if (!el.querySelector('img')) el.innerHTML = `<img src="${src}" alt="">`;
+    });
+  }
+
   function wire() {
     app.querySelectorAll('[data-go]').forEach(b => {
       b.addEventListener('click', () => goto(b.dataset.go));
     });
+    upgradeRoos();
   }
 
   /* ── Ekran główny ── */
@@ -215,12 +234,13 @@
         ${topbar('LingaRoo', { parentBtn: true, profile: act })}
         <div class="hero">
           <div class="bubble">Hello${act ? ', ' + esc(act.name) : ''}!<small>Pobawimy się razem?</small></div>
-          <div class="roo" id="heroRoo">${TEACHER_SVG}</div>
+          <div class="roo" data-roo="hero">${TEACHER_SVG}</div>
         </div>
         <div class="modes">
           <button class="modetile" data-go="themes/cards">
             <div class="icon">${UI.cards}</div>
             <div class="label">Słówka<small>oglądam i słucham</small></div>
+            <div class="countpill">${lessonsDone()}/${lessonsTotal()}</div>
           </button>
           <button class="modetile" data-go="pairs">
             <div class="icon">${UI.pairs}</div>
@@ -229,20 +249,12 @@
           <button class="modetile" data-go="themes/say">
             <div class="icon">${UI.board}</div>
             <div class="label">Tablica<small>mówię z LingaRoo</small></div>
+            <div class="countpill">${lessonsDone()}/${lessonsTotal()}</div>
           </button>
         </div>
         <div id="ttsNote"></div>
       </div>`;
     wire();
-    /* Bohater: ilustracja z pliku, gdy jest; inaczej zostaje SVG z kodu —
-     * brak pliku kosztuje wygląd, nie działanie. */
-    const heroImg = new Image();
-    heroImg.alt = '';
-    heroImg.onload = () => {
-      const hero = document.getElementById('heroRoo');
-      if (hero) hero.replaceChildren(heroImg);
-    };
-    heroImg.src = 'assets/roo-hero.png?v=1';
     /* Lista głosów bywa pusta zaraz po starcie — sprawdzamy po chwili,
      * żeby nie straszyć bez powodu w zwykłym Chrome. */
     later(() => {
@@ -255,12 +267,15 @@
   }
 
   /* ── Wybór tematu ── */
-  const leafSvg = c => `<svg viewBox="0 0 24 24"><path d="M12 3c5 3 7 7 7 11a7 7 0 1 1-14 0c0-4 2-8 7-11Z" fill="${c}"/></svg>`;
+  const leafSvg = (fill, stroke) => `<svg viewBox="0 0 24 24"><path d="M12 3c5 3 7 7 7 11a7 7 0 1 1-14 0c0-4 2-8 7-11Z" fill="${fill}"${stroke ? ` stroke="${stroke}" stroke-width="1.8"` : ''}/></svg>`;
   function themeLeaves(t) {
-    const done = Progress.done(t.id);
+    const done = Math.min(Progress.done(t.id), themeBoxes(t).length);
     return `<div class="boxleaves">${themeBoxes(t).map((_, i) =>
-      `<div class="leaf">${leafSvg(i < done ? 'var(--sage)' : 'var(--line)')}</div>`).join('')}</div>`;
+      `<div class="leaf">${i < done ? leafSvg('var(--sage)') : leafSvg('var(--paper)', 'var(--dim-txt)')}</div>`).join('')}
+      <span class="cnt">${done}/${themeBoxes(t).length}</span></div>`;
   }
+  const lessonsDone = () => THEMES.reduce((n, t) => n + Math.min(Progress.done(t.id), themeBoxes(t).length), 0);
+  const lessonsTotal = () => THEMES.reduce((n, t) => n + themeBoxes(t).length, 0);
   function renderThemes(mode) {
     const target = mode === 'say' ? 'say' : 'cards';
     app.innerHTML = `
@@ -403,7 +418,7 @@
               </button>`).join('')}
           </div>
           <div class="quizmsg" id="quizMsg"></div>
-          <div class="teacher"><div class="fig" id="fig">${TEACHER_SVG}</div></div>
+          <div class="teacher"><div class="fig" id="fig" data-roo="hero">${TEACHER_SVG}</div></div>
         </div>
         ${trackHtml(quiz.round)}
       </div>`;
@@ -467,7 +482,7 @@
                 <div class="cap">${t.en}</div>
               </button>`).join('')}
           </div>
-          <div class="teacher"><div class="fig" id="fig">${TEACHER_SVG}</div></div>
+          <div class="teacher"><div class="fig" id="fig" data-roo="hero">${TEACHER_SVG}</div></div>
         </div>
       </div>`;
     wire();
@@ -561,7 +576,7 @@
             <div class="miccap">TAP &amp; SAY</div>
           </div>
           <div class="teacher">
-            <div class="fig ${figAnim}" id="fig">${TEACHER_SVG}</div>
+            <div class="fig ${figAnim}" id="fig" data-roo="hero">${TEACHER_SVG}</div>
             ${ph === 'success' ? `<div class="badge">${UI.check}</div>` : ''}
           </div>
         </div>
@@ -679,7 +694,7 @@
         ${topbar('')}
         <div class="stage">
           <div class="endpanel">
-            <div class="fig">${TEACHER_SVG}</div>
+            <div class="fig" data-roo="hero">${TEACHER_SVG}</div>
             <h2>Well done!</h2>
             <p>${unlockedMsg || 'Brawo, to była dobra zabawa.'}</p>
             <div class="endrow">
