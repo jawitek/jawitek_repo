@@ -42,15 +42,16 @@ Kolory, Dom, Ubrania, Zawody, Pojazdy, Liczby, Kształty (po 12) — oraz
 nowy temat to nowy wpis z SVG, bez zmian w logice. Zawody i liczby mają
 generatory (`personSvg`, `numberSvg`) — wspólna sylwetka + akcesoria.
 
-### Pudełka: postęp bez punktów
+### Lekcje: postęp bez punktów
 
-Słowa tematu leżą w **pudełkach po 6** (`BOX_SIZE`), otwieranych po kolei:
-ukończenie sesji Znajdź słowo albo Tablicy na bieżącym pudełku otwiera
-następne (jedyny punkt zaliczania to ekran końca sesji — postęp nie ma
-bocznych ścieżek). Ukończone pudełka zawsze można powtarzać — powtórka to
-w Montessori cel, nie strata czasu. Postęp jest w `localStorage`
-(`lingaroo.progress`); Strefa Rodzica ma wyzerowanie (z potwierdzeniem
-drugim dotknięciem, bez okien dialogowych).
+Słowa tematu leżą w **lekcjach po 6 słów** (`BOX_SIZE`), otwieranych po
+kolei: ukończenie sesji Znajdź słowo albo Tablicy na bieżącej lekcji
+otwiera następną (jedyny punkt zaliczania to ekran końca sesji — postęp
+nie ma bocznych ścieżek). Nowa lekcja zaczyna się od poznania słówek
+(karty), nie od zgadywania. Ukończone lekcje zawsze można powtarzać —
+powtórka to w Montessori cel, nie strata czasu. Postęp jest w
+`localStorage` (`lingaroo.progress`); Strefa Rodzica ma wyzerowanie
+(z potwierdzeniem drugim dotknięciem, bez okien dialogowych).
 
 ### Wymowa: zapraszamy, nie oceniamy
 

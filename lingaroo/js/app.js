@@ -102,7 +102,7 @@
       <div class="screen">
         ${topbar('LingaRoo', { parentBtn: true })}
         <div class="hero">
-          <div class="roo">${TEACHER_SVG}</div>
+          <div class="roo" id="heroRoo">${TEACHER_SVG}</div>
           <div class="bubble">Hello!<small>Pobawimy się razem?</small></div>
         </div>
         <div class="modes">
@@ -122,6 +122,15 @@
         <div id="ttsNote"></div>
       </div>`;
     wire();
+    /* Bohater: ilustracja z pliku, gdy jest; inaczej zostaje SVG z kodu —
+     * brak pliku kosztuje wygląd, nie działanie. */
+    const heroImg = new Image();
+    heroImg.alt = '';
+    heroImg.onload = () => {
+      const hero = document.getElementById('heroRoo');
+      if (hero) hero.replaceChildren(heroImg);
+    };
+    heroImg.src = 'assets/roo-hero.png?v=1';
     /* Lista głosów bywa pusta zaraz po starcie — sprawdzamy po chwili,
      * żeby nie straszyć bez powodu w zwykłym Chrome. */
     later(() => {
@@ -168,15 +177,15 @@
     app.innerHTML = `
       <div class="screen">
         ${topbar(theme.pl)}
-        <p class="hint">Wybierz pudełko</p>
+        <p class="hint">Wybierz lekcję</p>
         <div class="themes list">
           ${boxes.map((box, i) => {
             const state = i < done ? 'done' : i === done ? 'open' : 'locked';
             return `
             <button class="modetile ${state === 'locked' ? 'locked' : ''}" ${state === 'locked' ? '' : `data-go="${mode}/${theme.id}/${i}"`}>
               <div class="icon">${box[0].svg}</div>
-              <div class="label">Pudełko ${i + 1}
-                <small>${state === 'done' ? 'ukończone — możesz powtarzać' : state === 'open' ? box.length + ' słów' : 'najpierw poprzednie pudełko'}</small>
+              <div class="label">Lekcja ${i + 1}
+                <small>${state === 'done' ? 'ukończona — możesz powtarzać' : state === 'open' ? box.length + ' słów' : 'najpierw poprzednia lekcja'}</small>
               </div>
               ${state === 'done' ? `<div class="donebadge">${UI.check}</div>` : ''}
             </button>`;
@@ -281,6 +290,7 @@
                 <div class="art">${o.svg}</div>
               </button>`).join('')}
           </div>
+          <div class="quizmsg" id="quizMsg"></div>
           <div class="teacher"><div class="fig" id="fig">${TEACHER_SVG}</div></div>
         </div>
         ${trackHtml(quiz.round)}
@@ -300,9 +310,22 @@
           document.getElementById('fig').classList.add('hop');
           later(() => { quiz.round++; renderQuiz(themeId, level); }, 1400);
         } else {
+          /* Zły wybór dostaje wyraźny, ale spokojny sygnał: czerwonawa
+           * ramka, kołysanie, kiwnięcie LingaRoo i krótki komunikat. */
           btn.classList.remove('wrong');
           void btn.offsetWidth; /* restart animacji */
           btn.classList.add('wrong');
+          const msg = document.getElementById('quizMsg');
+          const fig = document.getElementById('fig');
+          msg.textContent = `Let's try that again`;
+          fig.classList.remove('nod');
+          void fig.offsetWidth;
+          fig.classList.add('nod');
+          later(() => {
+            btn.classList.remove('wrong');
+            fig.classList.remove('nod');
+            if (msg.textContent === `Let's try that again`) msg.textContent = '';
+          }, 1600);
         }
       });
     });
@@ -326,8 +349,8 @@
         ${topbar('Pary')}
         <div class="stage">
           <div class="pairsgrid">
-            ${pairs.tiles.map((t, i) => `
-              <button class="wordcard ${pairs.matched.has(t.pair) ? 'gone' : ''}" data-i="${i}" aria-label="${t.en}">
+            ${pairs.tiles.map((t, i) => pairs.matched.has(t.pair) ? '' : `
+              <button class="wordcard" data-i="${i}" aria-label="${t.en}">
                 <div class="art">${t.svg}</div>
                 <div class="cap">${t.en}</div>
               </button>`).join('')}
@@ -355,14 +378,15 @@
           pairs.matched.add(tile.pair);
           pairs.picked = null;
           firstBtn.classList.remove('picked');
-          /* Trafiona para znika z ekranu; puste miejsca zostają,
-           * żeby reszta kart nie skakała. */
+          /* Trafiona para znika, a reszta kafelków spokojnie dosuwa się
+           * do lewego górnego rogu (FLIP) — bez dziur i bez przeskoków. */
           firstBtn.classList.add('gone');
           btn.classList.add('gone');
+          later(() => compactPairs([firstBtn, btn]), 580);
           Sound.chime();
           document.getElementById('fig').classList.add('hop');
           later(() => document.getElementById('fig') && document.getElementById('fig').classList.remove('hop'), 700);
-          if (pairs.matched.size === 4) later(() => renderEnd('pairs'), 900);
+          if (pairs.matched.size === 4) later(() => renderEnd('pairs'), 1300);
         } else {
           pairs.locked = true;
           firstBtn.classList.add('wrong');
@@ -490,6 +514,31 @@
     }
   }
 
+  /* Po zniknięciu pary pozostałe kafelki dosuwają się bez dziur:
+   * zdejmujemy trafione z siatki i animujemy resztę ze starych pozycji
+   * na nowe (FLIP). */
+  function compactPairs(goneBtns) {
+    const grid = app.querySelector('.pairsgrid');
+    if (!grid) return;
+    const rest = [...grid.querySelectorAll('[data-i]')]
+      .filter(b => b.style.display !== 'none' && !goneBtns.includes(b));
+    const before = new Map(rest.map(b => [b, b.getBoundingClientRect()]));
+    goneBtns.forEach(b => { b.style.display = 'none'; });
+    rest.forEach(b => {
+      const a = before.get(b);
+      const z = b.getBoundingClientRect();
+      const dx = a.left - z.left, dy = a.top - z.top;
+      if (!dx && !dy) return;
+      b.style.transition = 'none';
+      b.style.transform = `translate(${dx}px, ${dy}px)`;
+      requestAnimationFrame(() => {
+        b.style.transition = 'transform 0.45s ease';
+        b.style.transform = '';
+      });
+      later(() => { b.style.transition = ''; }, 550);
+    });
+  }
+
   /* ── Koniec sesji — spokojna pochwała, bez punktów ──
    * Jedyny punkt zaliczania pudełek: każda ukończona sesja przechodzi
    * tędy, więc postęp nie ma bocznych ścieżek. */
@@ -503,11 +552,13 @@
       const opened = Progress.complete(theme.id, completion.level);
       if (opened) {
         if (completion.level + 1 < total) {
-          unlockedMsg = 'Otworzyło się nowe pudełko!';
-          const act = againRoute.split('/')[0];
-          nextBtn = `<button class="softbtn" data-go="${act}/${completion.themeId}/${completion.level + 1}">Następne pudełko</button>`;
+          unlockedMsg = 'Otworzyła się nowa lekcja!';
+          /* Nowa lekcja zaczyna się od poznania słówek, nie od zgadywania —
+           * z Tablicy wracamy na Tablicę (tam LingaRoo i tak mówi pierwszy). */
+          const act = againRoute.split('/')[0] === 'say' ? 'say' : 'cards';
+          nextBtn = `<button class="softbtn" data-go="${act}/${completion.themeId}/${completion.level + 1}">Następna lekcja</button>`;
         } else {
-          unlockedMsg = `Wszystkie pudełka z tematu „${theme.pl}" ukończone!`;
+          unlockedMsg = `Wszystkie lekcje z tematu „${theme.pl}" ukończone!`;
         }
       }
     }
@@ -520,8 +571,8 @@
             <h2>Well done!</h2>
             <p>${unlockedMsg || 'Brawo, to była dobra zabawa.'}</p>
             <div class="endrow">
-              <button class="softbtn wood" data-go="${completion ? completion.backTo : 'home'}">${completion ? 'Półka' : 'Menu'}</button>
-              ${nextBtn || '<button class="softbtn" id="again">Jeszcze raz</button>'}
+              <button class="softbtn wood" data-go="${completion ? completion.backTo : 'home'}">${completion ? 'Lekcje' : 'Menu'}</button>
+              ${nextBtn || `<button class="softbtn" id="again">${againRoute === 'pairs' ? 'Następne pary' : 'Jeszcze raz'}</button>`}
             </div>
           </div>
         </div>
@@ -609,7 +660,7 @@
             <button class="toggle ${Settings.get('checkSpeech') && Speech.supported ? 'on' : ''}" data-set="checkSpeech" ${Speech.supported ? '' : 'disabled'} role="switch" aria-checked="${Settings.get('checkSpeech') && Speech.supported}" aria-label="Sprawdzanie wymowy"></button>
           </div>
           <div class="setrow">
-            <div class="txt">Postępy<small>Ukończone pudełka: ${THEMES.reduce((n, t) => n + Math.min(Progress.done(t.id), themeBoxes(t).length), 0)} z ${THEMES.reduce((n, t) => n + themeBoxes(t).length, 0)}. Wyzerowanie zamyka wszystkie pudełka poza pierwszymi.</small></div>
+            <div class="txt">Postępy<small>Ukończone lekcje: ${THEMES.reduce((n, t) => n + Math.min(Progress.done(t.id), themeBoxes(t).length), 0)} z ${THEMES.reduce((n, t) => n + themeBoxes(t).length, 0)}. Wyzerowanie zamyka wszystkie lekcje poza pierwszymi.</small></div>
             <button class="softbtn mini wood" id="resetProg">Wyzeruj</button>
           </div>
         </div>
