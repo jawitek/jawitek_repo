@@ -329,6 +329,11 @@
           </button>` : ''}
         </div>
         <div id="ttsNote"></div>
+        ${Survey.done() ? '' : `
+        <button class="surveycard" data-go="survey">
+          <span class="ico">${UI.form}</span>
+          <span>Ankieta dla rodzica<small>2 minuty — pomóż ulepszyć grę</small></span>
+        </button>`}
       </div>`;
     wire();
     /* Lista głosów bywa pusta zaraz po starcie — sprawdzamy po chwili,
@@ -577,6 +582,116 @@
         }
       });
     });
+  }
+
+  /* ── Ankieta dla rodzica-testera ──
+   * Jedyne miejsce, z którego cokolwiek opuszcza urządzenie — wyłącznie
+   * po świadomym naciśnięciu „Wyślij", bez żadnych danych dziecka. */
+  const SURVEY = [
+    { id: 'age',    q: 'Ile lat ma dziecko, które grało?', opts: ['2–3', '4–5', '6–7', '8+'] },
+    { id: 'eng',    q: 'Kontakt dziecka z angielskim przed grą?', opts: ['prawie żaden', 'trochę (bajki, przedszkole)', 'regularne zajęcia'] },
+    { id: 'time',   q: 'Jak długo grało za pierwszym razem?', opts: ['poniżej 5 min', '5–15 min', '15–30 min', 'nie chciało skończyć'] },
+    { id: 'return', q: 'Czy wracało do gry samo z siebie?', opts: ['tak, prosiło o nią', 'tak, gdy przypomniałem(-am)', 'nie wracało'] },
+    { id: 'mode',   q: 'Który tryb podobał się najbardziej?', opts: ['Słówka', 'Znajdź słowo', 'Pary', 'Tablica (mówienie)', 'Powtórka'] },
+    { id: 'words',  q: 'Czy dziecko użyło potem angielskiego słowa samo z siebie?', opts: ['tak, kilku', 'tak, jednego–dwóch', 'jeszcze nie'] },
+    { id: 'level',  q: 'Poziom trudności był…', opts: ['za łatwy', 'w sam raz', 'za trudny', 'różnie w różnych trybach'] },
+    { id: 'voice',  q: 'Oceń lektora (głos czytający słowa)', stars: 5, extra: 'dźwięk w ogóle nie działał' },
+    { id: 'calm',   q: 'Spokojna, stonowana forma gry (bez punktów i fanfar)…', opts: ['to duży plus', 'jest OK', 'dziecku czegoś brakowało'] },
+    { id: 'open',   q: 'Czego zabrakło albo co przeszkadzało?', text: true },
+    { id: 'store',  q: 'Czy zainstalował(a)byś taką grę ze sklepu?', opts: ['tak, nawet płatną', 'tak, darmową', 'raczej nie'] },
+  ];
+  const Survey = (() => {
+    const KEY = 'lingaroo.survey';
+    const read = () => { try { return JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } };
+    const write = o => { try { localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} };
+    return {
+      done: () => !!read().done,
+      draft: () => read().draft || {},
+      saveDraft(d) { const o = read(); o.draft = d; write(o); },
+      markDone() { write({ done: true }); },
+    };
+  })();
+
+  function renderSurvey() {
+    if (Survey.done()) { renderSurveyThanks(); return; }
+    const a = Survey.draft();
+    app.innerHTML = `
+      <div class="screen">
+        ${topbar('Ankieta')}
+        <p class="hint">Dla rodzica — dwie minuty. Wysyłamy tylko to, co tu zaznaczysz.</p>
+        <div class="survey">
+          ${SURVEY.map(s => `
+            <div class="qblock" data-q="${s.id}">
+              <div class="qtxt">${s.q}</div>
+              ${s.opts ? `<div class="chips">${s.opts.map((o, i) =>
+                `<button class="chip ${a[s.id] === i ? 'sel' : ''}" data-opt="${i}">${o}</button>`).join('')}</div>` : ''}
+              ${s.stars ? `
+                <div class="stars">${Array.from({ length: s.stars }, (_, i) =>
+                  `<button class="star ${a[s.id] > i ? 'on' : ''}" data-star="${i + 1}" aria-label="${i + 1} z 5">★</button>`).join('')}
+                </div>
+                <button class="chip small ${a[s.id + '_off'] ? 'sel' : ''}" data-extra="1">${s.extra}</button>` : ''}
+              ${s.text ? `<textarea class="freetext" maxlength="600" placeholder="Twoje uwagi…">${esc(a[s.id] || '')}</textarea>` : ''}
+            </div>`).join('')}
+          <div class="quizmsg" id="surveyMsg"></div>
+          <button class="softbtn" id="surveySend">Wyślij</button>
+        </div>
+      </div>`;
+    wire();
+    const answers = { ...a };
+    const persist = () => Survey.saveDraft(answers);
+    app.querySelectorAll('.qblock').forEach(block => {
+      const id = block.dataset.q;
+      block.querySelectorAll('[data-opt]').forEach(chip => chip.addEventListener('click', () => {
+        answers[id] = +chip.dataset.opt;
+        block.querySelectorAll('[data-opt]').forEach(c => c.classList.toggle('sel', c === chip));
+        persist();
+      }));
+      block.querySelectorAll('[data-star]').forEach(st => st.addEventListener('click', () => {
+        answers[id] = +st.dataset.star;
+        block.querySelectorAll('[data-star]').forEach(x => x.classList.toggle('on', +x.dataset.star <= answers[id]));
+        persist();
+      }));
+      const extra = block.querySelector('[data-extra]');
+      if (extra) extra.addEventListener('click', () => {
+        answers[id + '_off'] = !answers[id + '_off'];
+        extra.classList.toggle('sel', answers[id + '_off']);
+        persist();
+      });
+      const ta = block.querySelector('textarea');
+      if (ta) ta.addEventListener('input', () => { answers[id] = ta.value.slice(0, 600); persist(); });
+    });
+    document.getElementById('surveySend').addEventListener('click', async () => {
+      const msg = document.getElementById('surveyMsg');
+      msg.textContent = 'Wysyłanie…';
+      try {
+        const res = await fetch('api/feedback', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ v: 1, answers }),
+        });
+        if (!res.ok) throw new Error('http ' + res.status);
+        Survey.markDone();
+        renderSurveyThanks();
+      } catch (e) {
+        msg.textContent = 'Nie udało się wysłać — odpowiedzi są zapamiętane, spróbuj później przy internecie.';
+      }
+    });
+  }
+
+  function renderSurveyThanks() {
+    app.innerHTML = `
+      <div class="screen">
+        ${topbar('Ankieta')}
+        <div class="stage">
+          <div class="endpanel">
+            <div class="fig" data-roo="hero">${TEACHER_SVG}</div>
+            <h2>Dziękujemy!</h2>
+            <p>Twoje uwagi naprawdę kształtują tę grę.</p>
+            <div class="endrow"><button class="softbtn wood" data-go="home">Menu</button></div>
+          </div>
+        </div>
+      </div>`;
+    wire();
   }
 
   /* ── Powtórka: słowa z ukończonych lekcji, najpierw najsłabiej utrwalone ──
@@ -1007,8 +1122,10 @@
           </div>`;
           })()}
         </div>
-        <p class="about">LingaRoo 0.1 — angielski dla dzieci, spokojnie.<br>
-        Bez reklam, bez punktów, bez presji czasu. Wszystko działa bez internetu.</p>
+        <p class="about">LingaRoo — angielski dla dzieci, spokojnie.<br>
+        Bez reklam, bez punktów, bez presji czasu. Gra działa bez internetu,
+        a dane dziecka nie opuszczają urządzenia. Jedyny wyjątek: dobrowolna
+        ankieta dla rodzica — wysyła wyłącznie zaznaczone w niej odpowiedzi.</p>
       </div>`;
     wire();
     app.querySelectorAll('[data-set]').forEach(t => {
@@ -1052,7 +1169,7 @@
     const r = route();
     /* Bez aktywnego profilu wszystko prowadzi do „Kto dziś się bawi?"
      * (poza Strefą Rodzica, która jest ustawieniem urządzenia). */
-    if (!Profiles.active() && !['who', 'gate', 'parent'].includes(r.name)) {
+    if (!Profiles.active() && !['who', 'gate', 'parent', 'survey'].includes(r.name)) {
       renderWho();
       window.scrollTo(0, 0);
       return;
@@ -1066,6 +1183,7 @@
       case 'quiz':   renderQuiz(r.arg, lvl, true); break;
       case 'pairs':  renderPairs(true); break;
       case 'review': renderReview(true); break;
+      case 'survey': renderSurvey(); break;
       case 'say':    renderSay(r.arg, lvl, true); break;
       case 'gate':   renderGate(); break;
       case 'parent': renderParent(); break;

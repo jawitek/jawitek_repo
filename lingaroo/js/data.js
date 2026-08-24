@@ -2048,6 +2048,10 @@ const UI = {
     <circle cx="16" cy="12" r="4.5" stroke="#7A6A54" stroke-width="1.8"/>
   </svg>`,
   home: `<svg viewBox="0 0 24 24" fill="none"><path d="M4 11.5 12 4l8 7.5M6.5 10v9h11v-9" stroke="#7A6A54" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  form: `<svg viewBox="0 0 24 24" fill="none">
+    <rect x="5" y="3" width="14" height="18" rx="2.5" stroke="#7A6A54" stroke-width="1.8"/>
+    <path d="M8.5 8 H15.5 M8.5 12 H15.5 M8.5 16 H12.5" stroke="#7A6A54" stroke-width="1.6" stroke-linecap="round"/>
+  </svg>`,
   repeat: `<svg viewBox="0 0 24 24" fill="none">
     <path d="M6 8 Q6 4.5 9.5 4.5 H17 M17 4.5 L14 1.8 M17 4.5 L14 7.2" stroke="#7A6A54" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M18 16 Q18 19.5 14.5 19.5 H7 M7 19.5 L10 16.8 M7 19.5 L10 22.2" stroke="#7A6A54" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
