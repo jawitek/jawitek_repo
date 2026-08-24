@@ -8,7 +8,6 @@ static host (`python3 -m http.server` locally).
 | --- | --- | --- |
 | Kanno Noodle | `kanno/` | https://jawitek.github.io/jawitek_repo/kanno/ |
 | Na Zaspę 3 | `nazaspe3/` | https://jawitek.github.io/jawitek_repo/nazaspe3/ |
-| Pogo Pogo | `pogo-pogo/` | https://jawitek.github.io/jawitek_repo/pogo-pogo/ |
 
 The repository root holds only a redirect from `/` to `/kanno/`, so links to
 the old root address keep working.
@@ -26,10 +25,6 @@ the old root address keep working.
 │   ├── index.html
 │   ├── css/ js/ assets/
 │   └── README.md        details, and what is still stubbed
-├── pogo-pogo/      Pogo Pogo — browser game
-│   ├── index.html
-│   ├── css/ js/ assets/
-│   └── README.md SPEC.md
 ├── .agents/skills/ nano-banana-2 image generation skill
 └── .nojekyll       serve files verbatim, no Jekyll processing
 ```
@@ -77,4 +72,4 @@ The Kanno logo master files were kept out of that removal and live in
 - **`instagram.html` hotlinks Unsplash** for six of its photos, so that page
   depends on an external host. The main site hotlinks nothing.
 
-`nazaspe3/README.md` and `pogo-pogo/README.md` cover those two sites.
+`nazaspe3/README.md` covers that site in detail.
