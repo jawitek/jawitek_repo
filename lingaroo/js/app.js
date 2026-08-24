@@ -308,19 +308,19 @@
           <div class="bubble">Hello${act ? ', ' + esc(act.name) : ''}!<small>Pobawimy się razem?</small></div>
         </div>
         <div class="modes">
-          <button class="modetile" data-go="themes/cards">
+          ${(() => { const c = nextStep(); return `
+          <button class="modetile continue" data-go="${c.route}">
+            <div class="icon">${UI.play}</div>
+            <div class="label">Kontynuuj naukę<small>${c.label}</small></div>
+          </button>`; })()}
+          <button class="modetile" data-go="themes">
             <div class="icon">${UI.cards}</div>
-            <div class="label">Słówka<small>oglądam i słucham</small></div>
+            <div class="label">Nauka<small>tematy i lekcje</small></div>
             <div class="countpill">${lessonsDone()}/${lessonsTotal()}</div>
           </button>
           <button class="modetile" data-go="pairs">
             <div class="icon">${UI.pairs}</div>
             <div class="label">Pary<small>co do czego pasuje?</small></div>
-          </button>
-          <button class="modetile" data-go="themes/say">
-            <div class="icon">${UI.board}</div>
-            <div class="label">Tablica<small>mówię z LingaRoo</small></div>
-            <div class="countpill">${lessonsDone()}/${lessonsTotal()}</div>
           </button>
           ${reviewPool().length >= 6 ? `
           <button class="modetile" data-go="review">
@@ -363,15 +363,37 @@
   }
   const lessonsDone = () => THEMES.reduce((n, t) => n + Math.min(Progress.done(t.id), themeBoxes(t).length), 0);
   const lessonsTotal = () => THEMES.reduce((n, t) => n + themeBoxes(t).length, 0);
-  function renderThemes(mode) {
-    const target = mode === 'say' ? 'say' : 'cards';
+
+  /* Ostatnio ćwiczona lekcja (per profil) — „Kontynuuj naukę" wraca tam. */
+  const lastKey = () => { const p = Profiles.active(); return 'lingaroo.last' + (p ? '.' + p.id : ''); };
+  function rememberLesson(themeId, level) {
+    try { localStorage.setItem(lastKey(), JSON.stringify({ theme: themeId, level })); } catch (e) {}
+  }
+  /* Co dalej? Najpierw ostatnio ćwiczony temat, potem kolejne — pierwsza
+   * nieukończona lekcja i jej pierwszy brakujący krok. */
+  function nextStep() {
+    let last = null;
+    try { last = JSON.parse(localStorage.getItem(lastKey()) || 'null'); } catch (e) {}
+    const order = [];
+    if (last) order.push(themeById(last.theme));
+    THEMES.forEach(t => { if (!order.includes(t)) order.push(t); });
+    for (const t of order) {
+      const lvl = Progress.done(t.id);
+      if (lvl >= themeBoxes(t).length) continue;
+      const f = Progress.flags(t.id, lvl);
+      const act = !f.seen ? ['cards', 'Słówka'] : !f.quiz ? ['quiz', 'Znajdź słowo'] : ['say', 'Tablica'];
+      return { route: `${act[0]}/${t.id}/${lvl}`, label: `${t.pl} · Lekcja ${lvl + 1} · ${act[1]}` };
+    }
+    return { route: 'review', label: 'Wszystko ukończone — czas na Powtórkę!' };
+  }
+  function renderThemes() {
     app.innerHTML = `
       <div class="screen">
-        ${topbar(target === 'say' ? 'Tablica' : 'Słówka')}
+        ${topbar('Nauka')}
         <p class="hint">Co dziś ćwiczymy?</p>
         <div class="themes">
           ${THEMES.map(t => `
-            <button class="themetile" data-go="boxes/${target}/${t.id}">
+            <button class="themetile" data-go="boxes/${t.id}">
               <div class="icon">${t.coverSvg}</div>
               <div class="label">${t.pl}<small>${t.en}</small></div>
               ${themeLeaves(t)}
@@ -384,7 +406,7 @@
   /* ── Półka z pudełkami tematu ──
    * Pudełka otwierają się po kolei: ukończenie sesji na bieżącym
    * odblokowuje następne. Ukończone zawsze można powtarzać. */
-  function renderBoxes(mode, themeId) {
+  function renderBoxes(themeId) {
     const theme = themeById(themeId);
     const boxes = themeBoxes(theme);
     const done = Progress.done(theme.id);
@@ -409,7 +431,7 @@
               sub = left.length === 3 ? box.length + ' słów' : 'zostało: ' + left.join(', ');
             }
             return `
-            <button class="modetile ${state === 'locked' ? 'locked' : ''}" ${state === 'locked' ? '' : `data-go="${mode}/${theme.id}/${i}"`}>
+            <button class="modetile ${state === 'locked' ? 'locked' : ''}" ${state === 'locked' ? '' : `data-go="lesson/${theme.id}/${i}"`}>
               <div class="icon">${box[0].svg}</div>
               <div class="label">Lekcja ${i + 1}
                 <small>${sub}</small>
@@ -422,10 +444,37 @@
     wire();
   }
 
-  /* Strażnik pudełek: do zamkniętego poziomu prowadzi tylko półka. */
-  function guardLevel(mode, themeId, level) {
-    if (level > Progress.done(themeId)) { goto(`boxes/${mode}/${themeId}`); return false; }
+  /* Strażnik lekcji: do zamkniętego poziomu prowadzi tylko półka. */
+  function guardLevel(themeId, level) {
+    if (level > Progress.done(themeId)) { goto(`boxes/${themeId}`); return false; }
     return true;
+  }
+
+  /* ── Lekcja: trzy kroki z ptaszkami, następny podświetlony ── */
+  function renderLesson(themeId, level) {
+    const theme = themeById(themeId);
+    if (!guardLevel(theme.id, level)) return;
+    const f = Progress.flags(theme.id, level);
+    const next = !f.seen ? 'cards' : !f.quiz ? 'quiz' : !f.say ? 'say' : null;
+    const steps = [
+      ['cards', UI.cards, 'Słówka', 'obejrzyj i posłuchaj', f.seen],
+      ['quiz', UI.find, 'Znajdź słowo', 'wskaż, co słyszysz', f.quiz],
+      ['say', UI.board, 'Tablica', 'powiedz na głos', f.say],
+    ];
+    app.innerHTML = `
+      <div class="screen">
+        ${topbar(theme.pl)}
+        <p class="hint">Lekcja ${level + 1}${next ? '' : ' — ukończona, możesz powtarzać'}</p>
+        <div class="themes list">
+          ${steps.map(([act, icon, name, sub, done]) => `
+            <button class="modetile ${act === next ? 'nextstep' : ''}" data-go="${act}/${theme.id}/${level}">
+              <div class="icon">${icon}</div>
+              <div class="label">${name}<small>${sub}</small></div>
+              ${done ? `<div class="donebadge">${UI.check}</div>` : ''}
+            </button>`).join('')}
+        </div>
+      </div>`;
+    wire();
   }
 
   /* ── Słówka: karty do oglądania ── */
@@ -433,7 +482,8 @@
   let cardTheme = '';
   function renderCards(themeId, level) {
     const theme = themeById(themeId);
-    if (!guardLevel('cards', theme.id, level)) return;
+    if (!guardLevel(theme.id, level)) return;
+    rememberLesson(theme.id, level);
     const words = themeBoxes(theme)[level] || theme.words.slice(0, BOX_SIZE);
     const key = `${theme.id}/${level}`;
     if (cardTheme !== key) { cardTheme = key; cardIdx = 0; }
@@ -512,10 +562,11 @@
     return { target, options: shuffle([target, ...others]) };
   }
   function renderQuiz(themeId, level, fresh) {
-    if (!guardLevel('cards', themeId, level)) return;
+    if (!guardLevel(themeId, level)) return;
+    rememberLesson(themeId, level);
     if (fresh || !quiz || quiz.theme.id !== themeId || quiz.level !== level) quiz = newQuiz(themeId, level);
     if (quiz.round >= quiz.total) {
-      renderEnd(`quiz/${themeId}/${level}`, { themeId, level, activity: 'quiz', backTo: `boxes/cards/${themeId}` });
+      renderEnd(`quiz/${themeId}/${level}`, { themeId, level, activity: 'quiz', backTo: `lesson/${themeId}/${level}` });
       return;
     }
     const { target, options } = quizRoundData();
@@ -859,10 +910,11 @@
     return { theme, level, words: shuffle(box).slice(0, 5), round: 0, phase: 'prompt', revealed: 0 };
   }
   function renderSay(themeId, level, fresh) {
-    if (!guardLevel('say', themeId, level)) return;
+    if (!guardLevel(themeId, level)) return;
+    rememberLesson(themeId, level);
     if (fresh || !say || say.theme.id !== themeId || say.level !== level) say = newSay(themeId, level);
     if (say.round >= say.words.length) {
-      renderEnd(`say/${themeId}/${level}`, { themeId, level, activity: 'say', backTo: `boxes/say/${themeId}` });
+      renderEnd(`say/${themeId}/${level}`, { themeId, level, activity: 'say', backTo: `lesson/${themeId}/${level}` });
       return;
     }
     const w = say.words[say.round];
@@ -1025,7 +1077,7 @@
             <h2>Well done!</h2>
             <p>${msg}</p>
             <div class="endrow">
-              <button class="softbtn wood" data-go="${completion ? completion.backTo : 'home'}">${completion ? 'Lekcje' : 'Menu'}</button>
+              <button class="softbtn wood" data-go="${completion ? completion.backTo : 'home'}">${completion ? 'Lekcja' : 'Menu'}</button>
               ${nextBtn || `<button class="softbtn" id="again">${againRoute === 'pairs' ? 'Następne pary' : 'Jeszcze raz'}</button>`}
             </div>
           </div>
@@ -1191,8 +1243,9 @@
     const lvl = parseInt(r.arg2 || '0', 10) || 0;
     switch (r.name) {
       case 'who':    renderWho(); break;
-      case 'themes': renderThemes(r.arg); break;
-      case 'boxes':  renderBoxes(r.arg === 'say' ? 'say' : 'cards', r.arg2); break;
+      case 'themes': renderThemes(); break;
+      case 'boxes':  renderBoxes(r.arg === 'cards' || r.arg === 'say' ? r.arg2 : r.arg); break;
+      case 'lesson': renderLesson(r.arg, lvl); break;
       case 'cards':  renderCards(r.arg, lvl); break;
       case 'quiz':   renderQuiz(r.arg, lvl, true); break;
       case 'pairs':  renderPairs(true); break;
