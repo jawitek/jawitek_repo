@@ -848,7 +848,7 @@
    * Element można przeciągnąć (o trafieniu decyduje przecięcie prostokątów)
    * albo stuknąć: przy jednej strefie stuknięcie posyła go tam samo,
    * przy wielu — onTap decyduje (np. tylko wypowiada nazwę). */
-  function wireDrag({ items, zones, onDrop, onTap, isBusy }) {
+  function wireDrag({ items, zones, onDrop, onTap, onPick, isBusy }) {
     let lastPointer = 0;
     const hitZone = el => {
       const er = el.getBoundingClientRect();
@@ -880,6 +880,7 @@
         el.classList.remove('wrong');
         el.classList.add('dragging');
         el.style.transition = 'none';
+        if (onPick) onPick(it);
       });
       el.addEventListener('pointermove', e => {
         if (!dragging) return;
@@ -1157,7 +1158,7 @@
         return { svg: tripItemSvg(base.en, col), en: `${col} ${base.en}`, side: col };
       })).map((d, i) => ({ ...d, id: i }));
       return {
-        task: `Sort the ${plural(base.en)}! ${cols[0]} here, ${cols[1]} there!`,
+        task: `Sort the ${plural(base.en)}! ${cols[0][0].toUpperCase() + cols[0].slice(1)} on the left, ${cols[1]} on the right!`,
         credit: [cols[0], cols[1], base.en],
         zones: cols.map(c => ({ id: c, head: colorTabletSvg(TRIP_COLORS[c].c[0]) })),
         items,
@@ -1169,7 +1170,7 @@
       { svg: p.svg, en: `small ${p.en}`, side: 'small', size: 'small' },
     ])).map((d, i) => ({ ...d, id: i }));
     return {
-      task: 'Sort! Big things here, small things there!',
+      task: 'Sort! Big things on the left, small things on the right!',
       credit: ['big', 'small', ...picks.map(p => p.en)],
       zones: [{ id: 'big', head: SVG_BIG }, { id: 'small', head: SVG_SMALL }],
       items,
@@ -1225,7 +1226,10 @@
       items: d.items,
       zones: d.zones.map(z => ({ id: z.id, el: () => app.querySelector(`[data-zone="${z.id}"]`) })),
       isBusy: () => sortg.busy,
-      onTap: (el, it) => Sound.speak(it.en),
+      /* Chwycenie rzeczy wypowiada jej nazwę („yellow car") — stuknięcie
+       * to też chwycenie, więc nie robi nic ponad to. */
+      onPick: it => Sound.speak(it.en),
+      onTap: () => {},
       onDrop: (el, it, zone) => {
         if (zone.id === it.side) {
           sortg.done.add(it.id);
