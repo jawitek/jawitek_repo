@@ -195,6 +195,31 @@ svg { display: block; width: 100%; height: 100%; }
 [data-roo="pack"] img { transform: none; }
 #packZone { position: absolute; left: 50%; transform: translateX(-50%); bottom: 0; width: 160px; height: 100px; }
 
+/* Ubieranie: cel to sam LingaRoo, bez plecaka. */
+.dressroo { width: 118px; height: 140px; }
+.wchip { display: inline-flex; width: 34px; height: 34px; flex: 0 0 auto; }
+.wchip svg { width: 100%; height: 100%; }
+
+/* Sprzątanie: cel to mebel, na który wraca rzecz. */
+.spotart { width: 128px; height: 120px; }
+.spotart svg { width: 100%; height: 100%; }
+
+/* Dotknij!: postać z niewidocznymi strefami dotyku. */
+.kidwrap { position: relative; width: min(52vw, 210px); margin: 0 auto; }
+.kidwrap > svg { width: 100%; height: auto; display: block; }
+.kidzone { position: absolute; background: transparent; border: none; border-radius: 12px; padding: 0; }
+.kidzone.hit { background: rgba(122, 154, 139, 0.4); animation: nudge 0.5s ease; }
+.kidzone.miss { background: rgba(201, 107, 90, 0.3); animation: wobble 0.4s ease; }
+
+/* Koszyki: dwie strefy sortowania obok siebie. */
+.sortrow { display: flex; justify-content: center; gap: clamp(18px, 8vw, 56px); }
+.sortzone { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+.sortzone.bounce { animation: nudge 0.5s ease; }
+.sortzone .zhead { width: 40px; height: 40px; }
+.sortzone .zhead svg { width: 100%; height: 100%; }
+.sortzone .zbasket { width: clamp(96px, 26vw, 128px); height: clamp(76px, 21vw, 102px); }
+.sortzone .zbasket svg { width: 100%; height: 100%; }
+
 /* ── Ankieta dla rodzica ── */
 .surveycard {
   display: flex;

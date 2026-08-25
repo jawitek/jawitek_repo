@@ -1715,6 +1715,267 @@ function plural(en) {
   return en + 's';
 }
 
+/* ── Owoce, część dalsza ── */
+
+const SVG_MANGO = `<svg viewBox="0 0 100 100">
+  <path d="M34 26 Q60 14 74 34 Q86 52 72 72 Q56 90 38 78 Q20 66 24 46 Q26 32 34 26Z" fill="#D9A94F"/>
+  <path d="M40 34 Q58 26 68 40" stroke="#C9836C" stroke-width="8" fill="none" stroke-linecap="round" opacity="0.6"/>
+  <rect x="30" y="14" width="6" height="12" rx="3" fill="#8B5E45" transform="rotate(-24 33 20)"/>
+  <path d="M36 20 Q48 10 58 16 Q48 24 36 20Z" fill="#7A9A8B"/>
+</svg>`;
+
+const SVG_PINEAPPLE = `<svg viewBox="0 0 100 100">
+  <path d="M42 30 Q34 18 24 16 Q34 12 44 20 Q44 8 50 2 Q56 8 56 20 Q66 12 76 16 Q66 18 58 30Z" fill="#7A9A8B"/>
+  <ellipse cx="50" cy="62" rx="24" ry="30" fill="#D9B36C"/>
+  <path d="M32 44 L68 80 M28 56 L64 88 M36 34 L72 68 M46 30 L74 56 M26 70 L52 92" stroke="#C9A052" stroke-width="2.5"/>
+  <path d="M68 44 L32 80 M72 56 L36 88 M64 34 L28 68 M54 30 L26 56 M74 70 L48 92" stroke="#C9A052" stroke-width="2.5"/>
+</svg>`;
+
+const SVG_MELON = `<svg viewBox="0 0 100 100">
+  <circle cx="50" cy="54" r="32" fill="#A8A868"/>
+  <path d="M50 22 Q42 54 50 86 M26 32 Q34 54 28 78 M74 32 Q66 54 72 78 M19 48 Q50 40 81 48 M20 66 Q50 74 80 66" stroke="#96955C" stroke-width="2.5" fill="none"/>
+  <rect x="47" y="14" width="6" height="10" rx="3" fill="#8B5E45"/>
+</svg>`;
+
+const SVG_BLUEBERRY = `<svg viewBox="0 0 100 100">
+  <circle cx="34" cy="46" r="17" fill="#567483"/>
+  <circle cx="66" cy="44" r="15" fill="#6B8E9F"/>
+  <circle cx="50" cy="70" r="16" fill="#4C6472"/>
+  <path d="M30 42 L38 42 M34 38 L34 46" stroke="#3E4E63" stroke-width="2" stroke-linecap="round"/>
+  <path d="M62 40 L70 40 M66 36 L66 44" stroke="#3E4E63" stroke-width="2" stroke-linecap="round"/>
+  <path d="M46 66 L54 66 M50 62 L50 70" stroke="#3E4E63" stroke-width="2" stroke-linecap="round"/>
+  <path d="M42 26 Q50 16 60 22" stroke="#7A9A8B" stroke-width="3" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_RASPBERRY = `<svg viewBox="0 0 100 100">
+  <path d="M50 24 Q40 14 30 16 Q36 24 44 26 M50 24 Q60 14 70 16 Q64 24 56 26" fill="#7A9A8B"/>
+  <circle cx="38" cy="40" r="9" fill="#B85C5C"/><circle cx="54" cy="38" r="9" fill="#C96B5A"/><circle cx="68" cy="44" r="8" fill="#B85C5C"/>
+  <circle cx="32" cy="56" r="9" fill="#C96B5A"/><circle cx="48" cy="54" r="9" fill="#B85C5C"/><circle cx="64" cy="58" r="8" fill="#C96B5A"/>
+  <circle cx="40" cy="70" r="9" fill="#B85C5C"/><circle cx="56" cy="70" r="8" fill="#C96B5A"/>
+  <circle cx="48" cy="82" r="8" fill="#B85C5C"/>
+</svg>`;
+
+const SVG_COCONUT = `<svg viewBox="0 0 100 100">
+  <circle cx="42" cy="56" r="26" fill="#8B6A48"/>
+  <path d="M28 38 Q42 30 56 38 M24 52 Q28 44 34 40 M60 40 Q64 46 66 52" stroke="#6E5138" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <circle cx="36" cy="52" r="3" fill="#4F3A28"/><circle cx="48" cy="50" r="3" fill="#4F3A28"/><circle cx="42" cy="62" r="3" fill="#4F3A28"/>
+  <path d="M66 66 A20 20 0 0 1 90 46 Q88 66 74 72Z" fill="#EFE6D8"/>
+  <path d="M66 66 A20 20 0 0 1 90 46" stroke="#8B6A48" stroke-width="4" fill="none"/>
+</svg>`;
+
+/* ── Warzywa, część dalsza ── */
+
+const SVG_CABBAGE = `<svg viewBox="0 0 100 100">
+  <circle cx="50" cy="54" r="30" fill="#A8C0A0"/>
+  <path d="M24 48 Q36 30 56 28 Q44 40 40 56 Q38 70 44 82" stroke="#8CAB84" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M76 46 Q66 32 50 30 M78 58 Q70 70 58 78" stroke="#8CAB84" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M22 60 Q30 74 44 80" stroke="#8CAB84" stroke-width="4" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_BEETROOT = `<svg viewBox="0 0 100 100">
+  <path d="M50 34 Q72 38 72 58 Q72 76 50 86 Q28 76 28 58 Q28 38 50 34Z" fill="#A34F6A"/>
+  <path d="M50 86 Q49 92 46 96" stroke="#8B3F58" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M44 34 Q38 16 30 10 Q42 14 48 28 M52 32 Q54 12 64 6 Q60 18 56 32Z" fill="#7A9A8B"/>
+  <path d="M42 48 Q40 62 44 74" stroke="#8B3F58" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_GARLIC = `<svg viewBox="0 0 100 100">
+  <path d="M50 30 Q54 40 62 46 Q74 54 72 68 Q70 82 50 84 Q30 82 28 68 Q26 54 38 46 Q46 40 50 30Z" fill="#EFE6D8"/>
+  <path d="M50 34 Q48 60 46 82 M42 46 Q38 64 38 80 M58 46 Q62 64 62 80" stroke="#D9CBB4" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M48 30 Q46 20 42 16 Q50 18 52 28Z" fill="#A8A868"/>
+</svg>`;
+
+const SVG_LETTUCE = `<svg viewBox="0 0 100 100">
+  <path d="M20 58 Q14 40 28 36 Q26 22 42 24 Q46 12 58 20 Q70 14 74 28 Q88 30 82 46 Q90 58 76 64 Q60 74 40 72 Q24 70 20 58Z" fill="#A8C0A0"/>
+  <path d="M30 44 Q42 36 56 40 M36 56 Q50 48 66 52 M48 28 Q52 36 54 44" stroke="#8CAB84" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <ellipse cx="50" cy="72" rx="26" ry="8" fill="#8CAB84"/>
+</svg>`;
+
+const SVG_BEAN = `<svg viewBox="0 0 100 100">
+  <path d="M26 34 Q22 24 30 20 Q36 26 36 34 Q52 30 66 40 Q82 52 76 70 Q70 84 54 80 Q60 70 56 60 Q50 48 38 44 Q28 42 26 34Z" fill="#A8C0A0"/>
+  <path d="M34 78 Q26 82 22 78 Q26 70 34 70 Q30 60 36 54 Q44 60 42 70Z" fill="#8CAB84"/>
+</svg>`;
+
+const SVG_ZUCCHINI = `<svg viewBox="0 0 100 100">
+  <path d="M20 74 Q14 66 22 58 Q40 42 62 32 Q74 26 80 32 Q86 38 80 48 Q68 68 44 78 Q28 84 20 74Z" fill="#6B8A7B"/>
+  <path d="M28 68 Q46 56 66 44" stroke="#A8C0A0" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <rect x="76" y="22" width="8" height="14" rx="4" fill="#8B5E45" transform="rotate(35 80 29)"/>
+</svg>`;
+
+/* ── Dom, część dalsza ── */
+
+const SVG_SOFA = `<svg viewBox="0 0 100 100">
+  <rect x="18" y="30" width="64" height="26" rx="10" fill="#C98F8A"/>
+  <rect x="10" y="46" width="18" height="28" rx="8" fill="#B87F7A"/>
+  <rect x="72" y="46" width="18" height="28" rx="8" fill="#B87F7A"/>
+  <rect x="24" y="50" width="26" height="16" rx="6" fill="#D9A5A0"/>
+  <rect x="50" y="50" width="26" height="16" rx="6" fill="#D9A5A0"/>
+  <rect x="18" y="64" width="64" height="10" rx="5" fill="#B87F7A"/>
+  <rect x="22" y="74" width="8" height="10" rx="3" fill="#8B5E45"/>
+  <rect x="70" y="74" width="8" height="10" rx="3" fill="#8B5E45"/>
+</svg>`;
+
+const SVG_TV = `<svg viewBox="0 0 100 100">
+  <rect x="14" y="22" width="72" height="48" rx="5" fill="#4A4A45"/>
+  <rect x="19" y="27" width="62" height="38" rx="3" fill="#8FB0BE"/>
+  <path d="M30 58 Q40 44 52 52 Q62 40 72 50 L72 60 H30Z" fill="#A8C0A0"/>
+  <circle cx="64" cy="36" r="6" fill="#D9C25F"/>
+  <path d="M40 70 L36 82 M60 70 L64 82" stroke="#4A4A45" stroke-width="4" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_WARDROBE = `<svg viewBox="0 0 100 100">
+  <rect x="24" y="12" width="52" height="74" rx="4" fill="#B98255"/>
+  <path d="M50 12 V86" stroke="#8B5E45" stroke-width="3"/>
+  <rect x="29" y="18" width="17" height="56" rx="2" fill="#C99B72"/>
+  <rect x="54" y="18" width="17" height="56" rx="2" fill="#C99B72"/>
+  <circle cx="44" cy="48" r="2.5" fill="#6E5138"/>
+  <circle cx="56" cy="48" r="2.5" fill="#6E5138"/>
+  <rect x="26" y="86" width="7" height="8" rx="2" fill="#8B5E45"/>
+  <rect x="67" y="86" width="7" height="8" rx="2" fill="#8B5E45"/>
+</svg>`;
+
+const SVG_SHOWER = `<svg viewBox="0 0 100 100">
+  <path d="M30 26 Q30 14 42 14 H50" stroke="#A9A49B" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <path d="M24 30 Q30 22 40 24 Q44 32 38 38 Q28 40 24 30Z" fill="#A9A49B"/>
+  <path d="M28 46 L24 58 M36 46 L34 60 M44 44 L44 58 M32 66 L30 78 M40 66 L40 80" stroke="#8FB0BE" stroke-width="3.4" stroke-linecap="round"/>
+  <path d="M62 88 H86 M74 88 V40 Q74 34 68 34" stroke="#A9A49B" stroke-width="5" fill="none" stroke-linecap="round"/>
+</svg>`;
+
+const SVG_FRIDGE = `<svg viewBox="0 0 100 100">
+  <rect x="30" y="10" width="40" height="80" rx="6" fill="#D7E3E8"/>
+  <path d="M30 40 H70" stroke="#A7C2CC" stroke-width="3"/>
+  <rect x="36" y="20" width="4" height="12" rx="2" fill="#8F8A80"/>
+  <rect x="36" y="48" width="4" height="18" rx="2" fill="#8F8A80"/>
+</svg>`;
+
+const SVG_MIRROR = `<svg viewBox="0 0 100 100">
+  <ellipse cx="50" cy="46" rx="26" ry="34" fill="#B98255"/>
+  <ellipse cx="50" cy="46" rx="19" ry="27" fill="#D7E3E8"/>
+  <path d="M40 32 Q46 24 54 26 M38 44 Q40 36 44 32" stroke="#FDFBF7" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M42 80 H58 L62 90 H38Z" fill="#8B5E45"/>
+</svg>`;
+
+const SVG_CLOCK = `<svg viewBox="0 0 100 100">
+  <circle cx="50" cy="50" r="32" fill="#B98255"/>
+  <circle cx="50" cy="50" r="25" fill="#FDFBF7"/>
+  <path d="M50 30 V34 M50 66 V70 M30 50 H34 M66 50 H70" stroke="#8A7A5F" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M50 50 L50 36 M50 50 L60 56" stroke="#2D3142" stroke-width="3.4" stroke-linecap="round"/>
+  <circle cx="50" cy="50" r="3" fill="#2D3142"/>
+  <circle cx="34" cy="24" r="6" fill="#C9A052"/><circle cx="66" cy="24" r="6" fill="#C9A052"/>
+</svg>`;
+
+const SVG_PHONE = `<svg viewBox="0 0 100 100">
+  <rect x="32" y="12" width="36" height="76" rx="8" fill="#4A4A45"/>
+  <rect x="36" y="20" width="28" height="56" rx="3" fill="#8FB0BE"/>
+  <circle cx="50" cy="82" r="3.4" fill="#A9A49B"/>
+  <circle cx="44" cy="34" r="6" fill="#D9C25F"/>
+  <path d="M40 56 Q50 48 60 56 L60 64 H40Z" fill="#A8C0A0"/>
+</svg>`;
+
+/* ── Dotknij!: duża postać dziecka + strefy dotyku ── */
+
+const KID_SVG = `<svg viewBox="0 0 200 320">
+  <rect x="78" y="220" width="18" height="72" rx="9" fill="#E7C4A8"/>
+  <rect x="104" y="220" width="18" height="72" rx="9" fill="#E7C4A8"/>
+  <ellipse cx="84" cy="300" rx="18" ry="9" fill="#B98255"/>
+  <ellipse cx="116" cy="300" rx="18" ry="9" fill="#B98255"/>
+  <path d="M66 122 Q40 140 36 172" stroke="#E7C4A8" stroke-width="18" fill="none" stroke-linecap="round"/>
+  <path d="M134 122 Q160 140 164 172" stroke="#E7C4A8" stroke-width="18" fill="none" stroke-linecap="round"/>
+  <circle cx="34" cy="182" r="13" fill="#E7C4A8"/>
+  <circle cx="166" cy="182" r="13" fill="#E7C4A8"/>
+  <path d="M62 112 Q100 100 138 112 L134 196 Q100 206 66 196Z" fill="#7A9A8B"/>
+  <ellipse cx="100" cy="160" rx="26" ry="22" fill="#8CAB9C"/>
+  <path d="M66 196 Q100 206 134 196 L132 232 H106 L100 216 L94 232 H68Z" fill="#6B8E9F"/>
+  <ellipse cx="56" cy="64" rx="8" ry="12" fill="#E7C4A8"/>
+  <ellipse cx="144" cy="64" rx="8" ry="12" fill="#E7C4A8"/>
+  <ellipse cx="56" cy="64" rx="3.5" ry="6" fill="#C99B72"/>
+  <ellipse cx="144" cy="64" rx="3.5" ry="6" fill="#C99B72"/>
+  <circle cx="100" cy="64" r="42" fill="#E7C4A8"/>
+  <path d="M58 54 Q60 24 100 22 Q140 24 142 54 Q130 34 100 34 Q70 34 58 54Z" fill="#8B5E45"/>
+  <ellipse cx="84" cy="58" rx="9" ry="10" fill="#FDFBF7"/>
+  <ellipse cx="116" cy="58" rx="9" ry="10" fill="#FDFBF7"/>
+  <circle cx="85" cy="60" r="4.5" fill="#6E5138"/>
+  <circle cx="115" cy="60" r="4.5" fill="#6E5138"/>
+  <path d="M74 44 Q84 40 92 44 M108 44 Q116 40 126 44" stroke="#8B5E45" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M100 62 Q104 70 100 74 Q96 70 100 62Z" fill="#D9A97F"/>
+  <path d="M82 84 Q100 98 118 84 Q112 98 100 98 Q88 98 82 84Z" fill="#C96B5A"/>
+  <path d="M85 85 H115 V90 Q100 93 85 90Z" fill="#FDFBF7"/>
+  <circle cx="72" cy="76" r="6" fill="#D9A5A0" opacity="0.6"/>
+  <circle cx="128" cy="76" r="6" fill="#D9A5A0" opacity="0.6"/>
+</svg>`;
+
+/* Strefy dotyku w % kontenera postaci; parts = słowa, które strefa zalicza. */
+const KID_ZONES = [
+  { parts: 'hair', l: 29, t: 6, w: 42, h: 7 },
+  { parts: 'ears', l: 22, t: 16, w: 9, h: 9 },
+  { parts: 'ears', l: 69, t: 16, w: 9, h: 9 },
+  { parts: 'eyes', l: 36, t: 15, w: 10, h: 7 },
+  { parts: 'eyes', l: 54, t: 15, w: 10, h: 7 },
+  { parts: 'nose', l: 45, t: 20, w: 10, h: 5.5 },
+  { parts: 'mouth,teeth', l: 40, t: 25.5, w: 20, h: 6 },
+  { parts: 'head', l: 34, t: 11.5, w: 32, h: 3.5 },
+  { parts: 'head', l: 31, t: 20, w: 6, h: 7 },
+  { parts: 'head', l: 63, t: 20, w: 6, h: 7 },
+  { parts: 'arm', l: 13, t: 37, w: 13, h: 15 },
+  { parts: 'arm', l: 74, t: 37, w: 13, h: 15 },
+  { parts: 'hands', l: 9, t: 53, w: 13, h: 9 },
+  { parts: 'hands', l: 78, t: 53, w: 13, h: 9 },
+  { parts: 'tummy', l: 37, t: 44, w: 26, h: 15 },
+  { parts: 'legs', l: 37, t: 69, w: 11, h: 20 },
+  { parts: 'legs', l: 52, t: 69, w: 11, h: 20 },
+  { parts: 'feet', l: 32, t: 91, w: 18, h: 6.5 },
+  { parts: 'feet', l: 50, t: 91, w: 18, h: 6.5 },
+];
+
+/* ── Sortowanie: koszyk + pula rzeczy dla wielkości ── */
+
+const SVG_BASKET = `<svg viewBox="0 0 100 100">
+  <path d="M30 42 Q30 22 50 22 Q70 22 70 42" stroke="#B07F45" stroke-width="5" fill="none"/>
+  <path d="M16 42 H84 L76 84 Q50 90 24 84Z" fill="#C9975F"/>
+  <path d="M20 54 H80 M23 66 H77 M26 76 H74" stroke="#B07F45" stroke-width="3"/>
+</svg>`;
+
+const SORT_SIZE_POOL = [
+  { en: 'apple', svg: SVG_APPLE }, { en: 'ball', svg: SVG_BALL },
+  { en: 'teddy', svg: SVG_TEDDY }, { en: 'cup', svg: SVG_CUP },
+  { en: 'banana', svg: SVG_BANANA }, { en: 'car', svg: SVG_CAR },
+  { en: 'star', svg: SVG_STAR }, { en: 'balloon', svg: SVG_BALLOON },
+];
+
+/* ── Ubieranie na pogodę ── */
+
+const DRESS_ITEMS = {
+  umbrella: SVG_UMBRELLA, sunglasses: SVG_SUNGLASSES, boots: SVG_BOOTS,
+  scarf: SVG_SCARF, gloves: SVG_GLOVES, cap: SVG_CAP, jacket: SVG_JACKET,
+  hat: SVG_HAT, shirt: SVG_SHIRT, dress: SVG_DRESS, skirt: SVG_SKIRT,
+  shoe: SVG_SHOE, sock: SVG_SOCK, trousers: SVG_TROUSERS,
+};
+const DRESS_SCENES = [
+  { w: 'rain', svg: SVG_RAIN, need: ['umbrella', 'boots'], task: `It's raining! LingaRoo needs the umbrella and the boots!` },
+  { w: 'snow', svg: SVG_SNOW, need: ['scarf', 'gloves'], task: `It's snowing! LingaRoo needs the scarf and the gloves!` },
+  { w: 'sun', svg: SVG_SUN, need: ['cap', 'sunglasses'], task: `It's sunny! LingaRoo needs the cap and the sunglasses!` },
+  { w: 'wind', svg: SVG_WIND, need: ['jacket', 'hat'], task: `It's windy! LingaRoo needs the jacket and the hat!` },
+];
+
+/* ── Sprzątanie domu: każda rzecz wraca na swoje miejsce ── */
+
+const CLEAN_ITEMS = {
+  plate: SVG_PLATE, cup: SVG_CUP, fork: SVG_FORK, spoon: SVG_SPOON,
+  pillow: SVG_PILLOW, teddy: SVG_TEDDY, book: SVG_BOOK,
+  shirt: SVG_SHIRT, sock: SVG_SOCK, cap: SVG_CAP,
+  ball: SVG_BALL, car: SVG_CAR, blocks: SVG_BLOCKS,
+};
+const CLEAN_ROUNDS = [
+  { spot: 'table', spotSvg: SVG_TABLE, items: ['plate', 'cup', 'fork'],
+    task: 'Tidy up! Put the plate, the cup and the fork on the table!' },
+  { spot: 'bed', spotSvg: SVG_BED, items: ['pillow', 'teddy', 'book'],
+    task: 'Put the pillow, the teddy and the book on the bed!' },
+  { spot: 'wardrobe', spotSvg: SVG_WARDROBE, items: ['shirt', 'sock', 'cap'],
+    task: 'Put the shirt, the sock and the cap in the wardrobe!' },
+  { spot: 'basket', spotSvg: SVG_BASKET, items: ['ball', 'car', 'blocks'],
+    task: 'Put the ball, the car and the blocks in the basket!' },
+];
+
 /* ── Pakiety słów ─────────────────────────────────────────────
  * pl służy tylko podpowiedzi dla rodzica/dziecka czytającego —
  * dziecko słyszy wyłącznie angielski. */
@@ -1764,6 +2025,12 @@ const THEMES = [
       { en: 'broccoli',   pl: 'brokuł',     svg: SVG_BROCCOLI },
       { en: 'mushroom',   pl: 'grzyb',      svg: SVG_MUSHROOM },
       { en: 'radish',     pl: 'rzodkiewka', svg: SVG_RADISH },
+      { en: 'cabbage',    pl: 'kapusta',    svg: SVG_CABBAGE },
+      { en: 'beetroot',   pl: 'burak',      svg: SVG_BEETROOT },
+      { en: 'garlic',     pl: 'czosnek',    svg: SVG_GARLIC },
+      { en: 'lettuce',    pl: 'sałata',     svg: SVG_LETTUCE },
+      { en: 'bean',       pl: 'fasolka',    svg: SVG_BEAN },
+      { en: 'zucchini',   pl: 'cukinia',    svg: SVG_ZUCCHINI },
     ],
   },
   {
@@ -1784,6 +2051,12 @@ const THEMES = [
       { en: 'watermelon', pl: 'arbuz',      svg: SVG_WATERMELON },
       { en: 'peach',      pl: 'brzoskwinia',svg: SVG_PEACH },
       { en: 'kiwi',       pl: 'kiwi',       svg: SVG_KIWI },
+      { en: 'mango',      pl: 'mango',      svg: SVG_MANGO },
+      { en: 'pineapple',  pl: 'ananas',     svg: SVG_PINEAPPLE },
+      { en: 'melon',      pl: 'melon',      svg: SVG_MELON },
+      { en: 'blueberry',  pl: 'borówka',    svg: SVG_BLUEBERRY },
+      { en: 'raspberry',  pl: 'malina',     svg: SVG_RASPBERRY },
+      { en: 'coconut',    pl: 'kokos',      svg: SVG_COCONUT },
     ],
   },
   {
@@ -1804,6 +2077,12 @@ const THEMES = [
       { en: 'black',      pl: 'czarny',     svg: colorTabletSvg('#3D3D3D') },
       { en: 'grey',       pl: 'szary',      svg: colorTabletSvg('#A9A49B') },
       { en: 'gold',       pl: 'złoty',      svg: colorTabletSvg('#C9A94F') },
+      { en: 'light blue', pl: 'błękitny',   svg: colorTabletSvg('#A7C2CC') },
+      { en: 'navy',       pl: 'granatowy',  svg: colorTabletSvg('#3E4E63') },
+      { en: 'turquoise',  pl: 'turkusowy',  svg: colorTabletSvg('#6FA8A0') },
+      { en: 'lime',       pl: 'limonkowy',  svg: colorTabletSvg('#A8C060') },
+      { en: 'silver',     pl: 'srebrny',    svg: colorTabletSvg('#C0BDB4') },
+      { en: 'beige',      pl: 'beżowy',     svg: colorTabletSvg('#D8C9AC') },
     ],
   },
   {
@@ -1824,6 +2103,18 @@ const THEMES = [
       { en: 'lamp',       pl: 'lampa',      svg: SVG_LAMP },
       { en: 'door',       pl: 'drzwi',      svg: SVG_DOOR },
       { en: 'window',     pl: 'okno',       svg: SVG_WINDOW },
+      { en: 'sofa',       pl: 'kanapa',     svg: SVG_SOFA },
+      { en: 'TV',         pl: 'telewizor',  svg: SVG_TV },
+      { en: 'wardrobe',   pl: 'szafa',      svg: SVG_WARDROBE },
+      { en: 'shower',     pl: 'prysznic',   svg: SVG_SHOWER },
+      { en: 'fridge',     pl: 'lodówka',    svg: SVG_FRIDGE },
+      { en: 'mirror',     pl: 'lustro',     svg: SVG_MIRROR },
+      { en: 'clock',      pl: 'zegar',      svg: SVG_CLOCK },
+      { en: 'phone',      pl: 'telefon',    svg: SVG_PHONE },
+      { en: 'pillow',     pl: 'poduszka',   svg: SVG_PILLOW },
+      { en: 'towel',      pl: 'ręcznik',    svg: SVG_TOWEL },
+      { en: 'soap',       pl: 'mydło',      svg: SVG_SOAP },
+      { en: 'book',       pl: 'książka',    svg: SVG_BOOK },
     ],
   },
   {
@@ -2053,6 +2344,12 @@ const PAIRS = [
   { id: 'day-night',   a: { en: 'day',   pl: 'dzień',  svg: SVG_DAY },   b: { en: 'night', pl: 'noc',    svg: SVG_NIGHT } },
   { id: 'fast-slow',   a: { en: 'fast',  pl: 'szybki', svg: SVG_FAST },  b: { en: 'slow',  pl: 'wolny',  svg: SVG_SLOW } },
   { id: 'clean-dirty', a: { en: 'clean', pl: 'czysty', svg: SVG_CLEAN }, b: { en: 'dirty', pl: 'brudny', svg: SVG_DIRTY } },
+  { id: 'rabbit-carrot', a: { en: 'rabbit', pl: 'królik', svg: SVG_RABBIT }, b: { en: 'carrot', pl: 'marchewka', svg: SVG_CARROT } },
+  { id: 'mouse-cheese', a: { en: 'mouse', pl: 'mysz',    svg: SVG_MOUSE },  b: { en: 'cheese', pl: 'ser',    svg: SVG_CHEESE } },
+  { id: 'cow-milk',    a: { en: 'cow',   pl: 'krowa',   svg: SVG_COW },    b: { en: 'milk',   pl: 'mleko',  svg: SVG_MILK } },
+  { id: 'chicken-egg', a: { en: 'chicken', pl: 'kura',  svg: SVG_CHICKEN },b: { en: 'egg',    pl: 'jajko',  svg: SVG_EGG } },
+  { id: 'kite-wind',   a: { en: 'kite',  pl: 'latawiec',svg: SVG_KITE },   b: { en: 'wind',   pl: 'wiatr',  svg: SVG_WIND } },
+  { id: 'snow-gloves', a: { en: 'snow',  pl: 'śnieg',   svg: SVG_SNOW },   b: { en: 'gloves', pl: 'rękawiczki', svg: SVG_GLOVES } },
 ];
 
 /* ── Pudełka: słowa tematu w porcjach po 6, odblokowywane po kolei ── */
@@ -2065,6 +2362,9 @@ function themeBoxes(theme) {
 
 /* Ikony interfejsu (kreska 1.6–2, zaokrąglone końcówki — spokojna kreska) */
 const UI = {
+  hand: `<svg viewBox="0 0 24 24" fill="none">
+    <path d="M8.5 12V5.7a1.4 1.4 0 0 1 2.8 0V10m0-4.6V4.6a1.4 1.4 0 0 1 2.8 0V10m0-3.6a1.4 1.4 0 0 1 2.8 0V11m0-.6a1.4 1.4 0 0 1 2.8 0v4.3a6.3 6.3 0 0 1-6.3 6.3h-.9a6.3 6.3 0 0 1-5.2-2.7l-2.5-3.6a1.4 1.4 0 0 1 2.2-1.7l1.5 1.6" stroke="#2D3142" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`,
   gear: `<svg viewBox="0 0 24 24" fill="none">
     <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="#2D3142" stroke-width="1.6"/>
     <path d="M19.4 13.4c.05-.46.05-.94 0-1.4l1.8-1.4-1.8-3.1-2.1.6a7.6 7.6 0 0 0-2.3-1.3L14.6 4h-5.2l-.4 2.4c-.85.3-1.63.75-2.3 1.3l-2.1-.6-1.8 3.1 1.8 1.4a7 7 0 0 0 0 2.8l-1.8 1.4 1.8 3.1 2.1-.6c.67.55 1.45 1 2.3 1.3l.4 2.4h5.2l.4-2.4c.85-.3 1.63-.75 2.3-1.3l2.1.6 1.8-3.1-1.8-1.4Z" stroke="#2D3142" stroke-width="1.3" stroke-linejoin="round"/>
