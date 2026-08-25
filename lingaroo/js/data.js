@@ -1950,11 +1950,12 @@ const DRESS_ITEMS = {
   hat: SVG_HAT, shirt: SVG_SHIRT, dress: SVG_DRESS, skirt: SVG_SKIRT,
   shoe: SVG_SHOE, sock: SVG_SOCK, trousers: SVG_TROUSERS,
 };
+/* Prośby idą po jednej rzeczy naraz; intro z pogodą tylko przy pierwszej. */
 const DRESS_SCENES = [
-  { w: 'rain', svg: SVG_RAIN, need: ['umbrella', 'boots'], task: `It's raining! LingaRoo needs the umbrella and the boots!` },
-  { w: 'snow', svg: SVG_SNOW, need: ['scarf', 'gloves'], task: `It's snowing! LingaRoo needs the scarf and the gloves!` },
-  { w: 'sun', svg: SVG_SUN, need: ['cap', 'sunglasses'], task: `It's sunny! LingaRoo needs the cap and the sunglasses!` },
-  { w: 'wind', svg: SVG_WIND, need: ['jacket', 'hat'], task: `It's windy! LingaRoo needs the jacket and the hat!` },
+  { w: 'rain', svg: SVG_RAIN, need: ['umbrella', 'boots'], intro: `It's raining!` },
+  { w: 'snow', svg: SVG_SNOW, need: ['scarf', 'gloves'], intro: `It's snowing!` },
+  { w: 'sun', svg: SVG_SUN, need: ['cap', 'sunglasses'], intro: `It's sunny!` },
+  { w: 'wind', svg: SVG_WIND, need: ['jacket', 'hat'], intro: `It's windy!` },
 ];
 
 /* ── Sprzątanie domu: każda rzecz wraca na swoje miejsce ── */
@@ -1965,15 +1966,13 @@ const CLEAN_ITEMS = {
   shirt: SVG_SHIRT, sock: SVG_SOCK, cap: SVG_CAP,
   ball: SVG_BALL, car: SVG_CAR, blocks: SVG_BLOCKS,
 };
+/* Polecenia idą po jednej rzeczy naraz (place buduje zdanie
+ * „Put the plate on the table!") — dziecko nie zapamięta trzech. */
 const CLEAN_ROUNDS = [
-  { spot: 'table', spotSvg: SVG_TABLE, items: ['plate', 'cup', 'fork'],
-    task: 'Tidy up! Put the plate, the cup and the fork on the table!' },
-  { spot: 'bed', spotSvg: SVG_BED, items: ['pillow', 'teddy', 'book'],
-    task: 'Put the pillow, the teddy and the book on the bed!' },
-  { spot: 'wardrobe', spotSvg: SVG_WARDROBE, items: ['shirt', 'sock', 'cap'],
-    task: 'Put the shirt, the sock and the cap in the wardrobe!' },
-  { spot: 'basket', spotSvg: SVG_BASKET, items: ['ball', 'car', 'blocks'],
-    task: 'Put the ball, the car and the blocks in the basket!' },
+  { spot: 'table', spotSvg: SVG_TABLE, place: 'on the table', items: ['plate', 'cup', 'fork'] },
+  { spot: 'bed', spotSvg: SVG_BED, place: 'on the bed', items: ['pillow', 'teddy', 'book'] },
+  { spot: 'wardrobe', spotSvg: SVG_WARDROBE, place: 'in the wardrobe', items: ['shirt', 'sock', 'cap'] },
+  { spot: 'basket', spotSvg: SVG_BASKET, place: 'in the basket', items: ['ball', 'car', 'blocks'] },
 ];
 
 /* ── Pakiety słów ─────────────────────────────────────────────
@@ -2350,6 +2349,52 @@ const PAIRS = [
   { id: 'chicken-egg', a: { en: 'chicken', pl: 'kura',  svg: SVG_CHICKEN },b: { en: 'egg',    pl: 'jajko',  svg: SVG_EGG } },
   { id: 'kite-wind',   a: { en: 'kite',  pl: 'latawiec',svg: SVG_KITE },   b: { en: 'wind',   pl: 'wiatr',  svg: SVG_WIND } },
   { id: 'snow-gloves', a: { en: 'snow',  pl: 'śnieg',   svg: SVG_SNOW },   b: { en: 'gloves', pl: 'rękawiczki', svg: SVG_GLOVES } },
+  { id: 'bear-honey',  a: { en: 'bear',  pl: 'miś',     svg: SVG_BEAR },   b: { en: 'honey',  pl: 'miód',   svg: SVG_HONEY } },
+  { id: 'bee-honey',   a: { en: 'bee',   pl: 'pszczoła',svg: SVG_BEE },    b: { en: 'honey',  pl: 'miód',   svg: SVG_HONEY } },
+  { id: 'bread-butter', a: { en: 'bread', pl: 'chleb',  svg: SVG_BREAD },  b: { en: 'butter', pl: 'masło',  svg: SVG_BUTTER } },
+  { id: 'cookie-milk', a: { en: 'cookie', pl: 'ciastko', svg: SVG_COOKIE }, b: { en: 'milk',  pl: 'mleko',  svg: SVG_MILK } },
+  { id: 'soup-spoon',  a: { en: 'soup',  pl: 'zupa',    svg: SVG_SOUP },   b: { en: 'spoon',  pl: 'łyżka',  svg: SVG_SPOON } },
+  { id: 'juice-orange', a: { en: 'juice', pl: 'sok',    svg: SVG_JUICE },  b: { en: 'orange', pl: 'pomarańcza', svg: SVG_ORANGE } },
+  { id: 'water-glass', a: { en: 'water', pl: 'woda',    svg: SVG_WATER },  b: { en: 'glass',  pl: 'szklanka', svg: SVG_GLASS } },
+  { id: 'table-chair', a: { en: 'table', pl: 'stół',    svg: SVG_TABLE },  b: { en: 'chair',  pl: 'krzesło', svg: SVG_CHAIR } },
+  { id: 'tv-sofa',     a: { en: 'TV',    pl: 'telewizor', svg: SVG_TV },   b: { en: 'sofa',   pl: 'kanapa', svg: SVG_SOFA } },
+  { id: 'wardrobe-jacket', a: { en: 'wardrobe', pl: 'szafa', svg: SVG_WARDROBE }, b: { en: 'jacket', pl: 'kurtka', svg: SVG_JACKET } },
+  { id: 'door-key',    a: { en: 'door',  pl: 'drzwi',   svg: SVG_DOOR },   b: { en: 'key',    pl: 'klucz',  svg: SVG_KEY } },
+  { id: 'scarf-snow',  a: { en: 'scarf', pl: 'szalik',  svg: SVG_SCARF },  b: { en: 'snow',   pl: 'śnieg',  svg: SVG_SNOW } },
+  { id: 'boots-rain',  a: { en: 'boots', pl: 'kalosze', svg: SVG_BOOTS },  b: { en: 'rain',   pl: 'deszcz', svg: SVG_RAIN } },
+  { id: 'hat-sun',     a: { en: 'hat',   pl: 'kapelusz', svg: SVG_HAT },   b: { en: 'sun',    pl: 'słońce', svg: SVG_SUN } },
+  { id: 'cloud-rain',  a: { en: 'cloud', pl: 'chmura',  svg: SVG_CLOUD },  b: { en: 'rain',   pl: 'deszcz', svg: SVG_RAIN } },
+  { id: 'teeth-toothbrush', a: { en: 'teeth', pl: 'zęby', svg: SVG_TEETH }, b: { en: 'toothbrush', pl: 'szczoteczka', svg: SVG_TOOTHBRUSH } },
+  { id: 'eyes-glasses', a: { en: 'eyes', pl: 'oczy',    svg: SVG_EYES },   b: { en: 'glasses', pl: 'okulary', svg: SVG_GLASSES } },
+  { id: 'hands-gloves', a: { en: 'hands', pl: 'ręce',   svg: SVG_HANDS },  b: { en: 'gloves', pl: 'rękawiczki', svg: SVG_GLOVES } },
+  { id: 'nose-flower', a: { en: 'nose',  pl: 'nos',     svg: SVG_NOSE },   b: { en: 'flower', pl: 'kwiat',  svg: SVG_FLOWER } },
+  { id: 'doll-dress',  a: { en: 'doll',  pl: 'lalka',   svg: SVG_DOLL },   b: { en: 'dress',  pl: 'sukienka', svg: SVG_DRESS } },
+  { id: 'balloon-sky', a: { en: 'balloon', pl: 'balon', svg: SVG_BALLOON }, b: { en: 'sky',   pl: 'niebo',  svg: SVG_SKY } },
+  { id: 'swing-slide', a: { en: 'swing', pl: 'huśtawka', svg: SVG_SWING }, b: { en: 'slide',  pl: 'zjeżdżalnia', svg: SVG_SLIDE } },
+  { id: 'teddy-bed',   a: { en: 'teddy', pl: 'miś przytulanka', svg: SVG_TEDDY }, b: { en: 'bed', pl: 'łóżko', svg: SVG_BED } },
+  { id: 'dinosaur-egg', a: { en: 'dinosaur', pl: 'dinozaur', svg: SVG_DINOSAUR }, b: { en: 'egg', pl: 'jajko', svg: SVG_EGG } },
+  { id: 'rocket-moon', a: { en: 'rocket', pl: 'rakieta', svg: SVG_ROCKET }, b: { en: 'moon',  pl: 'księżyc', svg: SVG_MOON } },
+  { id: 'swim-fish',   a: { en: 'swim',  pl: 'pływać',  svg: SVG_SWIM },   b: { en: 'fish',   pl: 'ryba',   svg: SVG_FISH } },
+  { id: 'read-book',   a: { en: 'read',  pl: 'czytać',  svg: SVG_READ },   b: { en: 'book',   pl: 'książka', svg: SVG_BOOK } },
+  { id: 'draw-pencil', a: { en: 'draw',  pl: 'rysować', svg: SVG_DRAW },   b: { en: 'pencil', pl: 'ołówek', svg: SVG_PENCIL } },
+  { id: 'eat-apple',   a: { en: 'eat',   pl: 'jeść',    svg: SVG_EAT },    b: { en: 'apple',  pl: 'jabłko', svg: SVG_APPLE } },
+  { id: 'drink-juice', a: { en: 'drink', pl: 'pić',     svg: SVG_DRINK },  b: { en: 'juice',  pl: 'sok',    svg: SVG_JUICE } },
+  { id: 'wash-soap',   a: { en: 'wash',  pl: 'myć',     svg: SVG_WASH },   b: { en: 'soap',   pl: 'mydło',  svg: SVG_SOAP } },
+  { id: 'sing-bird',   a: { en: 'sing',  pl: 'śpiewać', svg: SVG_SING },   b: { en: 'bird',   pl: 'ptak',   svg: SVG_BIRD } },
+  { id: 'run-shoe',    a: { en: 'run',   pl: 'biegać',  svg: SVG_RUN },    b: { en: 'shoe',   pl: 'but',    svg: SVG_SHOE } },
+  { id: 'jump-frog',   a: { en: 'jump',  pl: 'skakać',  svg: SVG_JUMP },   b: { en: 'frog',   pl: 'żaba',   svg: SVG_FROG } },
+  { id: 'dance-drum',  a: { en: 'dance', pl: 'tańczyć', svg: SVG_DANCE },  b: { en: 'drum',   pl: 'bębenek', svg: SVG_DRUM } },
+  { id: 'walk-dog',    a: { en: 'walk',  pl: 'chodzić', svg: SVG_WALK },   b: { en: 'dog',    pl: 'pies',   svg: SVG_DOG } },
+  { id: 'sleep-pillow', a: { en: 'sleep', pl: 'spać',   svg: SVG_SLEEP },  b: { en: 'pillow', pl: 'poduszka', svg: SVG_PILLOW } },
+  { id: 'lemon-teapot', a: { en: 'lemon', pl: 'cytryna', svg: SVG_LEMON }, b: { en: 'teapot', pl: 'czajniczek', svg: SVG_TEAPOT } },
+  { id: 'strawberry-cake', a: { en: 'strawberry', pl: 'truskawka', svg: SVG_STRAWBERRY }, b: { en: 'cake', pl: 'ciasto', svg: SVG_CAKE } },
+  { id: 'night-owl',   a: { en: 'night', pl: 'noc',     svg: SVG_NIGHT },  b: { en: 'owl',    pl: 'sowa',   svg: SVG_OWL } },
+  { id: 'day-sun',     a: { en: 'day',   pl: 'dzień',   svg: SVG_DAY },    b: { en: 'sun',    pl: 'słońce', svg: SVG_SUN } },
+  { id: 'slow-turtle', a: { en: 'slow',  pl: 'wolny',   svg: SVG_SLOW },   b: { en: 'turtle', pl: 'żółw',   svg: SVG_TURTLE } },
+  { id: 'fast-rocket', a: { en: 'fast',  pl: 'szybki',  svg: SVG_FAST },   b: { en: 'rocket', pl: 'rakieta', svg: SVG_ROCKET } },
+  { id: 'plane-cloud', a: { en: 'plane', pl: 'samolot', svg: SVG_PLANE },  b: { en: 'cloud',  pl: 'chmura', svg: SVG_CLOUD } },
+  { id: 'duck-water',  a: { en: 'duck',  pl: 'kaczka',  svg: SVG_DUCK },   b: { en: 'water',  pl: 'woda',   svg: SVG_WATER } },
+  { id: 'cat-mouse',   a: { en: 'cat',   pl: 'kot',     svg: SVG_CAT },    b: { en: 'mouse',  pl: 'mysz',   svg: SVG_MOUSE } },
 ];
 
 /* ── Pudełka: słowa tematu w porcjach po 6, odblokowywane po kolei ── */

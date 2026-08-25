@@ -1075,6 +1075,7 @@
       items: d.items,
       zones: [{ id: 'pack', el: () => document.getElementById('packZone') }],
       isBusy: () => trip.busy,
+      onPick: it => Sound.speak(it.en),
       onDrop: (el, it) => { if (!it.target) el.style.transform = ''; tryPack(el, it); },
     });
   }
@@ -1263,7 +1264,8 @@
     });
   }
 
-  /* ── Ubierz LingaRoo: pogoda/ubrania — podaj mu to, czego potrzebuje ── */
+  /* ── Ubierz LingaRoo: pogoda/ubrania — podaj mu to, czego potrzebuje.
+   * Po jednej rzeczy naraz; intro z pogodą tylko przy pierwszej prośbie. ── */
   let dress = null;
   function dressRound(sceneIdx) {
     const scene = DRESS_SCENES[sceneIdx];
@@ -1272,7 +1274,7 @@
       ...scene.need.map(k => ({ svg: DRESS_ITEMS[k], en: k, target: true })),
       ...distract.map(k => ({ svg: DRESS_ITEMS[k], en: k, target: false })),
     ]).map((d, i) => ({ ...d, id: i }));
-    return { scene, task: scene.task, credit: [...scene.need, scene.w], items };
+    return { scene, order: scene.need, items };
   }
   function renderDress(themeId, level, fresh) {
     const theme = themeById(themeId);
@@ -1287,6 +1289,12 @@
     }
     if (!dress.data) { dress.data = dressRound(dress.order[dress.round]); dress.given = new Set(); }
     const d = dress.data;
+    const cur = d.order.find(en => {
+      const it = d.items.find(x => x.en === en && x.target);
+      return it && !dress.given.has(it.id);
+    });
+    d.cur = cur;
+    const task = `${dress.given.size ? '' : d.scene.intro + ' '}LingaRoo needs the ${cur}!`;
     const slots = [[8, 6], [39, 2], [70, 8], [10, 52], [41, 56], [70, 50]];
     app.innerHTML = `
       <div class="screen">
@@ -1295,7 +1303,7 @@
           <div class="prompt tripprompt">
             <button class="speaker" id="replay" aria-label="Posłuchaj jeszcze raz">${UI.speaker}</button>
             <span class="wchip">${d.scene.svg}</span>
-            <span>${d.task}</span>
+            <span>${task}</span>
           </div>
           <div class="tripboard" id="board">
             ${d.items.map((it, i) => dress.given.has(it.id) ? '' : `
@@ -1313,7 +1321,7 @@
         ${trackHtml(dress.round, dress.order.length)}
       </div>`;
     wire();
-    const speakTask = () => Sound.speak(d.task);
+    const speakTask = () => Sound.speak(task);
     if (!dress.spoken) { dress.spoken = true; later(speakTask, 400); }
     document.getElementById('replay').addEventListener('click', speakTask);
     const msgEl = () => document.getElementById('quizMsg');
@@ -1322,11 +1330,12 @@
       items: d.items,
       zones: [{ id: 'roo', el: () => document.getElementById('packZone') }],
       isBusy: () => dress.busy,
+      onPick: it => Sound.speak(it.en),
       onDrop: (el, it) => {
-        if (it.target) {
+        /* Tylko rzecz, o którą LingaRoo właśnie prosi. */
+        if (it.target && it.en === cur) {
           dress.given.add(it.id);
           Sound.tick();
-          Sound.speak(it.en);
           Progress.wordCorrect(it.en);
           packwrap.classList.remove('bounce');
           void packwrap.offsetWidth;
@@ -1335,14 +1344,19 @@
           el.style.opacity = '0';
           later(() => el.remove(), 300);
           const left = d.items.filter(x => x.target && !dress.given.has(x.id)).length;
+          dress.busy = true;
           if (!left) {
             Sound.chime();
             Progress.wordCorrect(d.scene.w);
-            dress.busy = true;
             later(() => {
               dress.round++; dress.data = null; dress.spoken = false; dress.busy = false;
               renderDress(theme.id, level);
             }, 1100);
+          } else {
+            later(() => {
+              dress.spoken = false; dress.busy = false;
+              renderDress(theme.id, level);
+            }, 700);
           }
         } else {
           el.style.transform = '';
@@ -1357,7 +1371,8 @@
     });
   }
 
-  /* ── Sprzątanie: dom — odłóż każdą rzecz na swoje miejsce ── */
+  /* ── Sprzątanie: dom — odłóż każdą rzecz na swoje miejsce.
+   * Lektor prosi o jedną rzecz naraz; dopiero po odłożeniu — o następną. ── */
   let clean = null;
   function cleanRound(idx) {
     const r = CLEAN_ROUNDS[idx];
@@ -1368,7 +1383,7 @@
       ...r.items.map(k => ({ svg: CLEAN_ITEMS[k], en: k, target: true })),
       ...distract.map(k => ({ svg: CLEAN_ITEMS[k], en: k, target: false })),
     ]).map((d, i) => ({ ...d, id: i }));
-    return { task: r.task, spot: r.spot, spotSvg: r.spotSvg, credit: [...r.items, r.spot], items };
+    return { spot: r.spot, spotSvg: r.spotSvg, place: r.place, order: r.items, items };
   }
   function renderClean(themeId, level, fresh) {
     const theme = themeById(themeId);
@@ -1383,6 +1398,13 @@
     }
     if (!clean.data) { clean.data = cleanRound(clean.round); clean.put = new Set(); }
     const d = clean.data;
+    /* Bieżąca prośba: pierwsza z kolejki rzecz, która jeszcze nie leży. */
+    const cur = d.order.find(en => {
+      const it = d.items.find(x => x.en === en && x.target);
+      return it && !clean.put.has(it.id);
+    });
+    d.cur = cur;
+    const task = `Put the ${cur} ${d.place}!`;
     const slots = [[8, 6], [39, 2], [70, 8], [10, 52], [41, 56], [70, 50]];
     app.innerHTML = `
       <div class="screen">
@@ -1390,7 +1412,7 @@
         <div class="stage triplayout">
           <div class="prompt tripprompt">
             <button class="speaker" id="replay" aria-label="Posłuchaj jeszcze raz">${UI.speaker}</button>
-            <span>${d.task}</span>
+            <span>${task}</span>
           </div>
           <div class="tripboard" id="board">
             ${d.items.map((it, i) => clean.put.has(it.id) ? '' : `
@@ -1408,7 +1430,7 @@
         ${trackHtml(clean.round, clean.total)}
       </div>`;
     wire();
-    const speakTask = () => Sound.speak(d.task);
+    const speakTask = () => Sound.speak(task);
     if (!clean.spoken) { clean.spoken = true; later(speakTask, 400); }
     document.getElementById('replay').addEventListener('click', speakTask);
     const msgEl = () => document.getElementById('quizMsg');
@@ -1417,11 +1439,13 @@
       items: d.items,
       zones: [{ id: 'spot', el: () => document.getElementById('packZone') }],
       isBusy: () => clean.busy,
+      onPick: it => Sound.speak(it.en),
       onDrop: (el, it) => {
-        if (it.target) {
+        /* Liczy się tylko rzecz, o którą lektor właśnie prosi — także
+         * właściwa-ale-jeszcze-nie-wywołana wraca na miejsce. */
+        if (it.target && it.en === cur) {
           clean.put.add(it.id);
           Sound.tick();
-          Sound.speak(it.en);
           Progress.wordCorrect(it.en);
           packwrap.classList.remove('bounce');
           void packwrap.offsetWidth;
@@ -1430,14 +1454,20 @@
           el.style.opacity = '0';
           later(() => el.remove(), 300);
           const left = d.items.filter(x => x.target && !clean.put.has(x.id)).length;
+          clean.busy = true;
           if (!left) {
             Sound.chime();
             Progress.wordCorrect(d.spot);
-            clean.busy = true;
             later(() => {
               clean.round++; clean.data = null; clean.spoken = false; clean.busy = false;
               renderClean(theme.id, level);
             }, 1100);
+          } else {
+            /* Kolejna prośba dopiero, gdy poprzednia rzecz już leży. */
+            later(() => {
+              clean.spoken = false; clean.busy = false;
+              renderClean(theme.id, level);
+            }, 700);
           }
         } else {
           el.style.transform = '';
@@ -1460,8 +1490,25 @@
   function newPairs() {
     let pool = PAIRS.filter(p => !recentPairs.includes(p.id));
     if (pool.length < 4) pool = PAIRS;
-    const chosen = shuffle(pool).slice(0, 4);
-    recentPairs = [...chosen.map(p => p.id), ...recentPairs].slice(0, 8);
+    /* To samo słowo bywa w kilku parach (miód: miś i pszczoła) — w jednej
+     * rozgrywce dwie takie pary dałyby dwa nierozróżnialne kafelki. */
+    const chosen = [];
+    const used = new Set();
+    for (const p of shuffle(pool)) {
+      if (used.has(p.a.en) || used.has(p.b.en)) continue;
+      chosen.push(p);
+      used.add(p.a.en); used.add(p.b.en);
+      if (chosen.length === 4) break;
+    }
+    if (chosen.length < 4) {
+      for (const p of shuffle(PAIRS)) {
+        if (chosen.includes(p) || used.has(p.a.en) || used.has(p.b.en)) continue;
+        chosen.push(p);
+        used.add(p.a.en); used.add(p.b.en);
+        if (chosen.length === 4) break;
+      }
+    }
+    recentPairs = [...chosen.map(p => p.id), ...recentPairs].slice(0, 24);
     const tiles = shuffle(chosen.flatMap(p => [
       { pair: p.id, en: p.a.en, svg: p.a.svg },
       { pair: p.id, en: p.b.en, svg: p.b.svg },
@@ -1911,8 +1958,8 @@
       trip: trip && trip.data && { round: trip.round, task: trip.data.task, left: trip.data.items.filter(x => x.target && !trip.packed.has(x.id)).length, items: trip.data.items.map(x => ({ i: x.id, en: x.en, target: x.target, packed: trip.packed.has(x.id) })) },
       touch: touch && { round: touch.round, total: touch.targets.length, word: touch.targets[touch.round] && touch.targets[touch.round].en },
       sort: sortg && sortg.data && { round: sortg.round, task: sortg.data.task, zones: sortg.data.zones.map(z => z.id), items: sortg.data.items.map(x => ({ i: x.id, en: x.en, side: x.side, done: sortg.done.has(x.id) })) },
-      dress: dress && dress.data && { round: dress.round, task: dress.data.task, weather: dress.data.scene.w, items: dress.data.items.map(x => ({ i: x.id, en: x.en, target: x.target, given: dress.given.has(x.id) })) },
-      clean: clean && clean.data && { round: clean.round, task: clean.data.task, spot: clean.data.spot, items: clean.data.items.map(x => ({ i: x.id, en: x.en, target: x.target, put: clean.put.has(x.id) })) },
+      dress: dress && dress.data && { round: dress.round, cur: dress.data.cur, weather: dress.data.scene.w, items: dress.data.items.map(x => ({ i: x.id, en: x.en, target: x.target, given: dress.given.has(x.id) })) },
+      clean: clean && clean.data && { round: clean.round, cur: clean.data.cur, spot: clean.data.spot, items: clean.data.items.map(x => ({ i: x.id, en: x.en, target: x.target, put: clean.put.has(x.id) })) },
       progress: THEMES.reduce((o, t) => (o[t.id] = Progress.done(t.id), o), {}),
       profiles: { active: (Profiles.active() || {}).name || null, count: Profiles.list().length },
       settings: ['sound', 'rate', 'plHints', 'checkSpeech'].reduce((o, k) => (o[k] = Settings.get(k), o), {}),
