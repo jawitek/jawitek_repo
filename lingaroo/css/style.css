@@ -204,6 +204,24 @@ svg { display: block; width: 100%; height: 100%; }
 .spotart { width: 128px; height: 120px; }
 .spotart svg { width: 100%; height: 100%; }
 
+/* Pokój, który sprząta się z rundy na rundę: obrazek stanu bieżącego,
+ * a pod nim (na wypadek braku pliku) mebel rysowany w kodzie. */
+.roomwrap {
+  position: relative;
+  width: min(88vw, 330px);
+  aspect-ratio: 1200 / 896;
+  margin: 0 auto;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 16px rgba(150, 120, 80, 0.18);
+  background: var(--paper);
+}
+.roomwrap .roomfall { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+.roomwrap .roomimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.roomwrap .roomnext { opacity: 0; transition: opacity 1.1s ease; }
+.roomwrap.advance .roomnext { opacity: 1; }
+.roomwrap #packZone { left: 0; top: 0; bottom: auto; transform: none; width: 100%; height: 100%; }
+
 /* Dotknij!: postać z niewidocznymi strefami dotyku. */
 .kidwrap { position: relative; width: min(52vw, 210px); margin: 0 auto; }
 .kidwrap > svg { width: 100%; height: auto; display: block; }
@@ -214,10 +232,26 @@ svg { display: block; width: 100%; height: 100%; }
 /* Koszyki: dwie strefy sortowania obok siebie, między nimi sztaluga,
  * na której po każdej rundzie przybywa zamalowana warstwa obrazu. */
 .sortrow { display: flex; justify-content: center; align-items: flex-end; gap: clamp(10px, 4vw, 36px); }
-.easelwrap { width: clamp(66px, 18vw, 92px); flex: 0 0 auto; }
+.easelwrap { width: clamp(66px, 18vw, 92px); flex: 0 0 auto; position: relative; }
 .easelwrap svg { width: 100%; height: auto; display: block; }
 .easelwrap .lp { opacity: 0; transition: opacity 1s ease; }
 .easelwrap.p1 .lp1, .easelwrap.p2 .lp2, .easelwrap.p3 .lp3 { opacity: 1; }
+/* Ilustrowane stany sztalugi przykrywają zapasowe SVG; brak plików = zostaje SVG. */
+.easelwrap .es {
+  position: absolute; left: 50%; top: 0; height: 100%; width: auto;
+  transform: translateX(-50%);
+  opacity: 0; transition: opacity 1s ease;
+}
+.easelwrap .es.s0 { opacity: 1; }
+.easelwrap.p1 .es.s0 { opacity: 0; }
+.easelwrap.p1 .es.s1 { opacity: 1; }
+.easelwrap.p2 .es.s1 { opacity: 0; }
+.easelwrap.p2 .es.s2 { opacity: 1; }
+.easelwrap.p3 .es.s2 { opacity: 0; }
+.easelwrap.p3 .es.s3 { opacity: 1; }
+.easelwrap .painter {
+  position: absolute; left: -26%; bottom: -2%; width: 56%; z-index: 2;
+}
 .sortzone { display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .sortzone.bounce { animation: nudge 0.5s ease; }
 .sortzone .zhead { width: 40px; height: 40px; }

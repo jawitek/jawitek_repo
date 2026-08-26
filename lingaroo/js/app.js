@@ -1214,7 +1214,14 @@
               <div class="zhead">${d.zones[0].head}</div>
               <div class="zbasket">${SVG_BASKET}</div>
             </div>
-            <div class="easelwrap ${['', 'p1', 'p1 p2', 'p1 p2 p3'][sortg.round] || ''}" id="easel">${SVG_EASEL}</div>
+            <div class="easelwrap ${['', 'p1', 'p1 p2', 'p1 p2 p3'][sortg.round] || ''}" id="easel">
+              ${SVG_EASEL}
+              <img class="es s0" src="assets/roo/easel-0.webp?v=1" alt="" onerror="this.remove()">
+              <img class="es s1" src="assets/roo/easel-1.webp?v=1" alt="" onerror="this.remove()">
+              <img class="es s2" src="assets/roo/easel-2.webp?v=1" alt="" onerror="this.remove()">
+              <img class="es s3" src="assets/roo/easel-3.webp?v=1" alt="" onerror="this.remove()">
+              <img class="painter" id="painter" src="assets/roo/roo-paint.webp?v=1" alt="" onerror="this.remove()">
+            </div>
             <div class="sortzone" data-zone="${d.zones[1].id}">
               <div class="zhead">${d.zones[1].head}</div>
               <div class="zbasket">${SVG_BASKET}</div>
@@ -1254,6 +1261,11 @@
             /* Nagroda rundy: kolejna warstwa obrazu na sztaludze. */
             const easel = document.getElementById('easel');
             if (easel) easel.classList.add('p' + (sortg.round + 1));
+            /* Po ostatniej rundzie malarz unosi pędzel: „skończone!" */
+            if (sortg.round + 1 === sortg.total) {
+              const painter = document.getElementById('painter');
+              if (painter) painter.src = 'assets/roo/roo-paint-done.webp?v=1';
+            }
             later(() => {
               sortg.round++; sortg.data = null; sortg.spoken = false; sortg.busy = false;
               renderSort(theme.id, level);
@@ -1430,8 +1442,10 @@
               </button>`).join('')}
           </div>
           <div class="quizmsg" id="quizMsg"></div>
-          <div class="packwrap" id="packwrap">
-            <div class="spotart">${d.spotSvg}</div>
+          <div class="packwrap roomwrap" id="packwrap">
+            <div class="spotart roomfall">${d.spotSvg}</div>
+            <img class="roomimg" src="assets/scenes/room-${clean.round}.webp?v=1" alt="" onerror="this.remove()">
+            <img class="roomimg roomnext" src="assets/scenes/room-${clean.round + 1}.webp?v=1" alt="" onerror="this.remove()">
             <div id="packZone"></div>
           </div>
         </div>
@@ -1466,10 +1480,12 @@
           if (!left) {
             Sound.chime();
             Progress.wordCorrect(d.spot);
+            /* Nagroda rundy: pokój na obrazku robi się odrobinę porządniejszy. */
+            packwrap.classList.add('advance');
             later(() => {
               clean.round++; clean.data = null; clean.spoken = false; clean.busy = false;
               renderClean(theme.id, level);
-            }, 1100);
+            }, 1600);
           } else {
             /* Kolejna prośba dopiero, gdy poprzednia rzecz już leży. */
             later(() => {
