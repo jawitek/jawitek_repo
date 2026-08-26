@@ -1995,12 +1995,13 @@ const DRESS_ITEMS = {
   hat: SVG_HAT, shirt: SVG_SHIRT, dress: SVG_DRESS, skirt: SVG_SKIRT,
   shoe: SVG_SHOE, sock: SVG_SOCK, trousers: SVG_TROUSERS,
 };
-/* Prośby idą po jednej rzeczy naraz; intro z pogodą tylko przy pierwszej. */
+/* Prośby idą po jednej rzeczy naraz; intro z pogodą tylko przy pierwszej.
+ * who: które z bliźniąt ubieramy (Kage: deszcz i słońce, Kiki: śnieg i wiatr). */
 const DRESS_SCENES = [
-  { w: 'rain', svg: SVG_RAIN, need: ['umbrella', 'boots'], intro: `It's raining!` },
-  { w: 'snow', svg: SVG_SNOW, need: ['scarf', 'gloves'], intro: `It's snowing!` },
-  { w: 'sun', svg: SVG_SUN, need: ['cap', 'sunglasses'], intro: `It's sunny!` },
-  { w: 'wind', svg: SVG_WIND, need: ['jacket', 'hat'], intro: `It's windy!` },
+  { w: 'rain', who: 'Kage', svg: SVG_RAIN, need: ['umbrella', 'boots'], intro: `It's raining!` },
+  { w: 'snow', who: 'Kiki', svg: SVG_SNOW, need: ['scarf', 'gloves'], intro: `It's snowing!` },
+  { w: 'sun', who: 'Kage', svg: SVG_SUN, need: ['cap', 'sunglasses'], intro: `It's sunny!` },
+  { w: 'wind', who: 'Kiki', svg: SVG_WIND, need: ['jacket', 'hat'], intro: `It's windy!` },
 ];
 
 /* ── Sprzątanie domu: każda rzecz wraca na swoje miejsce ── */

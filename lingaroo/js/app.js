@@ -1,4 +1,4 @@
-/* LingaRoo — logika ekranów.
+/* Kage & Kiki (dawniej LingaRoo) — logika ekranów.
  * Nawigacja po hashu (#home, #cards/animals, …), żeby każdy ekran dało się
  * otworzyć bezpośrednio — także w testach. Jeden punkt renderu na ekran. */
 
@@ -207,7 +207,7 @@
     const act = Profiles.active();
     app.innerHTML = `
       <div class="screen">
-        ${topbar('LingaRoo')}
+        ${topbar('Kage & Kiki')}
         <p class="hint">Kto dziś się bawi?</p>
         <div class="themes">
           ${list.map(p => `
@@ -266,7 +266,7 @@
       const color = state === 'upcoming' ? 'var(--dim-txt)' : '#FDFBF7';
       html += `<div class="step">
         <div class="peg ${state}">
-          ${state === 'active' ? `<div class="roo" data-roo="hero">${ROO_SVG}</div>` : ''}
+          ${state === 'active' ? `<div class="roo" data-roo="jump">${ROO_SVG}</div>` : ''}
           <div class="ico">${TRACK_ICONS[i % TRACK_ICONS.length](color)}</div>
         </div>
         ${i < total - 1 ? `<div class="link ${i < activeIdx ? 'done' : ''}"></div>` : ''}
@@ -275,11 +275,11 @@
     return html + '</div>';
   }
 
-  /* Ilustrowany LingaRoo: SVG z kodu renderuje się od razu, a gdy plik
+  /* Ilustrowani bohaterowie: SVG z kodu renderuje się od razu, a gdy plik
    * się wczyta, podmienia figury oznaczone data-roo. Brak pliku kosztuje
    * wygląd, nie działanie. */
   const RooArt = (() => {
-    const srcs = { hero: 'assets/roo-hero.png?v=1', pack: 'assets/roo-pack.png?v=1' };
+    const srcs = { hero: 'assets/kk/duo.webp?v=1', pack: 'assets/kk/kiki-basket.webp?v=1', jump: 'assets/kk/kage-jump.webp?v=1' };
     const ready = {};
     Object.entries(srcs).forEach(([k, src]) => {
       const im = new Image();
@@ -307,7 +307,7 @@
     const act = Profiles.active();
     app.innerHTML = `
       <div class="screen">
-        ${topbar('LingaRoo', { parentBtn: true, profile: act })}
+        ${topbar('Kage & Kiki', { parentBtn: true, profile: act })}
         <div class="hero">
           <div class="roo" data-roo="hero">${TEACHER_SVG}</div>
           <div class="bubble">Hello${act ? ', ' + esc(act.name) : ''}!<small>Pobawimy się razem?</small></div>
@@ -347,7 +347,7 @@
       const note = document.getElementById('ttsNote');
       if (note && Sound.ttsLikelyMissing()) {
         note.className = 'ttsnote';
-        note.textContent = 'Ta przeglądarka nie ma lektora — otwórz grę w Chrome albo Safari, a LingaRoo będzie mówił.';
+        note.textContent = 'Ta przeglądarka nie ma lektora — otwórz grę w Chrome albo Safari, a lektor będzie mówił.';
       }
     }, 1200);
   }
@@ -462,9 +462,9 @@
   function funStep(themeId) {
     if (themeId === 'body') return ['touch', UI.hand, 'Dotknij!', 'pokaż, gdzie to jest'];
     if (themeId === 'opposites' || themeId === 'colors') return ['sort', SVG_BASKET, 'Koszyki', 'posortuj do koszyków'];
-    if (themeId === 'weather' || themeId === 'clothes') return ['dress', SVG_UMBRELLA, 'Ubierz LingaRoo', 'na dzisiejszą pogodę'];
+    if (themeId === 'weather' || themeId === 'clothes') return ['dress', SVG_UMBRELLA, 'Ubieranki', 'na dzisiejszą pogodę'];
     if (themeId === 'home') return ['clean', SVG_WARDROBE, 'Sprzątanie', 'odłóż na swoje miejsce'];
-    if (TRIP_THEMES.includes(themeId)) return ['trip', BACKPACK_SVG, 'Wyprawa', 'spakuj plecak LingaRoo'];
+    if (TRIP_THEMES.includes(themeId)) return ['trip', BACKPACK_SVG, 'Wyprawa', 'spakuj koszyk na wyprawę'];
     return null;
   }
 
@@ -839,7 +839,7 @@
     });
   }
 
-  /* ── Wyprawa: utrwalenie lekcji — spakuj plecak LingaRoo ──
+  /* ── Wyprawa: utrwalenie lekcji — spakuj koszyk Kiki ──
    * Lektor prosi („Pack all the apples!"), dziecko przeciąga albo stuka
    * właściwe rzeczy; plecak łagodnie oddaje złe. Trudność rośnie:
    * rzeczowniki → kolor+rzeczownik (gdy lekcja ma przebarwialny przedmiot)
@@ -1220,7 +1220,7 @@
               <img class="es s1" src="assets/roo/easel-1.webp?v=1" alt="" onerror="this.remove()">
               <img class="es s2" src="assets/roo/easel-2.webp?v=1" alt="" onerror="this.remove()">
               <img class="es s3" src="assets/roo/easel-3.webp?v=1" alt="" onerror="this.remove()">
-              <img class="painter" id="painter" src="assets/roo/roo-paint.webp?v=1" alt="" onerror="this.remove()">
+              <img class="painter" id="painter" src="assets/kk/kiki-paint.webp?v=1" alt="" onerror="this.remove()">
             </div>
             <div class="sortzone" data-zone="${d.zones[1].id}">
               <div class="zhead">${d.zones[1].head}</div>
@@ -1264,7 +1264,7 @@
             /* Po ostatniej rundzie malarz unosi pędzel: „skończone!" */
             if (sortg.round + 1 === sortg.total) {
               const painter = document.getElementById('painter');
-              if (painter) painter.src = 'assets/roo/roo-paint-done.webp?v=1';
+              if (painter) painter.src = 'assets/kk/kiki-paint-done.webp?v=1';
             }
             later(() => {
               sortg.round++; sortg.data = null; sortg.spoken = false; sortg.busy = false;
@@ -1284,7 +1284,7 @@
     });
   }
 
-  /* ── Ubierz LingaRoo: pogoda/ubrania — podaj mu to, czego potrzebuje.
+  /* ── Ubieranki: pogoda/ubrania — podaj bliźniakowi to, czego potrzebuje.
    * Po jednej rzeczy naraz; intro z pogodą tylko przy pierwszej prośbie. ── */
   let dress = null;
   function dressRound(sceneIdx) {
@@ -1309,22 +1309,23 @@
     }
     if (!dress.data) { dress.data = dressRound(dress.order[dress.round]); dress.given = new Set(); }
     const d = dress.data;
-    /* LingaRoo przebiera się na oczach dziecka: goły → pierwsza rzecz →
+    /* Bliźniak przebiera się na oczach dziecka: goły → pierwsza rzecz →
      * komplet. Ilustrowane stany przykrywają zapasową figurę z kodu. */
+    const twin = d.scene.who.toLowerCase();
     const dressSrc = n => n <= 0
-      ? 'assets/roo-pack.png?v=1'
-      : `assets/roo/roo-${d.scene.w}-${Math.min(n, 2)}.webp?v=1`;
+      ? `assets/kk/${twin}-base.webp?v=1`
+      : `assets/kk/${twin}-${d.scene.w}-${Math.min(n, 2)}.webp?v=1`;
     const given = dress.given.size;
     const cur = d.order.find(en => {
       const it = d.items.find(x => x.en === en && x.target);
       return it && !dress.given.has(it.id);
     });
     d.cur = cur;
-    const task = `${dress.given.size ? '' : d.scene.intro + ' '}LingaRoo needs the ${cur}!`;
+    const task = `${dress.given.size ? '' : d.scene.intro + ' '}${d.scene.who} needs the ${cur}!`;
     const slots = [[8, 6], [39, 2], [70, 8], [10, 52], [41, 56], [70, 50]];
     app.innerHTML = `
       <div class="screen">
-        ${topbar('Ubierz LingaRoo')}
+        ${topbar('Ubieranki')}
         <div class="stage triplayout">
           <div class="prompt tripprompt">
             <button class="speaker" id="replay" aria-label="Posłuchaj jeszcze raz">${UI.speaker}</button>
@@ -1361,7 +1362,7 @@
       isBusy: () => dress.busy,
       onPick: it => Sound.speak(it.en),
       onDrop: (el, it) => {
-        /* Tylko rzecz, o którą LingaRoo właśnie prosi. */
+        /* Tylko rzecz, o którą bliźniak właśnie prosi. */
         if (it.target && it.en === cur) {
           dress.given.add(it.id);
           Sound.tick();
@@ -1369,7 +1370,7 @@
           packwrap.classList.remove('bounce');
           void packwrap.offsetWidth;
           packwrap.classList.add('bounce');
-          /* LingaRoo zakłada podaną rzecz. */
+          /* Bliźniak zakłada podaną rzecz. */
           packwrap.classList.add('advance');
           el.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
           el.style.opacity = '0';
@@ -1612,7 +1613,7 @@
   }
 
   /* ── Tablica: Tap & Say ──
-   * Domyślnie tryb echa: LingaRoo mówi, dziecko powtarza, nikt nie ocenia.
+   * Domyślnie tryb echa: lektor mówi, dziecko powtarza, nikt nie ocenia.
    * Sprawdzanie wymowy włącza się w Strefie Rodzica i działa tylko tam,
    * gdzie przeglądarka ma rozpoznawanie mowy. */
   let say = null;
@@ -1700,7 +1701,7 @@
           clearInterval(t);
           Sound.chime();
           Progress.wordCorrect(w.en);
-          /* Po napisaniu słowa kredą LingaRoo czyta je w całości. */
+          /* Po napisaniu słowa kredą lektor czyta je w całości. */
           later(() => Sound.speak(w.en), 350);
           later(() => {
             say.round++;
@@ -1844,8 +1845,8 @@
 
   function renderParent() {
     const srNote = Speech.supported
-      ? 'Gdy wyłączone, LingaRoo prosi o powtórzenie i nie ocenia.'
-      : 'Ta przeglądarka nie ma rozpoznawania mowy — LingaRoo prosi o powtórzenie i nie ocenia.';
+      ? 'Gdy wyłączone, gra prosi o powtórzenie i nie ocenia.'
+      : 'Ta przeglądarka nie ma rozpoznawania mowy — gra prosi o powtórzenie i nie ocenia.';
     app.innerHTML = `
       <div class="screen">
         ${topbar('Strefa Rodzica')}
@@ -1897,7 +1898,7 @@
           </div>`;
           })()}
         </div>
-        <p class="about">LingaRoo — angielski dla dzieci, spokojnie.<br>
+        <p class="about">Kage &amp; Kiki — angielski dla dzieci, spokojnie.<br>
         Bez reklam, bez punktów, bez presji czasu. Gra działa bez internetu,
         a dane dziecka nie opuszczają urządzenia. Jedyny wyjątek: dobrowolna
         ankieta dla rodzica — wysyła wyłącznie zaznaczone w niej odpowiedzi.</p>
@@ -1913,10 +1914,10 @@
     });
     document.getElementById('rate').addEventListener('change', e => {
       Settings.set('rate', parseFloat(e.target.value));
-      Sound.speak('Hello, I am LingaRoo.');
+      Sound.speak('Hello! We are Kage and Kiki.');
     });
     document.getElementById('ttsTest').addEventListener('click', () => {
-      Sound.speak('Hello! I am LingaRoo. Nice to meet you.');
+      Sound.speak('Hello! We are Kage and Kiki. Nice to meet you.');
     });
     /* Działania niszczące wymagają drugiego dotknięcia — bez okien dialogowych. */
     const arm = (btn, label, fn) => {

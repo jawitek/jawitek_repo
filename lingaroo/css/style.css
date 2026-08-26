@@ -1,6 +1,6 @@
-/* LingaRoo — spokojna technologia.
+/* Kage & Kiki (dawniej LingaRoo) — spokojna technologia.
  * Zasady: żadnych neonów, mignięć i konfetti. Ruch tylko powolny i celowy
- * (oddech, kiwnięcie, podskok LingaRoo). Materiały: drewno, len, matowy
+ * (oddech, kiwnięcie, podskok bohatera). Materiały: drewno, len, matowy
  * papier, tablica kredowa. Duże cele dotykowe (min. 56 px). */
 
 :root {
@@ -108,12 +108,11 @@ svg { display: block; width: 100%; height: 100%; }
 .woodbtn > div, .woodbtn > svg { width: 26px; height: 26px; }
 .woodbtn.subtle { opacity: 0.7; }
 
-/* ── Ekran główny: mały kangur, dymek z prawej przy pyszczku ── */
-.hero { display: flex; align-items: flex-start; justify-content: center; gap: 12px; margin: 8px 0 2px; }
-.hero .roo { width: 96px; height: 118px; flex: none; animation: breathe 4s ease-in-out infinite; }
-/* Ilustracja źródłowa patrzy w lewo — w grze wszystkie kangury patrzą
- * w prawo (w stronę mety), więc odbijamy ją lustrzanie. */
-[data-roo] img { width: 100%; height: 100%; object-fit: contain; display: block; transform: scaleX(-1); }
+/* ── Ekran główny: duet Kage & Kiki, dymek z prawej ── */
+.hero { display: flex; align-items: flex-start; justify-content: center; gap: 10px; margin: 8px 0 2px; }
+.hero .roo { width: clamp(120px, 34vw, 156px); height: 118px; flex: none; animation: breathe 4s ease-in-out infinite; }
+/* Ilustracje bliźniaków patrzą w prawo już w plikach — bez odbicia. */
+[data-roo] img { width: 100%; height: 100%; object-fit: contain; display: block; }
 .hero .bubble {
   position: relative;
   margin-top: 14px;
@@ -125,7 +124,7 @@ svg { display: block; width: 100%; height: 100%; }
   font-size: 16px;
   color: var(--brown);
 }
-/* Ogonek dymka celuje w lewo, w stronę pyszczka (kangur patrzy w prawo). */
+/* Ogonek dymka celuje w lewo, w stronę bohaterów. */
 .hero .bubble::after {
   content: '';
   position: absolute;
@@ -192,10 +191,9 @@ svg { display: block; width: 100%; height: 100%; }
 .packwrap { position: relative; display: flex; justify-content: center; margin-top: 2px; }
 .packwrap.bounce { animation: nudge 0.5s ease; }
 .packroo { width: 128px; height: 150px; }
-[data-roo="pack"] img { transform: none; }
 #packZone { position: absolute; left: 50%; transform: translateX(-50%); bottom: 0; width: 160px; height: 100px; }
 
-/* Ubieranie: cel to sam LingaRoo — przebiera się w to, co dostał. */
+/* Ubieranki: bliźniak przebiera się w to, co dostał. */
 .droowrap { position: relative; width: 138px; height: 168px; }
 .droowrap .drooimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: opacity 0.8s ease; }
 .droowrap .droonext { opacity: 0; }

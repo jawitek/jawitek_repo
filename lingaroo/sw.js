@@ -16,14 +16,17 @@ const APP_SHELL = [
   `./icons/icon-192.png?v=${LINGAROO_V}`,
   `./icons/icon-512.png?v=${LINGAROO_V}`,
   `./icons/icon-maskable-512.png?v=${LINGAROO_V}`,
-  './assets/roo-hero.png?v=1',
-  './assets/roo-pack.png?v=1',
   ...[0, 1, 2, 3, 4].map(n => `./assets/scenes/room-${n}.webp?v=1`),
   ...[0, 1, 2, 3].map(n => `./assets/roo/easel-${n}.webp?v=1`),
-  './assets/roo/roo-paint.webp?v=1',
-  './assets/roo/roo-paint-done.webp?v=1',
-  ...['rain', 'snow', 'sun', 'wind'].flatMap(w =>
-    [1, 2].map(n => `./assets/roo/roo-${w}-${n}.webp?v=1`)),
+  './assets/kk/duo.webp?v=1',
+  './assets/kk/kage-jump.webp?v=1',
+  './assets/kk/kiki-basket.webp?v=1',
+  './assets/kk/kage-base.webp?v=1',
+  './assets/kk/kiki-base.webp?v=1',
+  './assets/kk/kiki-paint.webp?v=1',
+  './assets/kk/kiki-paint-done.webp?v=1',
+  ...['rain', 'sun'].flatMap(w => [1, 2].map(n => `./assets/kk/kage-${w}-${n}.webp?v=1`)),
+  ...['snow', 'wind'].flatMap(w => [1, 2].map(n => `./assets/kk/kiki-${w}-${n}.webp?v=1`)),
 ];
 
 self.addEventListener('install', e => {
