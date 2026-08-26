@@ -658,6 +658,7 @@
    * Jedyne miejsce, z którego cokolwiek opuszcza urządzenie — wyłącznie
    * po świadomym naciśnięciu „Wyślij", bez żadnych danych dziecka. */
   const SURVEY = [
+    { id: 'calm',   q: 'Spokojna, stonowana forma gry (bez punktów i fanfar)…', opts: ['to duży plus', 'jest OK', 'dziecku czegoś brakowało'] },
     { id: 'age',    q: 'Ile lat ma dziecko, które grało?', opts: ['2–3', '4–5', '6–7', '8+'] },
     { id: 'eng',    q: 'Kontakt dziecka z angielskim przed grą?', opts: ['prawie żaden', 'trochę (bajki, przedszkole)', 'regularne zajęcia'] },
     { id: 'time',   q: 'Jak długo grało za pierwszym razem?', opts: ['poniżej 5 min', '5–15 min', '15–30 min', 'nie chciało skończyć'] },
@@ -666,7 +667,6 @@
     { id: 'words',  q: 'Czy dziecko użyło potem angielskiego słowa samo z siebie?', opts: ['tak, kilku', 'tak, jednego–dwóch', 'jeszcze nie'] },
     { id: 'level',  q: 'Poziom trudności był…', opts: ['za łatwy', 'w sam raz', 'za trudny', 'różnie w różnych trybach'] },
     { id: 'voice',  q: 'Oceń lektora (głos czytający słowa)', stars: 5, extra: 'dźwięk w ogóle nie działał' },
-    { id: 'calm',   q: 'Spokojna, stonowana forma gry (bez punktów i fanfar)…', opts: ['to duży plus', 'jest OK', 'dziecku czegoś brakowało'] },
     { id: 'open',   q: 'Czego zabrakło albo co przeszkadzało?', text: true },
     { id: 'store',  q: 'Czy zainstalował(a)byś taką grę ze sklepu?', opts: ['tak, nawet płatną', 'tak, darmową', 'raczej nie'] },
   ];
