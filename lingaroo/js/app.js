@@ -1210,11 +1210,15 @@
           </div>
           <div class="quizmsg" id="quizMsg"></div>
           <div class="sortrow">
-            ${d.zones.map(z => `
-              <div class="sortzone" data-zone="${z.id}">
-                <div class="zhead">${z.head}</div>
-                <div class="zbasket">${SVG_BASKET}</div>
-              </div>`).join('')}
+            <div class="sortzone" data-zone="${d.zones[0].id}">
+              <div class="zhead">${d.zones[0].head}</div>
+              <div class="zbasket">${SVG_BASKET}</div>
+            </div>
+            <div class="easelwrap ${['', 'p1', 'p1 p2', 'p1 p2 p3'][sortg.round] || ''}" id="easel">${SVG_EASEL}</div>
+            <div class="sortzone" data-zone="${d.zones[1].id}">
+              <div class="zhead">${d.zones[1].head}</div>
+              <div class="zbasket">${SVG_BASKET}</div>
+            </div>
           </div>
         </div>
         ${trackHtml(sortg.round, sortg.total)}
@@ -1247,10 +1251,13 @@
             Sound.chime();
             d.credit.forEach(c => Progress.wordCorrect(c));
             sortg.busy = true;
+            /* Nagroda rundy: kolejna warstwa obrazu na sztaludze. */
+            const easel = document.getElementById('easel');
+            if (easel) easel.classList.add('p' + (sortg.round + 1));
             later(() => {
               sortg.round++; sortg.data = null; sortg.spoken = false; sortg.busy = false;
               renderSort(theme.id, level);
-            }, 1100);
+            }, 1600);
           }
         } else {
           msgEl().textContent = `Let's try that again`;

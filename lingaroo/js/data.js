@@ -1929,6 +1929,51 @@ const KID_ZONES = [
 
 /* ── Sortowanie: koszyk + pula rzeczy dla wielkości ── */
 
+/* Sztaluga do Koszyków: szkic ołówkiem + trzy warstwy farby (lp1..lp3)
+ * odsłaniane klasami p1..p3 na kontenerze. Kolory wprost z palety gry. */
+const SVG_EASEL = `<svg viewBox="0 0 200 250">
+  <path d="M100 58 L100 244" stroke="#C7B18C" stroke-width="7" stroke-linecap="round" opacity="0.75"/>
+  <path d="M62 50 L34 240" stroke="#D9C6A3" stroke-width="9" stroke-linecap="round"/>
+  <path d="M138 50 L166 240" stroke="#D9C6A3" stroke-width="9" stroke-linecap="round"/>
+  <rect x="88" y="30" width="24" height="14" rx="5" fill="#C7B18C"/>
+  <rect x="36" y="148" width="128" height="9" rx="4.5" fill="#D9C6A3"/>
+  <rect x="40" y="40" width="120" height="110" rx="4" fill="#FDFBF7" stroke="#E2D9C6" stroke-width="2"/>
+  <g class="lp lp1">
+    <rect x="43" y="43" width="114" height="88" fill="#A9C4CE"/>
+    <circle cx="66" cy="64" r="11" fill="#D9B36C"/>
+  </g>
+  <g class="lp lp2">
+    <rect x="43" y="128" width="114" height="19" fill="#9DB8A6"/>
+    <rect x="55" y="114" width="6" height="20" rx="3" fill="#8A7A5F"/>
+    <circle cx="58" cy="108" r="12" fill="#7A9A8B"/>
+  </g>
+  <g class="lp lp3">
+    <rect x="102" y="104" width="36" height="28" fill="#C96B5A"/>
+    <path d="M97 104 L120 85 L143 104 Z" fill="#D98A6C"/>
+    <rect x="114" y="116" width="12" height="16" rx="2" fill="#F3E4CC"/>
+  </g>
+  <g fill="none" stroke="#C9BFA8" stroke-width="1.6">
+    <circle cx="66" cy="64" r="11"/>
+    <circle cx="58" cy="108" r="12"/>
+    <path d="M58 120 V134"/>
+    <rect x="102" y="104" width="36" height="28"/>
+    <path d="M97 104 L120 85 L143 104"/>
+    <path d="M44 131 H156"/>
+  </g>
+  <g>
+    <rect x="46" y="222" width="18" height="20" rx="4" fill="#FBF7EF" stroke="#E2D9C6" stroke-width="1.5"/>
+    <path d="M52 224 L49 208" stroke="#B98255" stroke-width="3" stroke-linecap="round"/>
+    <path d="M49 208 L48 202" stroke="#7A9A8B" stroke-width="4" stroke-linecap="round"/>
+    <path d="M59 224 L61 210" stroke="#B98255" stroke-width="3" stroke-linecap="round"/>
+    <path d="M61 210 L62 204" stroke="#C96B5A" stroke-width="4" stroke-linecap="round"/>
+    <ellipse cx="126" cy="238" rx="20" ry="7.5" fill="#F3E4CC"/>
+    <circle cx="117" cy="236" r="2.6" fill="#C96B5A"/>
+    <circle cx="125" cy="239" r="2.6" fill="#6B8E9F"/>
+    <circle cx="133" cy="236" r="2.6" fill="#7A9A8B"/>
+    <circle cx="140" cy="239" r="2.6" fill="#D9B36C"/>
+  </g>
+</svg>`;
+
 const SVG_BASKET = `<svg viewBox="0 0 100 100">
   <path d="M30 42 Q30 22 50 22 Q70 22 70 42" stroke="#B07F45" stroke-width="5" fill="none"/>
   <path d="M16 42 H84 L76 84 Q50 90 24 84Z" fill="#C9975F"/>
