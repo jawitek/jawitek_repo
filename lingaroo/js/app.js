@@ -743,7 +743,8 @@
         Survey.markDone();
         renderSurveyThanks();
       } catch (e) {
-        msg.textContent = 'Nie udało się wysłać — odpowiedzi są zapamiętane, spróbuj później przy internecie.';
+        /* Kod błędu w nawiasie pomaga zdiagnozować problem zdalnie. */
+        msg.textContent = `Nie udało się wysłać — odpowiedzi są zapamiętane, spróbuj później przy internecie. (${e.message})`;
       }
     });
   }
