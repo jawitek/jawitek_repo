@@ -1309,6 +1309,12 @@
     }
     if (!dress.data) { dress.data = dressRound(dress.order[dress.round]); dress.given = new Set(); }
     const d = dress.data;
+    /* LingaRoo przebiera się na oczach dziecka: goły → pierwsza rzecz →
+     * komplet. Ilustrowane stany przykrywają zapasową figurę z kodu. */
+    const dressSrc = n => n <= 0
+      ? 'assets/roo-pack.png?v=1'
+      : `assets/roo/roo-${d.scene.w}-${Math.min(n, 2)}.webp?v=1`;
+    const given = dress.given.size;
     const cur = d.order.find(en => {
       const it = d.items.find(x => x.en === en && x.target);
       return it && !dress.given.has(it.id);
@@ -1333,8 +1339,11 @@
               </button>`).join('')}
           </div>
           <div class="quizmsg" id="quizMsg"></div>
-          <div class="packwrap" id="packwrap">
+          <div class="packwrap droowrap" id="packwrap">
             <div class="packroo dressroo" data-roo="hero">${TEACHER_SVG}</div>
+            <img class="drooimg" src="${dressSrc(given)}" alt="" onerror="this.remove()"
+              onload="var f=this.parentNode.querySelector('.dressroo'); if(f) f.style.display='none'">
+            <img class="drooimg droonext" src="${dressSrc(given + 1)}" alt="" onerror="this.remove()">
             <div id="packZone"></div>
           </div>
         </div>
@@ -1360,6 +1369,8 @@
           packwrap.classList.remove('bounce');
           void packwrap.offsetWidth;
           packwrap.classList.add('bounce');
+          /* LingaRoo zakłada podaną rzecz. */
+          packwrap.classList.add('advance');
           el.style.transition = 'transform 0.3s ease, opacity 0.3s ease';
           el.style.opacity = '0';
           later(() => el.remove(), 300);

@@ -195,7 +195,11 @@ svg { display: block; width: 100%; height: 100%; }
 [data-roo="pack"] img { transform: none; }
 #packZone { position: absolute; left: 50%; transform: translateX(-50%); bottom: 0; width: 160px; height: 100px; }
 
-/* Ubieranie: cel to sam LingaRoo, bez plecaka. */
+/* Ubieranie: cel to sam LingaRoo — przebiera się w to, co dostał. */
+.droowrap { position: relative; width: 138px; height: 168px; }
+.droowrap .drooimg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: opacity 0.8s ease; }
+.droowrap .droonext { opacity: 0; }
+.droowrap.advance .droonext { opacity: 1; }
 .dressroo { width: 118px; height: 140px; }
 .wchip { display: inline-flex; width: 34px; height: 34px; flex: 0 0 auto; }
 .wchip svg { width: 100%; height: 100%; }
