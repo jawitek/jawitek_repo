@@ -29,8 +29,11 @@ lockup was built to be pixel-consistent with its siblings:
   (714 font units → 183.14 pt) and placed with the same KAP|suffix gap
   (0.14 H) and suffix|bracket gap (0.09 H) as KAP IN.
 - Everything is outlined, so the SVGs render identically without the font.
-- The bracket takes **Grain `#E1C68F`** (Ecru), the one hue the family had
-  not used, and the colour of the product.
+- The bracket takes **Tilled Earth `#6F6134`**, the one hue the family had
+  not used, and the colour of the field the products come from. Ecru
+  `#E1C68F` was the first proposal; the owner asked for a colour closer to
+  soil, chose this one from five soil tones, and rejected a barley-ear
+  variant, so the logotype stays pure like RE, IN and VC.
 
 The generator script is not in the repo (it needs the fonts embedded in the
 source PDFs, which cannot be redistributed). Rebuilding the logo means
@@ -43,10 +46,10 @@ changes.
   "FOOD COMMODITIES" (outlined Helvetica Neue Light as a stand-in for the
   family's Frutiger claim). `kap-co-grain.svg` puts a grain inside the O,
   allowed on packaging only — a nod to the bird inside KONSDROB's O.
-- **Harvest palette** (Champagne, Eggshell, Mustard, Persian Orange, Olive,
+- **Harvest palette** (Champagne, Eggshell, Mustard, Persian Orange, Ecru,
   Moss, Black Bean, Platinum) is the owner's chosen set from the reference
   palettes and drives the packaging colour coding by product group.
-- **Pantone for Grain is a suggestion** (7502 C). The core colours keep the
+- **Pantone for Tilled Earth is a suggestion** (7769 C as a starting point). The core colours keep the
   family's Pantone references; the harvest palette is HEX/RGB only and needs
   a press proof before the first print run.
 - **`family-konsdrob.png`** is a crop of the KONSDROB logo proposal
