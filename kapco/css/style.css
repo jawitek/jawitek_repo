@@ -1,14 +1,14 @@
 /* ==========================================================================
    KAP CO — Brand Guidelines
    Family system: Dark Green #004438 + Dark Grey #333333, Helvetica Neue.
-   KAP CO accent: Tilled Earth #6F6134. Harvest palette for packaging.
+   KAP CO accent: Harvest Gold #A68A4B; barley ear through the O. Harvest palette for packaging.
    ========================================================================== */
 
 :root{
   --green:#004438;
   --green-deep:#00302a;
   --grey:#333333;
-  --earth:#6F6134;
+  --gold:#A68A4B;
   --ecru:#E1C68F;
   --champagne:#FAE7C9;
   --eggshell:#F0EADC;
@@ -46,7 +46,7 @@ body{
 img,svg{display:block;max-width:100%}
 a{color:var(--green);text-decoration:none}
 a:hover{text-decoration:underline}
-:where(a,button,[tabindex]):focus-visible{outline:2px solid var(--earth);outline-offset:3px}
+:where(a,button,[tabindex]):focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 h1,h2,h3,h4{margin:0;font-weight:700;letter-spacing:-.02em;line-height:1.1;text-wrap:balance}
 p{margin:0}
 .skip{position:absolute;left:-9999px;top:0;z-index:99;background:var(--green);color:#fff;padding:10px 16px}
@@ -94,7 +94,7 @@ p{margin:0}
   padding:40px var(--pad) 40px;border-bottom:0;
 }
 .cover .corner{position:absolute;top:0;right:0;width:180px;height:180px}
-.cover .corner path{fill:var(--earth)}
+.cover .corner path{fill:var(--gold)}
 .cover-logo{width:min(520px,70%);margin-top:110px}
 .cover-meta{display:flex;justify-content:space-between;align-items:end;gap:24px;flex-wrap:wrap;margin-top:56px}
 .cover-meta h1{font-size:34px;font-weight:300;letter-spacing:-.01em}
@@ -117,7 +117,7 @@ p{margin:0}
   display:grid;grid-template-columns:150px 1fr;gap:16px;align-items:baseline;
 }
 .pyramid > div.idea{background:var(--green);color:#fff;border-color:var(--green)}
-.pyramid > div.idea .lab{color:var(--earth)}
+.pyramid > div.idea .lab{color:var(--gold)}
 .pyramid .lab{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
 .pyramid p{font-size:15px;line-height:1.5}
 .pyramid .idea p{font-size:22px;font-weight:700;line-height:1.2;letter-spacing:-.01em}
@@ -139,7 +139,7 @@ p{margin:0}
   margin:0;border:1px solid var(--line);border-radius:3px;padding:32px 28px 20px;
   display:flex;flex-direction:column;justify-content:space-between;gap:24px;min-height:200px;
 }
-.family figure.is-new{border-color:var(--earth);background:var(--paper-2)}
+.family figure.is-new{border-color:var(--gold);background:var(--paper-2)}
 .family img{width:100%;max-height:96px;object-fit:contain;object-position:left center}
 .family figcaption{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
 .family figcaption b{color:var(--ink);font-weight:400}
@@ -178,7 +178,7 @@ p{margin:0}
 .minsize div{display:flex;flex-direction:column;gap:8px;font-size:12px;color:var(--muted)}
 .minsize img{height:auto}
 
-.donts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-top:56px}
+.donts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:56px}
 .dont{border:1px solid var(--line);border-radius:3px;padding:20px;display:grid;gap:14px;font-size:13px;color:var(--grey)}
 .dont .box{height:76px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;background:var(--paper-2)}
 .dont .box img{width:70%}
@@ -187,6 +187,7 @@ p{margin:0}
 .dont .box.tilt img{transform:rotate(-12deg)}
 .dont .box.recolor{filter:hue-rotate(300deg) saturate(3)}
 .dont .box.lowc{background:var(--moss)}
+.dont .box.earbig img{transform:scale(1.35) translateX(-8%)}
 
 /* ----------------------------- colours --------------------------------- */
 .swatches{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
@@ -276,7 +277,7 @@ h3.group:first-of-type{margin-top:0}
 
 .pattern{
   margin-top:56px;height:220px;border-radius:3px;background-color:var(--paper);border:1px solid var(--line);
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Cpath fill='%236F6134' d='M20 12h30v30h-9V21H20z'/%3E%3C/svg%3E");
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 80'%3E%3Cpath fill='%23A68A4B' d='M20 12h30v30h-9V21H20z'/%3E%3C/svg%3E");
   background-size:64px 64px;display:grid;place-items:center;
 }
 .pattern img{width:220px;background:var(--paper);padding:14px 22px}
@@ -292,7 +293,7 @@ h3.group:first-of-type{margin-top:0}
 .card.back{background:var(--green);display:grid;place-items:center}
 .card.back img{width:150px}
 .card .corner{position:absolute;top:0;right:0;width:44px;height:44px}
-.card .corner path{fill:var(--earth)}
+.card .corner path{fill:var(--gold)}
 .card .who{align-self:end;font-size:10px;line-height:1.45;color:var(--grey)}
 .card .who b{display:block;font-size:12px;color:var(--ink)}
 .card .lines{font-size:9px;color:var(--muted);display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:6px}

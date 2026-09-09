@@ -29,11 +29,14 @@ lockup was built to be pixel-consistent with its siblings:
   (714 font units → 183.14 pt) and placed with the same KAP|suffix gap
   (0.14 H) and suffix|bracket gap (0.09 H) as KAP IN.
 - Everything is outlined, so the SVGs render identically without the font.
-- The bracket takes **Tilled Earth `#6F6134`**, the one hue the family had
-  not used, and the colour of the field the products come from. Ecru
-  `#E1C68F` was the first proposal; the owner asked for a colour closer to
-  soil, chose this one from five soil tones, and rejected a barley-ear
-  variant, so the logotype stays pure like RE, IN and VC.
+- The bracket takes **Harvest Gold `#A68A4B`**, and a stylised **barley ear**
+  grows through the O in the same colour. The ear is 1.40 H tall, its top
+  level with the bracket top, its foot 0.12 H below the baseline; the O is
+  cut away around it with an SVG mask, so the file works on any background.
+  History: Ecru `#E1C68F` was the first proposal, then five soil tones
+  (Tilled Earth `#6F6134` was chosen), then the owner brought a sketch with
+  an ear in the O and an oversized bracket; version 2 of that sketch, with
+  the family-sized bracket, is what shipped. The gold is read off the sketch.
 
 The generator script is not in the repo (it needs the fonts embedded in the
 source PDFs, which cannot be redistributed). Rebuilding the logo means
@@ -44,12 +47,12 @@ changes.
 
 - **Two logo variants beyond the family set.** `kap-co-descriptor.svg` adds
   "FOOD COMMODITIES" (outlined Helvetica Neue Light as a stand-in for the
-  family's Frutiger claim). `kap-co-grain.svg` puts a grain inside the O,
-  allowed on packaging only — a nod to the bird inside KONSDROB's O.
+  family's Frutiger claim). `kap-co-simple*.svg` drop the ear for sizes
+  under 35 mm, embroidery and single-colour stamps.
 - **Harvest palette** (Champagne, Eggshell, Mustard, Persian Orange, Ecru,
   Moss, Black Bean, Platinum) is the owner's chosen set from the reference
   palettes and drives the packaging colour coding by product group.
-- **Pantone for Tilled Earth is a suggestion** (7769 C as a starting point). The core colours keep the
+- **Pantone for Harvest Gold is a suggestion** (7562 C as a starting point). The core colours keep the
   family's Pantone references; the harvest palette is HEX/RGB only and needs
   a press proof before the first print run.
 - **`family-konsdrob.png`** is a crop of the KONSDROB logo proposal
