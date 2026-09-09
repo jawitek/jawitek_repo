@@ -8,6 +8,7 @@ static host (`python3 -m http.server` locally).
 | --- | --- | --- |
 | Kanno Noodle | `kanno/` | https://jawitek.github.io/jawitek_repo/kanno/ |
 | Na Zaspę 3 | `nazaspe3/` | https://jawitek.github.io/jawitek_repo/nazaspe3/ |
+| KAP CO brand guidelines | `kapco/` | https://jawitek.github.io/jawitek_repo/kapco/ |
 
 The repository root holds only a redirect from `/` to `/kanno/`, so links to
 the old root address keep working.
@@ -25,6 +26,11 @@ the old root address keep working.
 │   ├── index.html
 │   ├── css/ js/ assets/
 │   └── README.md        details, and what is still stubbed
+├── kapco/          KAP CO — logo and brand guidelines for the food-commodities company
+│   ├── index.html
+│   ├── css/ assets/
+│   ├── brand/           logo masters (SVG / PNG) + PDF export of the guidelines
+│   └── README.md        how the logo was built, decisions
 ├── .agents/skills/ nano-banana-2 image generation skill
 └── .nojekyll       serve files verbatim, no Jekyll processing
 ```

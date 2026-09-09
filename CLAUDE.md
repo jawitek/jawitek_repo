@@ -8,6 +8,7 @@ nie zaniedbanie. Utrzymuj go.
 /            strona Kanno Noodle (przekierowanie do kanno/)
 kanno/       strona firmowa Kanno Noodle
 nazaspe3/    biurowiec na wynajem, Gdańsk Nowy Port
+kapco/       logo i księga znaku KAP CO (spółka spożywcza KAP Holding)
 ```
 
 Każdy projekt ma własny `README.md` z opisem i decyzjami projektowymi.
